@@ -18,18 +18,21 @@ interface ExpenseFormProps {
 
 // Default sub-categories for each category
 const subCategoryMap: Record<string, string[]> = {
-  "Food & Dining": ["Groceries", "Restaurant", "Coffee Shop", "Fast Food", "Snacks"],
-  "Transportation": ["Fuel", "Public Transport", "Parking", "Maintenance", "Insurance"],
-  "Utilities": ["Electricity", "Water", "Gas", "Internet", "Phone"],
-  "Entertainment": ["Movies", "Streaming", "Games", "Books", "Music"],
-  "Healthcare": ["Doctor", "Medication", "Dental", "Insurance", "Medical Supplies"],
-  "Education": ["Tuition", "Books", "Online Learning", "Courses", "Supplies"],
-  "Insurance": ["Auto Insurance", "Health Insurance", "Life Insurance", "Home Insurance"],
-  "Health & Fitness": ["Gym", "Sports", "Equipment", "Supplements", "Classes"],
-  "Salary": ["Monthly Salary", "Overtime", "Allowances"],
-  "Freelance": ["Web Development", "Design", "Consulting", "Writing"],
-  "Investment": ["Dividends", "Interest", "Capital Gains"],
-  "Bonus": ["Performance Bonus", "Year-end Bonus", "Commission"],
+  "Food & Groceries": ["Monthly Groceries", "Fresh Vegetables", "Fruits", "Dairy Products", "Spices & Condiments"],
+  "Food & Dining": ["Cafe & Restaurants", "Family Dining", "Street Food", "Sweets", "Fast Food"],
+  "Transportation": ["Fuel", "Auto Rickshaw", "Bus/Metro", "Taxi/Cab", "Vehicle Maintenance"],
+  "Utilities": ["Electricity", "Water", "Gas", "Internet", "Mobile Recharge"],
+  "Entertainment": ["Movies", "Streaming Services", "Games", "Books", "Music"],
+  "Healthcare": ["Doctor Consultation", "Medicines", "Dental", "Health Insurance", "Medical Tests"],
+  "Education": ["School Fees", "Books", "Online Learning", "Tuition", "Stationery"],
+  "Insurance": ["Vehicle Insurance", "Health Insurance", "Life Insurance", "Home Insurance"],
+  "Health & Fitness": ["Gym Membership", "Sports", "Yoga Classes", "Health Supplements"],
+  "Shopping": ["Clothing", "Electronics", "Online Shopping", "Household Items", "Gifts"],
+  "Salary": ["Monthly Salary", "Overtime", "DA/HRA", "Special Allowances"],
+  "Freelance Income": ["Web Development", "Design", "Consulting", "Content Writing"],
+  "Investment Income": ["FD Interest", "Share Dividends", "Mutual Funds", "PPF Interest"],
+  "Rental Income": ["House Rent", "Shop Rent", "Vehicle Rent"],
+  "Bonus": ["Performance Bonus", "Festival Bonus", "Commission", "Incentives"],
 };
 
 export function ExpenseForm({
