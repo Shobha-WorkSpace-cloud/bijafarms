@@ -139,7 +139,7 @@ export function ExpenseForm({
     }
   }, [formData.category]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.description || !formData.amount || !formData.category) {
@@ -166,7 +166,7 @@ export function ExpenseForm({
       notes: formData.notes,
     };
 
-    onSubmit(expense);
+    await onSubmit(expense);
   };
 
   const handleCategoryChange = (value: string) => {
