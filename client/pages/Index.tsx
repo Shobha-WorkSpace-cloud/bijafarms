@@ -212,7 +212,7 @@ export default function Index() {
             </CardHeader>
             <CardContent>
               <div className={`text-2xl font-bold ${summary.balance >= 0 ? 'text-blue-900' : 'text-red-900'}`}>
-                ${summary.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ₹{summary.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </div>
             </CardContent>
           </Card>
