@@ -130,17 +130,22 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
           const worksheet = workbook.Sheets[sheetName];
           const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
+          console.log('Excel Import Debug:');
+          console.log('Sheet Names:', workbook.SheetNames);
+          console.log('First 3 rows:', jsonData.slice(0, 3));
+          console.log('Available columns:', Object.keys(jsonData[0] || {}));
+
           importedExpenses = jsonData.map((row: any, index: number) => {
-            // Try to map common column names
-            const dateValue = row['Date'] || row['date'] || row['DATE'];
-            const typeValue = row['Type'] || row['type'] || row['TYPE'];
-            const descriptionValue = row['Description'] || row['description'] || row['DESCRIPTION'];
-            const amountValue = row['Amount'] || row['amount'] || row['AMOUNT'];
-            const paidByValue = row['Paid By'] || row['paid by'] || row['PAID BY'] || row['PaidBy'] || row['paidBy'];
-            const categoryValue = row['Category'] || row['category'] || row['CATEGORY'];
-            const subCategoryValue = row['Sub-Category'] || row['sub-category'] || row['SUB-CATEGORY'] || row['SubCategory'] || row['subCategory'];
-            const sourceValue = row['Source'] || row['source'] || row['SOURCE'];
-            const notesValue = row['Notes'] || row['notes'] || row['NOTES'];
+            // Try to map common column names with more variations
+            const dateValue = row['Date'] || row['date'] || row['DATE'] || row['Transaction Date'] || row['transaction_date'];
+            const typeValue = row['Type'] || row['type'] || row['TYPE'] || row['Transaction Type'] || row['Income/Expense'];
+            const descriptionValue = row['Description'] || row['description'] || row['DESCRIPTION'] || row['Particulars'] || row['Details'] || row['Narration'];
+            const amountValue = row['Amount'] || row['amount'] || row['AMOUNT'] || row['Value'] || row['Sum'] || row['Total'];
+            const paidByValue = row['Paid By'] || row['paid by'] || row['PAID BY'] || row['PaidBy'] || row['paidBy'] || row['Payer'] || row['Person'];
+            const categoryValue = row['Category'] || row['category'] || row['CATEGORY'] || row['Expense Category'] || row['Type Category'];
+            const subCategoryValue = row['Sub-Category'] || row['sub-category'] || row['SUB-CATEGORY'] || row['SubCategory'] || row['subCategory'] || row['Sub Category'];
+            const sourceValue = row['Source'] || row['source'] || row['SOURCE'] || row['Payment Method'] || row['Mode'] || row['Account'];
+            const notesValue = row['Notes'] || row['notes'] || row['NOTES'] || row['Remarks'] || row['Comments'];
 
             return {
               id: `imported_${Date.now()}_${index}`,
