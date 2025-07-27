@@ -66,23 +66,28 @@ export default function Index() {
     null,
   );
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Load sample data on component mount
+  // Load expenses from API on component mount
   useEffect(() => {
-    const loadSampleData = async () => {
+    const loadExpenses = async () => {
       try {
-        const response = await fetch("/sample-data.json");
-        const data = await response.json();
+        const data = await api.fetchExpenses();
         setExpenses(data);
         setFilteredExpenses(data);
       } catch (error) {
-        console.error("Error loading sample data:", error);
+        console.error("Error loading expenses:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load expenses. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
     };
-    loadSampleData();
-  }, []);
+    loadExpenses();
+  }, [toast]);
 
   // Filter expenses based on current filters
   useEffect(() => {
