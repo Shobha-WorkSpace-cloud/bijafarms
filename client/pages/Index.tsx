@@ -201,8 +201,22 @@ export default function Index() {
     }
   };
 
-  const handleDeleteExpense = (id: string) => {
-    setExpenses((prev) => prev.filter((expense) => expense.id !== id));
+  const handleDeleteExpense = async (id: string) => {
+    try {
+      await api.deleteExpense(id);
+      setExpenses((prev) => prev.filter((expense) => expense.id !== id));
+      toast({
+        title: "Success",
+        description: "Expense deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete expense. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleImportExpenses = (importedExpenses: ExpenseRecord[]) => {
