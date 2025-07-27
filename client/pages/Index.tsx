@@ -46,6 +46,8 @@ import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseCharts } from "@/components/ExpenseCharts";
 import { ImportExport } from "@/components/ImportExport";
 import { ExcelDebugger } from "@/components/ExcelDebugger";
+import { useToast } from "@/hooks/use-toast";
+import * as api from "@/lib/api";
 
 export default function Index() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
