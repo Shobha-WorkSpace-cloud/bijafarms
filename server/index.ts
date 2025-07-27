@@ -28,5 +28,14 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Expense routes
+  app.get("/api/expenses", getExpenses);
+  app.post("/api/expenses", addExpense);
+  app.put("/api/expenses/:id", updateExpense);
+  app.delete("/api/expenses/:id", deleteExpense);
+  app.post("/api/expenses/import", importExpenses);
+  app.post("/api/expenses/bulk-delete", bulkDeleteExpenses);
+  app.get("/api/expenses/backup", backupExpenses);
+
   return app;
 }
