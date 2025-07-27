@@ -247,7 +247,7 @@ export default function Index() {
                   />
                 </div>
                 
-                <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value === 'all' ? '' : value }))}>
+                <Select value={filters.type || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value === 'all' ? '' : value }))}>
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="Type" />
                   </SelectTrigger>
