@@ -167,9 +167,9 @@ const ChartTooltipContent = React.forwardRef<
       labelKey,
     ]);
 
-    if (!active || !payload?.length) {
-      return null;
-    }
+    if (!active || !(payload as any)?.length) {
+    return null;
+  }
 
     const nestLabel = payload.length === 1 && indicator !== "dot";
 
