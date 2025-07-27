@@ -1,0 +1,286 @@
+import { useRef } from "react";
+import { Upload, Download, FileSpreadsheet } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { ExpenseRecord } from "@shared/expense-types";
+import * as XLSX from 'xlsx';
+
+interface ImportExportProps {
+  expenses: ExpenseRecord[];
+  onImport: (expenses: ExpenseRecord[]) => void;
+}
+
+export function ImportExport({ expenses, onImport }: ImportExportProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const exportToExcel = () => {
+    try {
+      // Prepare data for Excel export
+      const excelData = expenses.map(expense => ({
+        'Date': expense.date,
+        'Type': expense.type,
+        'Description': expense.description,
+        'Amount': expense.amount,
+        'Paid By': expense.paidBy,
+        'Category': expense.category,
+        'Sub-Category': expense.subCategory,
+        'Source': expense.source,
+        'Notes': expense.notes
+      }));
+
+      // Create workbook and worksheet
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(excelData);
+
+      // Set column widths for better formatting
+      const colWidths = [
+        { wch: 12 }, // Date
+        { wch: 10 }, // Type
+        { wch: 30 }, // Description
+        { wch: 12 }, // Amount
+        { wch: 15 }, // Paid By
+        { wch: 18 }, // Category
+        { wch: 18 }, // Sub-Category
+        { wch: 15 }, // Source
+        { wch: 30 }  // Notes
+      ];
+      ws['!cols'] = colWidths;
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Expenses');
+
+      // Generate filename with current date
+      const today = new Date().toISOString().split('T')[0];
+      const filename = `expenses_${today}.xlsx`;
+
+      // Save the file
+      XLSX.writeFile(wb, filename);
+
+      toast({
+        title: "Export Successful",
+        description: `Exported ${expenses.length} transactions to ${filename}`,
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting your data. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const exportToCSV = () => {
+    try {
+      const headers = ['Date', 'Type', 'Description', 'Amount', 'Paid By', 'Category', 'Sub-Category', 'Source', 'Notes'];
+      const csvContent = [
+        headers.join(','),
+        ...expenses.map(expense => [
+          expense.date,
+          expense.type,
+          `"${expense.description.replace(/"/g, '""')}"`,
+          expense.amount,
+          `"${expense.paidBy.replace(/"/g, '""')}"`,
+          `"${expense.category.replace(/"/g, '""')}"`,
+          `"${expense.subCategory.replace(/"/g, '""')}"`,
+          `"${expense.source.replace(/"/g, '""')}"`,
+          `"${expense.notes.replace(/"/g, '""')}"`
+        ].join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const today = new Date().toISOString().split('T')[0];
+      a.download = `expenses_${today}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Export Successful",
+        description: `Exported ${expenses.length} transactions to CSV`,
+      });
+    } catch (error) {
+      console.error('CSV export error:', error);
+      toast({
+        title: "Export Failed",
+        description: "There was an error exporting your data. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        let importedExpenses: ExpenseRecord[] = [];
+
+        if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+          // Handle Excel files
+          const workbook = XLSX.read(data, { type: 'binary' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+          importedExpenses = jsonData.map((row: any, index: number) => {
+            // Try to map common column names
+            const dateValue = row['Date'] || row['date'] || row['DATE'];
+            const typeValue = row['Type'] || row['type'] || row['TYPE'];
+            const descriptionValue = row['Description'] || row['description'] || row['DESCRIPTION'];
+            const amountValue = row['Amount'] || row['amount'] || row['AMOUNT'];
+            const paidByValue = row['Paid By'] || row['paid by'] || row['PAID BY'] || row['PaidBy'] || row['paidBy'];
+            const categoryValue = row['Category'] || row['category'] || row['CATEGORY'];
+            const subCategoryValue = row['Sub-Category'] || row['sub-category'] || row['SUB-CATEGORY'] || row['SubCategory'] || row['subCategory'];
+            const sourceValue = row['Source'] || row['source'] || row['SOURCE'];
+            const notesValue = row['Notes'] || row['notes'] || row['NOTES'];
+
+            return {
+              id: `imported_${Date.now()}_${index}`,
+              date: dateValue ? new Date(dateValue).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+              type: (typeValue === 'Income' || typeValue === 'income') ? 'Income' as const : 'Expense' as const,
+              description: String(descriptionValue || 'Imported transaction'),
+              amount: parseFloat(String(amountValue)) || 0,
+              paidBy: String(paidByValue || 'Unknown'),
+              category: String(categoryValue || 'Other'),
+              subCategory: String(subCategoryValue || 'General'),
+              source: String(sourceValue || 'Unknown'),
+              notes: String(notesValue || '')
+            };
+          });
+        } else if (file.name.endsWith('.csv')) {
+          // Handle CSV files
+          const csvText = data as string;
+          const lines = csvText.split('\n');
+          const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+          
+          importedExpenses = lines.slice(1)
+            .filter(line => line.trim())
+            .map((line, index) => {
+              const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+              const rowData: any = {};
+              headers.forEach((header, i) => {
+                rowData[header] = values[i] || '';
+              });
+
+              const dateValue = rowData['Date'] || rowData['date'] || rowData['DATE'];
+              const typeValue = rowData['Type'] || rowData['type'] || rowData['TYPE'];
+              const descriptionValue = rowData['Description'] || rowData['description'] || rowData['DESCRIPTION'];
+              const amountValue = rowData['Amount'] || rowData['amount'] || rowData['AMOUNT'];
+              const paidByValue = rowData['Paid By'] || rowData['paid by'] || rowData['PAID BY'] || rowData['PaidBy'] || rowData['paidBy'];
+              const categoryValue = rowData['Category'] || rowData['category'] || rowData['CATEGORY'];
+              const subCategoryValue = rowData['Sub-Category'] || rowData['sub-category'] || rowData['SUB-CATEGORY'] || rowData['SubCategory'] || rowData['subCategory'];
+              const sourceValue = rowData['Source'] || rowData['source'] || rowData['SOURCE'];
+              const notesValue = rowData['Notes'] || rowData['notes'] || rowData['NOTES'];
+
+              return {
+                id: `imported_${Date.now()}_${index}`,
+                date: dateValue ? new Date(dateValue).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                type: (typeValue === 'Income' || typeValue === 'income') ? 'Income' as const : 'Expense' as const,
+                description: String(descriptionValue || 'Imported transaction'),
+                amount: parseFloat(String(amountValue)) || 0,
+                paidBy: String(paidByValue || 'Unknown'),
+                category: String(categoryValue || 'Other'),
+                subCategory: String(subCategoryValue || 'General'),
+                source: String(sourceValue || 'Unknown'),
+                notes: String(notesValue || '')
+              };
+            });
+        }
+
+        if (importedExpenses.length > 0) {
+          onImport(importedExpenses);
+          toast({
+            title: "Import Successful",
+            description: `Imported ${importedExpenses.length} transactions from ${file.name}`,
+          });
+        } else {
+          toast({
+            title: "Import Failed",
+            description: "No valid transactions found in the file.",
+            variant: "destructive",
+          });
+        }
+      } catch (error) {
+        console.error('Import error:', error);
+        toast({
+          title: "Import Failed",
+          description: "There was an error importing the file. Please check the format and try again.",
+          variant: "destructive",
+        });
+      }
+    };
+
+    if (file.name.endsWith('.csv')) {
+      reader.readAsText(file);
+    } else {
+      reader.readAsBinaryString(file);
+    }
+
+    // Reset file input
+    event.target.value = '';
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileSpreadsheet className="h-5 w-5" />
+          Import & Export
+        </CardTitle>
+        <CardDescription>
+          Import transactions from Excel/CSV files or export your current data
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button onClick={triggerFileInput} variant="outline" className="flex-1">
+            <Upload className="h-4 w-4 mr-2" />
+            Import from Excel/CSV
+          </Button>
+          
+          <Button onClick={exportToExcel} variant="outline" className="flex-1">
+            <Download className="h-4 w-4 mr-2" />
+            Export to Excel
+          </Button>
+          
+          <Button onClick={exportToCSV} variant="outline" className="flex-1">
+            <Download className="h-4 w-4 mr-2" />
+            Export to CSV
+          </Button>
+        </div>
+
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          onChange={handleFileImport}
+          className="hidden"
+        />
+
+        <div className="text-sm text-slate-600 space-y-2">
+          <p><strong>Import Instructions:</strong></p>
+          <ul className="list-disc list-inside space-y-1">
+            <li>Supported formats: Excel (.xlsx, .xls) and CSV (.csv)</li>
+            <li>Required columns: Date, Type, Description, Amount</li>
+            <li>Optional columns: Paid By, Category, Sub-Category, Source, Notes</li>
+            <li>Type should be either "Income" or "Expense"</li>
+            <li>Amount should be a number (no currency symbols)</li>
+            <li>Date should be in YYYY-MM-DD format or Excel date format</li>
+          </ul>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
