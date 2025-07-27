@@ -219,8 +219,24 @@ export default function Index() {
     }
   };
 
-  const handleImportExpenses = (importedExpenses: ExpenseRecord[]) => {
-    setExpenses((prev) => [...importedExpenses, ...prev]);
+  const handleImportExpenses = async (importedExpenses: ExpenseRecord[]) => {
+    try {
+      await api.importExpenses(importedExpenses);
+      // Reload all expenses from server to get the latest data
+      const refreshedExpenses = await api.fetchExpenses();
+      setExpenses(refreshedExpenses);
+      toast({
+        title: "Success",
+        description: `Imported ${importedExpenses.length} expenses successfully`,
+      });
+    } catch (error) {
+      console.error("Error importing expenses:", error);
+      toast({
+        title: "Error",
+        description: "Failed to import expenses. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const exportToCSV = () => {
