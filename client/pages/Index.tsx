@@ -171,7 +171,6 @@ export default function Index() {
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-slate-900 mb-2">Expense Tracker</h1>
           <p className="text-slate-600 text-lg">Manage your finances with ease</p>
-          <ExcelParser />
         </div>
 
         {/* Summary Cards */}
