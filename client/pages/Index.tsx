@@ -247,23 +247,23 @@ export default function Index() {
                   />
                 </div>
                 
-                <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value }))}>
+                <Select value={filters.type} onValueChange={(value) => setFilters(prev => ({ ...prev, type: value === 'all' ? '' : value }))}>
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="Income">Income</SelectItem>
                     <SelectItem value="Expense">Expense</SelectItem>
                   </SelectContent>
                 </Select>
 
-                <Select value={filters.category} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}>
+                <Select value={filters.category || 'all'} onValueChange={(value) => setFilters(prev => ({ ...prev, category: value === 'all' ? '' : value }))}>
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {uniqueCategories.map(category => (
                       <SelectItem key={category} value={category}>{category}</SelectItem>
                     ))}
