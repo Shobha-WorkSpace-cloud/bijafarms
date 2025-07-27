@@ -328,12 +328,17 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
             <Upload className="h-4 w-4 mr-2" />
             Import from Excel/CSV
           </Button>
-          
+
+          <Button onClick={testImportFromURL} variant="outline" className="flex-1 bg-blue-50 border-blue-200">
+            <Upload className="h-4 w-4 mr-2" />
+            Test Import from URL
+          </Button>
+
           <Button onClick={exportToExcel} variant="outline" className="flex-1">
             <Download className="h-4 w-4 mr-2" />
             Export to Excel
           </Button>
-          
+
           <Button onClick={exportToCSV} variant="outline" className="flex-1">
             <Download className="h-4 w-4 mr-2" />
             Export to CSV
