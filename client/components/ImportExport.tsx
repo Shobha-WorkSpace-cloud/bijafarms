@@ -471,7 +471,7 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
       });
 
       if (importedExpenses.length > 0) {
-        onImport(importedExpenses);
+        await onImport(importedExpenses);
         toast({
           title: "Import Successful",
           description: `Imported ${importedExpenses.length} transactions from URL`,
