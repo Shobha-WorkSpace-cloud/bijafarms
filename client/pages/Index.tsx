@@ -159,9 +159,23 @@ export default function Index() {
   const uniquePaidBy = [...new Set(expenses.map((e) => e.paidBy))];
   const uniqueSources = [...new Set(expenses.map((e) => e.source))];
 
-  const handleAddExpense = (newExpense: ExpenseRecord) => {
-    setExpenses((prev) => [newExpense, ...prev]);
-    setIsAddDialogOpen(false);
+  const handleAddExpense = async (newExpense: ExpenseRecord) => {
+    try {
+      const createdExpense = await api.createExpense(newExpense);
+      setExpenses((prev) => [createdExpense, ...prev]);
+      setIsAddDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "Expense added successfully",
+      });
+    } catch (error) {
+      console.error("Error adding expense:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add expense. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleEditExpense = (updatedExpense: ExpenseRecord) => {
