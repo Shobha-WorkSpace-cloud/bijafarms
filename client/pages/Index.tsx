@@ -12,7 +12,6 @@ import { DataTable } from "@/components/DataTable";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseCharts } from "@/components/ExpenseCharts";
 import { ImportExport } from "@/components/ImportExport";
-import { ExcelParser } from "@/components/ExcelParser";
 
 export default function Index() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
