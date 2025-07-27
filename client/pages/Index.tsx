@@ -241,6 +241,28 @@ export default function Index() {
     }
   };
 
+  const handleRefreshData = async () => {
+    try {
+      setLoading(true);
+      const refreshedExpenses = await api.fetchExpenses();
+      setExpenses(refreshedExpenses);
+      setFilteredExpenses(refreshedExpenses);
+      toast({
+        title: "Success",
+        description: "Data refreshed successfully",
+      });
+    } catch (error) {
+      console.error("Error refreshing expenses:", error);
+      toast({
+        title: "Error",
+        description: "Failed to refresh data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const exportToCSV = () => {
     const headers = [
       "Date",
