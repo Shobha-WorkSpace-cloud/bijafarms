@@ -4,7 +4,7 @@ const API_BASE = "/api/expenses";
 
 // Get all expenses
 export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
-  const response = await fetch(API_BASE);
+  const response = await fetch(`${API_BASE}?t=${Date.now()}`);
   if (!response.ok) {
     throw new Error("Failed to fetch expenses");
   }
