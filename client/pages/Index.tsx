@@ -198,7 +198,7 @@ export default function Index() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-red-900">
-                ${summary.totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ₹{summary.totalExpenses.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
               </div>
             </CardContent>
           </Card>
