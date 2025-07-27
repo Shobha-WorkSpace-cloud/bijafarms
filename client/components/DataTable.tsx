@@ -149,8 +149,8 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                   </TableCell>
                 </TableRow>
               ) : (
-                sortedExpenses.map((expense) => (
-                  <TableRow key={expense.id} className="hover:bg-slate-50">
+                sortedExpenses.map((expense, index) => (
+                  <TableRow key={`${expense.id}-${index}`} className="hover:bg-slate-50">
                     <TableCell className="font-medium">
                       {formatDate(expense.date)}
                     </TableCell>
