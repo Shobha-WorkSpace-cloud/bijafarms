@@ -14,7 +14,7 @@ import * as XLSX from "xlsx";
 
 interface ImportExportProps {
   expenses: ExpenseRecord[];
-  onImport: (expenses: ExpenseRecord[]) => void;
+  onImport: (expenses: ExpenseRecord[]) => Promise<void> | void;
 }
 
 export function ImportExport({ expenses, onImport }: ImportExportProps) {
