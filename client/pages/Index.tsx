@@ -180,11 +180,12 @@ export default function Index() {
 
   const handleEditExpense = async (updatedExpense: ExpenseRecord) => {
     try {
-      const updated = await api.updateExpense(updatedExpense.id, updatedExpense);
+      const updated = await api.updateExpense(
+        updatedExpense.id,
+        updatedExpense,
+      );
       setExpenses((prev) =>
-        prev.map((expense) =>
-          expense.id === updated.id ? updated : expense,
-        ),
+        prev.map((expense) => (expense.id === updated.id ? updated : expense)),
       );
       setEditingExpense(null);
       toast({

@@ -9,7 +9,7 @@ import {
   deleteExpense,
   importExpenses,
   bulkDeleteExpenses,
-  backupExpenses
+  backupExpenses,
 } from "./routes/expenses";
 
 export function createServer() {

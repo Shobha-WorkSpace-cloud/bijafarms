@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { ExpenseRecord } from "@shared/expense-types";
 
-const EXPENSES_FILE = path.join(__dirname, '../data/expenses.json');
+const EXPENSES_FILE = path.join(__dirname, "../data/expenses.json");
 
 // Ensure data directory exists
 const dataDir = path.dirname(EXPENSES_FILE);
@@ -17,10 +17,10 @@ const readExpenses = (): ExpenseRecord[] => {
     if (!fs.existsSync(EXPENSES_FILE)) {
       return [];
     }
-    const data = fs.readFileSync(EXPENSES_FILE, 'utf8');
+    const data = fs.readFileSync(EXPENSES_FILE, "utf8");
     return JSON.parse(data);
   } catch (error) {
-    console.error('Error reading expenses:', error);
+    console.error("Error reading expenses:", error);
     return [];
   }
 };
@@ -30,7 +30,7 @@ const writeExpenses = (expenses: ExpenseRecord[]): void => {
   try {
     fs.writeFileSync(EXPENSES_FILE, JSON.stringify(expenses, null, 2));
   } catch (error) {
-    console.error('Error writing expenses:', error);
+    console.error("Error writing expenses:", error);
     throw error;
   }
 };
@@ -41,8 +41,8 @@ export const getExpenses: RequestHandler = (req, res) => {
     const expenses = readExpenses();
     res.json(expenses);
   } catch (error) {
-    console.error('Error getting expenses:', error);
-    res.status(500).json({ error: 'Failed to fetch expenses' });
+    console.error("Error getting expenses:", error);
+    res.status(500).json({ error: "Failed to fetch expenses" });
   }
 };
 
@@ -50,10 +50,10 @@ export const getExpenses: RequestHandler = (req, res) => {
 export const addExpense: RequestHandler = (req, res) => {
   try {
     const newExpense: ExpenseRecord = req.body;
-    
+
     // Validate required fields
     if (!newExpense.description || !newExpense.amount || !newExpense.category) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      return res.status(400).json({ error: "Missing required fields" });
     }
 
     // Generate ID if not provided
@@ -67,8 +67,8 @@ export const addExpense: RequestHandler = (req, res) => {
 
     res.status(201).json(newExpense);
   } catch (error) {
-    console.error('Error adding expense:', error);
-    res.status(500).json({ error: 'Failed to add expense' });
+    console.error("Error adding expense:", error);
+    res.status(500).json({ error: "Failed to add expense" });
   }
 };
 
@@ -79,10 +79,10 @@ export const updateExpense: RequestHandler = (req, res) => {
     const updatedExpense: ExpenseRecord = req.body;
 
     const expenses = readExpenses();
-    const index = expenses.findIndex(expense => expense.id === id);
+    const index = expenses.findIndex((expense) => expense.id === id);
 
     if (index === -1) {
-      return res.status(404).json({ error: 'Expense not found' });
+      return res.status(404).json({ error: "Expense not found" });
     }
 
     expenses[index] = { ...expenses[index], ...updatedExpense, id };
@@ -90,8 +90,8 @@ export const updateExpense: RequestHandler = (req, res) => {
 
     res.json(expenses[index]);
   } catch (error) {
-    console.error('Error updating expense:', error);
-    res.status(500).json({ error: 'Failed to update expense' });
+    console.error("Error updating expense:", error);
+    res.status(500).json({ error: "Failed to update expense" });
   }
 };
 
@@ -101,19 +101,19 @@ export const deleteExpense: RequestHandler = (req, res) => {
     const { id } = req.params;
 
     const expenses = readExpenses();
-    const index = expenses.findIndex(expense => expense.id === id);
+    const index = expenses.findIndex((expense) => expense.id === id);
 
     if (index === -1) {
-      return res.status(404).json({ error: 'Expense not found' });
+      return res.status(404).json({ error: "Expense not found" });
     }
 
     expenses.splice(index, 1);
     writeExpenses(expenses);
 
-    res.json({ message: 'Expense deleted successfully' });
+    res.json({ message: "Expense deleted successfully" });
   } catch (error) {
-    console.error('Error deleting expense:', error);
-    res.status(500).json({ error: 'Failed to delete expense' });
+    console.error("Error deleting expense:", error);
+    res.status(500).json({ error: "Failed to delete expense" });
   }
 };
 
@@ -123,22 +123,22 @@ export const importExpenses: RequestHandler = (req, res) => {
     const importedExpenses: ExpenseRecord[] = req.body;
 
     if (!Array.isArray(importedExpenses)) {
-      return res.status(400).json({ error: 'Expected array of expenses' });
+      return res.status(400).json({ error: "Expected array of expenses" });
     }
 
     const expenses = readExpenses();
-    
+
     // Add imported expenses to the beginning
     const updatedExpenses = [...importedExpenses, ...expenses];
     writeExpenses(updatedExpenses);
 
-    res.json({ 
-      message: 'Expenses imported successfully', 
-      count: importedExpenses.length 
+    res.json({
+      message: "Expenses imported successfully",
+      count: importedExpenses.length,
     });
   } catch (error) {
-    console.error('Error importing expenses:', error);
-    res.status(500).json({ error: 'Failed to import expenses' });
+    console.error("Error importing expenses:", error);
+    res.status(500).json({ error: "Failed to import expenses" });
   }
 };
 
@@ -148,20 +148,22 @@ export const bulkDeleteExpenses: RequestHandler = (req, res) => {
     const { ids }: { ids: string[] } = req.body;
 
     if (!Array.isArray(ids)) {
-      return res.status(400).json({ error: 'Expected array of IDs' });
+      return res.status(400).json({ error: "Expected array of IDs" });
     }
 
     const expenses = readExpenses();
-    const filteredExpenses = expenses.filter(expense => !ids.includes(expense.id));
+    const filteredExpenses = expenses.filter(
+      (expense) => !ids.includes(expense.id),
+    );
     writeExpenses(filteredExpenses);
 
-    res.json({ 
-      message: 'Expenses deleted successfully', 
-      deletedCount: expenses.length - filteredExpenses.length 
+    res.json({
+      message: "Expenses deleted successfully",
+      deletedCount: expenses.length - filteredExpenses.length,
     });
   } catch (error) {
-    console.error('Error bulk deleting expenses:', error);
-    res.status(500).json({ error: 'Failed to delete expenses' });
+    console.error("Error bulk deleting expenses:", error);
+    res.status(500).json({ error: "Failed to delete expenses" });
   }
 };
 
@@ -169,14 +171,17 @@ export const bulkDeleteExpenses: RequestHandler = (req, res) => {
 export const backupExpenses: RequestHandler = (req, res) => {
   try {
     const expenses = readExpenses();
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const backupFileName = `expenses-backup-${timestamp}.json`;
 
-    res.setHeader('Content-Type', 'application/json');
-    res.setHeader('Content-Disposition', `attachment; filename="${backupFileName}"`);
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${backupFileName}"`,
+    );
     res.json(expenses);
   } catch (error) {
-    console.error('Error creating backup:', error);
-    res.status(500).json({ error: 'Failed to create backup' });
+    console.error("Error creating backup:", error);
+    res.status(500).json({ error: "Failed to create backup" });
   }
 };
