@@ -23,14 +23,14 @@ const readExpenses = (): ExpenseRecord[] => {
     // Transform the data to match the expected format and ensure unique IDs
     return rawData.map((item: any, index: number) => {
       // Convert date from MM/DD/YYYY to YYYY-MM-DD format
-      let formattedDate = new Date().toISOString().split('T')[0];
+      let formattedDate = new Date().toISOString().split("T")[0];
       const dateStr = item.Date || item.date;
       if (dateStr) {
         try {
-          const dateParts = dateStr.split('/');
+          const dateParts = dateStr.split("/");
           if (dateParts.length === 3) {
             const [month, day, year] = dateParts;
-            formattedDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
           }
         } catch (e) {
           console.warn(`Invalid date format: ${dateStr}`);
@@ -40,14 +40,14 @@ const readExpenses = (): ExpenseRecord[] => {
       return {
         id: String(item.id || index + 1),
         date: formattedDate,
-        type: item.Type || item.type || 'Expense',
-        description: item.Description || item.description || 'No description',
+        type: item.Type || item.type || "Expense",
+        description: item.Description || item.description || "No description",
         amount: parseFloat(item.Amount || item.amount || 0),
-        paidBy: item['Paid By'] || item.paidBy || 'Unknown',
-        category: item.Category || item.category || 'Other',
-        subCategory: item['Sub-Category'] || item.subCategory || 'General',
-        source: item.Source || item.source || 'Unknown',
-        notes: item.Notes || item.notes || ''
+        paidBy: item["Paid By"] || item.paidBy || "Unknown",
+        category: item.Category || item.category || "Other",
+        subCategory: item["Sub-Category"] || item.subCategory || "General",
+        source: item.Source || item.source || "Unknown",
+        notes: item.Notes || item.notes || "",
       };
     });
   } catch (error) {
