@@ -15,7 +15,7 @@ import { ExpenseRecord, ExpenseFormData } from "@shared/expense-types";
 
 interface ExpenseFormProps {
   initialData?: ExpenseRecord;
-  onSubmit: (expense: ExpenseRecord) => void;
+  onSubmit: (expense: ExpenseRecord) => Promise<void> | void;
   onCancel: () => void;
   categories: string[];
   paidByOptions: string[];
