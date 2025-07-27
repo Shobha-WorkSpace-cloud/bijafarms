@@ -1028,13 +1028,9 @@
         "Paid By":"Both",
         "Category":"Rooms",
         "Sub-Category":"flooring",
-        "Sou...
-```
-
-The requested JSON data has been generated with 'id' as the first column and 'Unnamed' columns removed.
-
-```json
-[
+        "Source": "Bajaj",
+        "Notes": null
+        },
     {
         "id":1,
         "Date":"9\/28\/2024",
