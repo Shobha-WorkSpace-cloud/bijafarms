@@ -211,7 +211,7 @@ export function ExpenseForm({
             </Button>
           </div>
         ) : (
-          <Select value={formData.category} onValueChange={handleCategoryChange}>
+          <Select value={formData.category || undefined} onValueChange={handleCategoryChange}>
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
@@ -228,8 +228,8 @@ export function ExpenseForm({
       {/* Sub-Category */}
       <div className="space-y-2">
         <Label>Sub-Category</Label>
-        <Select 
-          value={formData.subCategory} 
+        <Select
+          value={formData.subCategory || undefined}
           onValueChange={(value) => setFormData(prev => ({ ...prev, subCategory: value }))}
           disabled={!availableSubCategories.length}
         >
@@ -264,7 +264,7 @@ export function ExpenseForm({
             </Button>
           </div>
         ) : (
-          <Select value={formData.paidBy} onValueChange={handlePaidByChange}>
+          <Select value={formData.paidBy || undefined} onValueChange={handlePaidByChange}>
             <SelectTrigger>
               <SelectValue placeholder="Select who paid" />
             </SelectTrigger>
@@ -298,7 +298,7 @@ export function ExpenseForm({
             </Button>
           </div>
         ) : (
-          <Select value={formData.source} onValueChange={handleSourceChange}>
+          <Select value={formData.source || undefined} onValueChange={handleSourceChange}>
             <SelectTrigger>
               <SelectValue placeholder="Select payment source" />
             </SelectTrigger>
