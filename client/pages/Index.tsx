@@ -178,13 +178,27 @@ export default function Index() {
     }
   };
 
-  const handleEditExpense = (updatedExpense: ExpenseRecord) => {
-    setExpenses((prev) =>
-      prev.map((expense) =>
-        expense.id === updatedExpense.id ? updatedExpense : expense,
-      ),
-    );
-    setEditingExpense(null);
+  const handleEditExpense = async (updatedExpense: ExpenseRecord) => {
+    try {
+      const updated = await api.updateExpense(updatedExpense.id, updatedExpense);
+      setExpenses((prev) =>
+        prev.map((expense) =>
+          expense.id === updated.id ? updated : expense,
+        ),
+      );
+      setEditingExpense(null);
+      toast({
+        title: "Success",
+        description: "Expense updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating expense:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update expense. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDeleteExpense = (id: string) => {
