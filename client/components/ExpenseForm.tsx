@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ExpenseRecord, ExpenseFormData } from "@shared/expense-types";
@@ -18,21 +24,77 @@ interface ExpenseFormProps {
 
 // Default sub-categories for each category
 const subCategoryMap: Record<string, string[]> = {
-  "Food & Groceries": ["Monthly Groceries", "Fresh Vegetables", "Fruits", "Dairy Products", "Spices & Condiments"],
-  "Food & Dining": ["Cafe & Restaurants", "Family Dining", "Street Food", "Sweets", "Fast Food"],
-  "Transportation": ["Fuel", "Auto Rickshaw", "Bus/Metro", "Taxi/Cab", "Vehicle Maintenance"],
-  "Utilities": ["Electricity", "Water", "Gas", "Internet", "Mobile Recharge"],
-  "Entertainment": ["Movies", "Streaming Services", "Games", "Books", "Music"],
-  "Healthcare": ["Doctor Consultation", "Medicines", "Dental", "Health Insurance", "Medical Tests"],
-  "Education": ["School Fees", "Books", "Online Learning", "Tuition", "Stationery"],
-  "Insurance": ["Vehicle Insurance", "Health Insurance", "Life Insurance", "Home Insurance"],
-  "Health & Fitness": ["Gym Membership", "Sports", "Yoga Classes", "Health Supplements"],
-  "Shopping": ["Clothing", "Electronics", "Online Shopping", "Household Items", "Gifts"],
-  "Salary": ["Monthly Salary", "Overtime", "DA/HRA", "Special Allowances"],
-  "Freelance Income": ["Web Development", "Design", "Consulting", "Content Writing"],
-  "Investment Income": ["FD Interest", "Share Dividends", "Mutual Funds", "PPF Interest"],
+  "Food & Groceries": [
+    "Monthly Groceries",
+    "Fresh Vegetables",
+    "Fruits",
+    "Dairy Products",
+    "Spices & Condiments",
+  ],
+  "Food & Dining": [
+    "Cafe & Restaurants",
+    "Family Dining",
+    "Street Food",
+    "Sweets",
+    "Fast Food",
+  ],
+  Transportation: [
+    "Fuel",
+    "Auto Rickshaw",
+    "Bus/Metro",
+    "Taxi/Cab",
+    "Vehicle Maintenance",
+  ],
+  Utilities: ["Electricity", "Water", "Gas", "Internet", "Mobile Recharge"],
+  Entertainment: ["Movies", "Streaming Services", "Games", "Books", "Music"],
+  Healthcare: [
+    "Doctor Consultation",
+    "Medicines",
+    "Dental",
+    "Health Insurance",
+    "Medical Tests",
+  ],
+  Education: [
+    "School Fees",
+    "Books",
+    "Online Learning",
+    "Tuition",
+    "Stationery",
+  ],
+  Insurance: [
+    "Vehicle Insurance",
+    "Health Insurance",
+    "Life Insurance",
+    "Home Insurance",
+  ],
+  "Health & Fitness": [
+    "Gym Membership",
+    "Sports",
+    "Yoga Classes",
+    "Health Supplements",
+  ],
+  Shopping: [
+    "Clothing",
+    "Electronics",
+    "Online Shopping",
+    "Household Items",
+    "Gifts",
+  ],
+  Salary: ["Monthly Salary", "Overtime", "DA/HRA", "Special Allowances"],
+  "Freelance Income": [
+    "Web Development",
+    "Design",
+    "Consulting",
+    "Content Writing",
+  ],
+  "Investment Income": [
+    "FD Interest",
+    "Share Dividends",
+    "Mutual Funds",
+    "PPF Interest",
+  ],
   "Rental Income": ["House Rent", "Shop Rent", "Vehicle Rent"],
-  "Bonus": ["Performance Bonus", "Festival Bonus", "Commission", "Incentives"],
+  Bonus: ["Performance Bonus", "Festival Bonus", "Commission", "Incentives"],
 };
 
 export function ExpenseForm({
@@ -44,21 +106,23 @@ export function ExpenseForm({
   sourceOptions,
 }: ExpenseFormProps) {
   const [formData, setFormData] = useState<ExpenseFormData>({
-    date: initialData?.date || new Date().toISOString().split('T')[0],
-    type: initialData?.type || 'Expense',
-    description: initialData?.description || '',
-    amount: initialData?.amount?.toString() || '',
-    paidBy: initialData?.paidBy || '',
-    category: initialData?.category || '',
-    subCategory: initialData?.subCategory || '',
-    source: initialData?.source || '',
-    notes: initialData?.notes || '',
+    date: initialData?.date || new Date().toISOString().split("T")[0],
+    type: initialData?.type || "Expense",
+    description: initialData?.description || "",
+    amount: initialData?.amount?.toString() || "",
+    paidBy: initialData?.paidBy || "",
+    category: initialData?.category || "",
+    subCategory: initialData?.subCategory || "",
+    source: initialData?.source || "",
+    notes: initialData?.notes || "",
   });
 
-  const [availableSubCategories, setAvailableSubCategories] = useState<string[]>([]);
-  const [newCategory, setNewCategory] = useState('');
-  const [newPaidBy, setNewPaidBy] = useState('');
-  const [newSource, setNewSource] = useState('');
+  const [availableSubCategories, setAvailableSubCategories] = useState<
+    string[]
+  >([]);
+  const [newCategory, setNewCategory] = useState("");
+  const [newPaidBy, setNewPaidBy] = useState("");
+  const [newSource, setNewSource] = useState("");
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [showNewPaidByInput, setShowNewPaidByInput] = useState(false);
   const [showNewSourceInput, setShowNewSourceInput] = useState(false);
@@ -68,7 +132,7 @@ export function ExpenseForm({
     if (formData.category && subCategoryMap[formData.category]) {
       setAvailableSubCategories(subCategoryMap[formData.category]);
       if (!subCategoryMap[formData.category].includes(formData.subCategory)) {
-        setFormData(prev => ({ ...prev, subCategory: '' }));
+        setFormData((prev) => ({ ...prev, subCategory: "" }));
       }
     } else {
       setAvailableSubCategories([]);
@@ -77,14 +141,17 @@ export function ExpenseForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.description || !formData.amount || !formData.category) {
       return;
     }
 
-    const finalCategory = showNewCategoryInput && newCategory ? newCategory : formData.category;
-    const finalPaidBy = showNewPaidByInput && newPaidBy ? newPaidBy : formData.paidBy;
-    const finalSource = showNewSourceInput && newSource ? newSource : formData.source;
+    const finalCategory =
+      showNewCategoryInput && newCategory ? newCategory : formData.category;
+    const finalPaidBy =
+      showNewPaidByInput && newPaidBy ? newPaidBy : formData.paidBy;
+    const finalSource =
+      showNewSourceInput && newSource ? newSource : formData.source;
 
     const expense: ExpenseRecord = {
       id: initialData?.id || Date.now().toString(),
@@ -103,32 +170,32 @@ export function ExpenseForm({
   };
 
   const handleCategoryChange = (value: string) => {
-    if (value === 'new') {
+    if (value === "new") {
       setShowNewCategoryInput(true);
-      setFormData(prev => ({ ...prev, category: '' }));
+      setFormData((prev) => ({ ...prev, category: "" }));
     } else {
       setShowNewCategoryInput(false);
-      setFormData(prev => ({ ...prev, category: value }));
+      setFormData((prev) => ({ ...prev, category: value }));
     }
   };
 
   const handlePaidByChange = (value: string) => {
-    if (value === 'new') {
+    if (value === "new") {
       setShowNewPaidByInput(true);
-      setFormData(prev => ({ ...prev, paidBy: '' }));
+      setFormData((prev) => ({ ...prev, paidBy: "" }));
     } else {
       setShowNewPaidByInput(false);
-      setFormData(prev => ({ ...prev, paidBy: value }));
+      setFormData((prev) => ({ ...prev, paidBy: value }));
     }
   };
 
   const handleSourceChange = (value: string) => {
-    if (value === 'new') {
+    if (value === "new") {
       setShowNewSourceInput(true);
-      setFormData(prev => ({ ...prev, source: '' }));
+      setFormData((prev) => ({ ...prev, source: "" }));
     } else {
       setShowNewSourceInput(false);
-      setFormData(prev => ({ ...prev, source: value }));
+      setFormData((prev) => ({ ...prev, source: value }));
     }
   };
 
@@ -139,8 +206,8 @@ export function ExpenseForm({
         <Label>Transaction Type</Label>
         <RadioGroup
           value={formData.type}
-          onValueChange={(value: 'Income' | 'Expense') => 
-            setFormData(prev => ({ ...prev, type: value }))
+          onValueChange={(value: "Income" | "Expense") =>
+            setFormData((prev) => ({ ...prev, type: value }))
           }
           className="flex space-x-4"
         >
@@ -162,7 +229,9 @@ export function ExpenseForm({
           id="date"
           type="date"
           value={formData.date}
-          onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, date: e.target.value }))
+          }
           required
         />
       </div>
@@ -173,7 +242,9 @@ export function ExpenseForm({
         <Input
           id="description"
           value={formData.description}
-          onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, description: e.target.value }))
+          }
           placeholder="Enter transaction description"
           required
         />
@@ -188,7 +259,9 @@ export function ExpenseForm({
           step="0.01"
           min="0"
           value={formData.amount}
-          onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, amount: e.target.value }))
+          }
           placeholder="0.00"
           required
         />
@@ -214,13 +287,18 @@ export function ExpenseForm({
             </Button>
           </div>
         ) : (
-          <Select value={formData.category || undefined} onValueChange={handleCategoryChange}>
+          <Select
+            value={formData.category || undefined}
+            onValueChange={handleCategoryChange}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {categories.map(category => (
-                <SelectItem key={category} value={category}>{category}</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
               ))}
               <SelectItem value="new">+ Add New Category</SelectItem>
             </SelectContent>
@@ -233,15 +311,19 @@ export function ExpenseForm({
         <Label>Sub-Category</Label>
         <Select
           value={formData.subCategory || undefined}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, subCategory: value }))}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, subCategory: value }))
+          }
           disabled={!availableSubCategories.length}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select sub-category" />
           </SelectTrigger>
           <SelectContent>
-            {availableSubCategories.map(subCategory => (
-              <SelectItem key={subCategory} value={subCategory}>{subCategory}</SelectItem>
+            {availableSubCategories.map((subCategory) => (
+              <SelectItem key={subCategory} value={subCategory}>
+                {subCategory}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -267,13 +349,18 @@ export function ExpenseForm({
             </Button>
           </div>
         ) : (
-          <Select value={formData.paidBy || undefined} onValueChange={handlePaidByChange}>
+          <Select
+            value={formData.paidBy || undefined}
+            onValueChange={handlePaidByChange}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select who paid" />
             </SelectTrigger>
             <SelectContent>
-              {paidByOptions.map(option => (
-                <SelectItem key={option} value={option}>{option}</SelectItem>
+              {paidByOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
               ))}
               <SelectItem value="new">+ Add New Payer</SelectItem>
             </SelectContent>
@@ -301,13 +388,18 @@ export function ExpenseForm({
             </Button>
           </div>
         ) : (
-          <Select value={formData.source || undefined} onValueChange={handleSourceChange}>
+          <Select
+            value={formData.source || undefined}
+            onValueChange={handleSourceChange}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select payment source" />
             </SelectTrigger>
             <SelectContent>
-              {sourceOptions.map(option => (
-                <SelectItem key={option} value={option}>{option}</SelectItem>
+              {sourceOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
               ))}
               <SelectItem value="new">+ Add New Source</SelectItem>
             </SelectContent>
@@ -321,7 +413,9 @@ export function ExpenseForm({
         <Textarea
           id="notes"
           value={formData.notes}
-          onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+          onChange={(e) =>
+            setFormData((prev) => ({ ...prev, notes: e.target.value }))
+          }
           placeholder="Additional notes (optional)"
           rows={3}
         />
@@ -333,7 +427,7 @@ export function ExpenseForm({
           Cancel
         </Button>
         <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-          {initialData ? 'Update' : 'Add'} Transaction
+          {initialData ? "Update" : "Add"} Transaction
         </Button>
       </div>
     </form>

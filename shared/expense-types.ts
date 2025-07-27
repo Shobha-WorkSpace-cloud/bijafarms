@@ -1,7 +1,7 @@
 export interface ExpenseRecord {
   id: string;
   date: string;
-  type: 'Expense' | 'Income';
+  type: "Expense" | "Income";
   description: string;
   amount: number;
   paidBy: string;
@@ -13,7 +13,7 @@ export interface ExpenseRecord {
 
 export interface ExpenseFormData {
   date: string;
-  type: 'Expense' | 'Income';
+  type: "Expense" | "Income";
   description: string;
   amount: string;
   paidBy: string;

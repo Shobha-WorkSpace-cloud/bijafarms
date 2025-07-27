@@ -3,9 +3,30 @@ import { Edit, Trash2, ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ExpenseRecord } from "@shared/expense-types";
 
 interface DataTableProps {
@@ -15,25 +36,25 @@ interface DataTableProps {
 }
 
 type SortField = keyof ExpenseRecord;
-type SortDirection = 'asc' | 'desc';
+type SortDirection = "asc" | "desc";
 
 export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
-  const [sortField, setSortField] = useState<SortField>('date');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [sortField, setSortField] = useState<SortField>("date");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const sortedExpenses = [...expenses].sort((a, b) => {
     const aValue = a[sortField];
     const bValue = b[sortField];
-    
-    if (typeof aValue === 'number' && typeof bValue === 'number') {
-      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
     }
-    
+
     const aStr = String(aValue).toLowerCase();
     const bStr = String(bValue).toLowerCase();
-    
-    if (sortDirection === 'asc') {
+
+    if (sortDirection === "asc") {
       return aStr.localeCompare(bStr);
     } else {
       return bStr.localeCompare(aStr);
@@ -42,29 +63,35 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
     }).format(amount);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
-  const SortButton = ({ field, children }: { field: SortField; children: React.ReactNode }) => (
+  const SortButton = ({
+    field,
+    children,
+  }: {
+    field: SortField;
+    children: React.ReactNode;
+  }) => (
     <Button
       variant="ghost"
       size="sm"
@@ -113,8 +140,12 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
             <TableBody>
               {sortedExpenses.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8 text-slate-500">
-                    No transactions found. Try adjusting your filters or add a new transaction.
+                  <TableCell
+                    colSpan={8}
+                    className="text-center py-8 text-slate-500"
+                  >
+                    No transactions found. Try adjusting your filters or add a
+                    new transaction.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -125,8 +156,14 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        variant={expense.type === 'Income' ? 'default' : 'secondary'}
-                        className={expense.type === 'Income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
+                        variant={
+                          expense.type === "Income" ? "default" : "secondary"
+                        }
+                        className={
+                          expense.type === "Income"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
+                        }
                       >
                         {expense.type}
                       </Badge>
@@ -135,19 +172,26 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                       <div>
                         <div className="font-medium">{expense.description}</div>
                         {expense.notes && (
-                          <div className="text-sm text-slate-500 mt-1">{expense.notes}</div>
+                          <div className="text-sm text-slate-500 mt-1">
+                            {expense.notes}
+                          </div>
                         )}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className={`font-semibold ${expense.type === 'Income' ? 'text-green-600' : 'text-red-600'}`}>
-                        {expense.type === 'Income' ? '+' : '-'}{formatCurrency(expense.amount)}
+                      <span
+                        className={`font-semibold ${expense.type === "Income" ? "text-green-600" : "text-red-600"}`}
+                      >
+                        {expense.type === "Income" ? "+" : "-"}
+                        {formatCurrency(expense.amount)}
                       </span>
                     </TableCell>
                     <TableCell>
                       <div>
                         <div className="font-medium">{expense.category}</div>
-                        <div className="text-sm text-slate-500">{expense.subCategory}</div>
+                        <div className="text-sm text-slate-500">
+                          {expense.subCategory}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>{expense.paidBy}</TableCell>
@@ -200,8 +244,8 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the transaction
-              from your records.
+              This action cannot be undone. This will permanently delete the
+              transaction from your records.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

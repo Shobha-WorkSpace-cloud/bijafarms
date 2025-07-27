@@ -1,29 +1,63 @@
 import { useMemo } from "react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExpenseRecord, CategoryChartData, MonthlyChartData } from "@shared/expense-types";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+} from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ExpenseRecord,
+  CategoryChartData,
+  MonthlyChartData,
+} from "@shared/expense-types";
 
 interface ExpenseChartsProps {
   expenses: ExpenseRecord[];
 }
 
 const COLORS = [
-  '#3B82F6', '#EF4444', '#10B981', '#F59E0B', '#8B5CF6',
-  '#EC4899', '#14B8A6', '#F97316', '#84CC16', '#6366F1'
+  "#3B82F6",
+  "#EF4444",
+  "#10B981",
+  "#F59E0B",
+  "#8B5CF6",
+  "#EC4899",
+  "#14B8A6",
+  "#F97316",
+  "#84CC16",
+  "#6366F1",
 ];
 
 export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
   // Category breakdown for expenses
   const expenseCategoryData: CategoryChartData[] = useMemo(() => {
     const categoryMap = new Map<string, { amount: number; count: number }>();
-    
+
     expenses
-      .filter(expense => expense.type === 'Expense')
-      .forEach(expense => {
-        const existing = categoryMap.get(expense.category) || { amount: 0, count: 0 };
+      .filter((expense) => expense.type === "Expense")
+      .forEach((expense) => {
+        const existing = categoryMap.get(expense.category) || {
+          amount: 0,
+          count: 0,
+        };
         categoryMap.set(expense.category, {
           amount: existing.amount + expense.amount,
-          count: existing.count + 1
+          count: existing.count + 1,
         });
       });
 
@@ -31,7 +65,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
       .map(([category, data]) => ({
         category,
         amount: data.amount,
-        count: data.count
+        count: data.count,
       }))
       .sort((a, b) => b.amount - a.amount);
   }, [expenses]);
@@ -39,21 +73,21 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
   // Income vs Expenses by month
   const monthlyData: MonthlyChartData[] = useMemo(() => {
     const monthMap = new Map<string, { income: number; expenses: number }>();
-    
-    expenses.forEach(expense => {
-      const month = new Date(expense.date).toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short' 
+
+    expenses.forEach((expense) => {
+      const month = new Date(expense.date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
       });
-      
+
       const existing = monthMap.get(month) || { income: 0, expenses: 0 };
-      
-      if (expense.type === 'Income') {
+
+      if (expense.type === "Income") {
         existing.income += expense.amount;
       } else {
         existing.expenses += expense.amount;
       }
-      
+
       monthMap.set(month, existing);
     });
 
@@ -61,9 +95,11 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
       .map(([month, data]) => ({
         month,
         income: data.income,
-        expenses: data.expenses
+        expenses: data.expenses,
       }))
-      .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+      .sort(
+        (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime(),
+      );
   }, [expenses]);
 
   // Top spending categories for pie chart
@@ -71,11 +107,15 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
   const otherCategories = expenseCategoryData.slice(8);
   const pieData = [
     ...topCategories,
-    ...(otherCategories.length > 0 ? [{
-      category: 'Other',
-      amount: otherCategories.reduce((sum, cat) => sum + cat.amount, 0),
-      count: otherCategories.reduce((sum, cat) => sum + cat.count, 0)
-    }] : [])
+    ...(otherCategories.length > 0
+      ? [
+          {
+            category: "Other",
+            amount: otherCategories.reduce((sum, cat) => sum + cat.amount, 0),
+            count: otherCategories.reduce((sum, cat) => sum + cat.count, 0),
+          },
+        ]
+      : []),
   ];
 
   // Daily spending trend (last 30 days)
@@ -83,13 +123,13 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
     const dailyMap = new Map<string, number>();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
+
     expenses
-      .filter(expense => 
-        expense.type === 'Expense' && 
-        new Date(expense.date) >= thirtyDaysAgo
+      .filter(
+        (expense) =>
+          expense.type === "Expense" && new Date(expense.date) >= thirtyDaysAgo,
       )
-      .forEach(expense => {
+      .forEach((expense) => {
         const date = expense.date;
         const existing = dailyMap.get(date) || 0;
         dailyMap.set(date, existing + expense.amount);
@@ -101,9 +141,9 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
   }, [expenses]);
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-IN', {
-      style: 'currency',
-      currency: 'INR',
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
     }).format(value);
   };
 
@@ -131,7 +171,15 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
           <p className="font-semibold">{data.category}</p>
           <p>Amount: {formatCurrency(data.amount)}</p>
           <p>Transactions: {data.count}</p>
-          <p>Percentage: {((data.amount / expenseCategoryData.reduce((sum, cat) => sum + cat.amount, 0)) * 100).toFixed(1)}%</p>
+          <p>
+            Percentage:{" "}
+            {(
+              (data.amount /
+                expenseCategoryData.reduce((sum, cat) => sum + cat.amount, 0)) *
+              100
+            ).toFixed(1)}
+            %
+          </p>
         </div>
       );
     }
@@ -156,7 +204,9 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
       <Card>
         <CardHeader>
           <CardTitle>Monthly Income vs Expenses</CardTitle>
-          <CardDescription>Track your financial trends over time</CardDescription>
+          <CardDescription>
+            Track your financial trends over time
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -177,7 +227,9 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
         <Card>
           <CardHeader>
             <CardTitle>Expenses by Category</CardTitle>
-            <CardDescription>Breakdown of your spending categories</CardDescription>
+            <CardDescription>
+              Breakdown of your spending categories
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -187,13 +239,18 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ category, percent }) => `${category} ${(percent * 100).toFixed(0)}%`}
+                  label={({ category, percent }) =>
+                    `${category} ${(percent * 100).toFixed(0)}%`
+                  }
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="amount"
                 >
                   {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
                   ))}
                 </Pie>
                 <Tooltip content={<PieTooltip />} />
@@ -210,16 +267,19 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart 
-                data={expenseCategoryData.slice(0, 6)} 
+              <BarChart
+                data={expenseCategoryData.slice(0, 6)}
                 layout="horizontal"
                 margin={{ left: 80 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" tickFormatter={formatCurrency} />
                 <YAxis dataKey="category" type="category" width={80} />
-                <Tooltip 
-                  formatter={(value: number) => [formatCurrency(value), 'Amount']}
+                <Tooltip
+                  formatter={(value: number) => [
+                    formatCurrency(value),
+                    "Amount",
+                  ]}
                   labelFormatter={(label) => `Category: ${label}`}
                 />
                 <Bar dataKey="amount" fill="#3B82F6" />
@@ -240,26 +300,36 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={dailyTrend}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(date) =>
+                    new Date(date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })
+                  }
                 />
                 <YAxis tickFormatter={formatCurrency} />
-                <Tooltip 
-                  labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                  formatter={(value: number) => [formatCurrency(value), 'Spent']}
+                <Tooltip
+                  labelFormatter={(date) =>
+                    new Date(date).toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  }
+                  formatter={(value: number) => [
+                    formatCurrency(value),
+                    "Spent",
+                  ]}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="amount" 
-                  stroke="#EF4444" 
+                <Line
+                  type="monotone"
+                  dataKey="amount"
+                  stroke="#EF4444"
                   strokeWidth={2}
-                  dot={{ fill: '#EF4444' }}
+                  dot={{ fill: "#EF4444" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -275,24 +345,29 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900">
-              {expenseCategoryData[0]?.category || 'N/A'}
+              {expenseCategoryData[0]?.category || "N/A"}
             </div>
             <p className="text-sm text-slate-600">
-              {expenseCategoryData[0] ? formatCurrency(expenseCategoryData[0].amount) : '$0.00'}
+              {expenseCategoryData[0]
+                ? formatCurrency(expenseCategoryData[0].amount)
+                : "$0.00"}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Average Transaction</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Transaction
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-slate-900">
               {formatCurrency(
-                expenses.length > 0 
-                  ? expenses.reduce((sum, exp) => sum + exp.amount, 0) / expenses.length
-                  : 0
+                expenses.length > 0
+                  ? expenses.reduce((sum, exp) => sum + exp.amount, 0) /
+                      expenses.length
+                  : 0,
               )}
             </div>
             <p className="text-sm text-slate-600">
@@ -309,9 +384,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
             <div className="text-2xl font-bold text-slate-900">
               {expenseCategoryData.length}
             </div>
-            <p className="text-sm text-slate-600">
-              Unique spending categories
-            </p>
+            <p className="text-sm text-slate-600">Unique spending categories</p>
           </CardContent>
         </Card>
       </div>
