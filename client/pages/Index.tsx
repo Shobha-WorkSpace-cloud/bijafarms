@@ -5,7 +5,7 @@ import {
   Filter,
   Download,
   Upload,
-  DollarSign,
+  IndianRupee,
   TrendingUp,
   TrendingDown,
   Receipt,
