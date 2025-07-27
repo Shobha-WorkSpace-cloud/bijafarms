@@ -490,7 +490,6 @@ export default function Index() {
           </TabsContent>
 
           <TabsContent value="import">
-            <ExcelDebugger />
             <ImportExport expenses={expenses} onImport={handleImportExpenses} />
           </TabsContent>
         </Tabs>
