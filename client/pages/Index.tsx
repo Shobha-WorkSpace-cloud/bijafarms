@@ -123,6 +123,10 @@ export default function Index() {
     setExpenses(prev => prev.filter(expense => expense.id !== id));
   };
 
+  const handleImportExpenses = (importedExpenses: ExpenseRecord[]) => {
+    setExpenses(prev => [...importedExpenses, ...prev]);
+  };
+
   const exportToCSV = () => {
     const headers = ['Date', 'Type', 'Description', 'Amount', 'Paid By', 'Category', 'Sub-Category', 'Source', 'Notes'];
     const csvContent = [
