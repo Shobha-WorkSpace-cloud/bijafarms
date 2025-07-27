@@ -1,32 +1,3 @@
-```python?code_reference&code_event_index=2
-import pandas as pd
-
-# Load the CSV file into a DataFrame
-df = pd.read_csv('Bija_transaction.csv')
-
-# Add an 'id' column with incrementing integer values
-df['id'] = range(1, len(df) + 1)
-
-# Remove columns that start with 'Unnamed:'
-df = df.loc[:, ~df.columns.str.startswith('Unnamed:')]
-
-# Get the current columns
-cols = df.columns.tolist()
-
-# Move 'id' to the first position
-cols.insert(0, cols.pop(cols.index('id')))
-
-# Reorder the DataFrame columns
-df = df[cols]
-
-# Convert the DataFrame to JSON
-json_data = df.to_json(orient='records', indent=4)
-
-# Print the JSON data
-print(json_data)
-```
-
-```text?code_stdout&code_event_index=2
 [
     {
         "id":1,
