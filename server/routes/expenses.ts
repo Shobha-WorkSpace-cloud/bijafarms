@@ -18,7 +18,21 @@ const readExpenses = (): ExpenseRecord[] => {
       return [];
     }
     const data = fs.readFileSync(EXPENSES_FILE, "utf8");
-    return JSON.parse(data);
+    const rawData = JSON.parse(data);
+
+    // Transform the data to match the expected format and ensure unique IDs
+    return rawData.map((item: any, index: number) => ({
+      id: String(item.id || index + 1),
+      date: item.Date || item.date || new Date().toISOString().split('T')[0],
+      type: item.Type || item.type || 'Expense',
+      description: item.Description || item.description || 'No description',
+      amount: parseFloat(item.Amount || item.amount || 0),
+      paidBy: item['Paid By'] || item.paidBy || 'Unknown',
+      category: item.Category || item.category || 'Other',
+      subCategory: item['Sub-Category'] || item.subCategory || 'General',
+      source: item.Source || item.source || 'Unknown',
+      notes: item.Notes || item.notes || ''
+    }));
   } catch (error) {
     console.error("Error reading expenses:", error);
     return [];
