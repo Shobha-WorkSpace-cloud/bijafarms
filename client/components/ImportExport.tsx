@@ -147,10 +147,15 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
             const sourceValue = row['Source'] || row['source'] || row['SOURCE'] || row['Payment Method'] || row['Mode'] || row['Account'];
             const notesValue = row['Notes'] || row['notes'] || row['NOTES'] || row['Remarks'] || row['Comments'];
 
+            console.log(`Row ${index}:`, {
+              dateValue, typeValue, descriptionValue, amountValue,
+              paidByValue, categoryValue, sourceValue, allKeys: Object.keys(row)
+            });
+
             return {
               id: `imported_${Date.now()}_${index}`,
               date: dateValue ? new Date(dateValue).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-              type: (typeValue === 'Income' || typeValue === 'income') ? 'Income' as const : 'Expense' as const,
+              type: (typeValue === 'Income' || typeValue === 'income' || typeValue === 'INCOME') ? 'Income' as const : 'Expense' as const,
               description: String(descriptionValue || 'Imported transaction'),
               amount: parseFloat(String(amountValue)) || 0,
               paidBy: String(paidByValue || 'Unknown'),
