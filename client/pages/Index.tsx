@@ -11,6 +11,7 @@ import { ExpenseRecord, ExpenseFilters, ExpenseSummary } from "@shared/expense-t
 import { DataTable } from "@/components/DataTable";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseCharts } from "@/components/ExpenseCharts";
+import { ImportExport } from "@/components/ImportExport";
 
 export default function Index() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
