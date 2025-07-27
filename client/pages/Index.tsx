@@ -307,11 +307,12 @@ export default function Index() {
 
         {/* Main Content */}
         <Tabs defaultValue="table" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+          <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
             <TabsTrigger value="table">Data Table</TabsTrigger>
             <TabsTrigger value="charts">Analytics</TabsTrigger>
+            <TabsTrigger value="import">Import/Export</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="table">
             <DataTable
               expenses={filteredExpenses}
@@ -319,9 +320,16 @@ export default function Index() {
               onDelete={handleDeleteExpense}
             />
           </TabsContent>
-          
+
           <TabsContent value="charts">
             <ExpenseCharts expenses={filteredExpenses} />
+          </TabsContent>
+
+          <TabsContent value="import">
+            <ImportExport
+              expenses={expenses}
+              onImport={handleImportExpenses}
+            />
           </TabsContent>
         </Tabs>
 
