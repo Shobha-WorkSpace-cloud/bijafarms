@@ -231,7 +231,7 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
     if (file.name.endsWith('.csv')) {
       reader.readAsText(file);
     } else {
-      reader.readAsBinaryString(file);
+      reader.readAsArrayBuffer(file);
     }
 
     // Reset file input
