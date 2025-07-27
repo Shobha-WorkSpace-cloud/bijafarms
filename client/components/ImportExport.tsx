@@ -138,7 +138,7 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = e.target?.result;
         let importedExpenses: ExpenseRecord[] = [];
