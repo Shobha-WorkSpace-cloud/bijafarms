@@ -3839,18 +3839,5 @@
           "Sub-Category": "GoatB-Shed",
           "Source": "Self",
           "Notes": null
-        },
-        {
-          "id": 321,
-          "Date": "7\/15\/2025",
-          "Type": "Expense",
-          "Description": "poultry purchase",
-          "Amount": 700.0,
-          "Paid By": "Madhava",
-          "Category": "Business",
-          "Sub-Category": "GoatB-Misc",
-          "Source": "Self",
-          "Notes": null
         }
-    
-]
+        ]
