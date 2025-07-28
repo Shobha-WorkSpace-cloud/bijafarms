@@ -36,9 +36,6 @@ const readExpenses = (): ExpenseRecord[] => {
             const paddedDay = day.padStart(2, "0");
 
             formattedDate = `${year}-${paddedMonth}-${paddedDay}`;
-
-            // Log for debugging
-            console.log(`Converted ${dateStr} to ${formattedDate}`);
           }
         } catch (e) {
           console.warn(`Invalid date format: ${dateStr}`);
