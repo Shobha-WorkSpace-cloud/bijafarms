@@ -10,8 +10,14 @@ export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
   }
   const data = await response.json();
   console.log("API Response - Total records:", data.length);
-  console.log("API Response - Max ID:", Math.max(...data.map((item: any) => parseInt(item.id) || 0)));
-  console.log("API Response - Has ID 321:", data.some((item: any) => item.id === "321"));
+  console.log(
+    "API Response - Max ID:",
+    Math.max(...data.map((item: any) => parseInt(item.id) || 0)),
+  );
+  console.log(
+    "API Response - Has ID 321:",
+    data.some((item: any) => item.id === "321"),
+  );
   return data;
 };
 
