@@ -75,9 +75,15 @@ export default function Index() {
     const loadExpenses = async () => {
       try {
         const data = await api.fetchExpenses();
-        console.log('Initial load - expenses count:', data.length);
-        console.log('Initial load - sample IDs:', data.slice(0, 5).map(e => e.id));
-        console.log('Checking for ID 321:', data.find(e => e.id === '321') ? 'FOUND' : 'NOT FOUND');
+        console.log("Initial load - expenses count:", data.length);
+        console.log(
+          "Initial load - sample IDs:",
+          data.slice(0, 5).map((e) => e.id),
+        );
+        console.log(
+          "Checking for ID 321:",
+          data.find((e) => e.id === "321") ? "FOUND" : "NOT FOUND",
+        );
         setExpenses(data);
         setFilteredExpenses(data);
       } catch (error) {
@@ -250,10 +256,10 @@ export default function Index() {
       setLoading(true);
 
       // Clear any browser caches
-      if ('caches' in window) {
+      if ("caches" in window) {
         const cacheNames = await caches.keys();
         await Promise.all(
-          cacheNames.map(cacheName => caches.delete(cacheName))
+          cacheNames.map((cacheName) => caches.delete(cacheName)),
         );
       }
 
@@ -262,8 +268,15 @@ export default function Index() {
       sessionStorage.clear();
 
       const refreshedExpenses = await api.fetchExpenses();
-      console.log('Refreshed expenses data:', refreshedExpenses.length, 'records');
-      console.log('Sample IDs:', refreshedExpenses.slice(0, 5).map(e => e.id));
+      console.log(
+        "Refreshed expenses data:",
+        refreshedExpenses.length,
+        "records",
+      );
+      console.log(
+        "Sample IDs:",
+        refreshedExpenses.slice(0, 5).map((e) => e.id),
+      );
 
       setExpenses(refreshedExpenses);
       setFilteredExpenses(refreshedExpenses);
