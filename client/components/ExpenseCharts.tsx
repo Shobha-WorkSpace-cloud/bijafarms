@@ -70,26 +70,22 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
       .sort((a, b) => b.amount - a.amount);
   }, [expenses]);
 
-  // Income vs Expenses by month
+  // Monthly expenses tracking
   const monthlyData: MonthlyChartData[] = useMemo(() => {
     const monthMap = new Map<string, { income: number; expenses: number }>();
 
-    expenses.forEach((expense) => {
-      const month = new Date(expense.date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-      });
+    expenses
+      .filter((expense) => expense.type === "Expense")
+      .forEach((expense) => {
+        const month = new Date(expense.date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+        });
 
-      const existing = monthMap.get(month) || { income: 0, expenses: 0 };
-
-      if (expense.type === "Income") {
-        existing.income += expense.amount;
-      } else {
+        const existing = monthMap.get(month) || { income: 0, expenses: 0 };
         existing.expenses += expense.amount;
-      }
-
-      monthMap.set(month, existing);
-    });
+        monthMap.set(month, existing);
+      });
 
     return Array.from(monthMap.entries())
       .map(([month, data]) => ({
@@ -200,12 +196,12 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
 
   return (
     <div className="space-y-6">
-      {/* Monthly Income vs Expenses */}
+      {/* Monthly Expenses Tracking */}
       <Card>
         <CardHeader>
-          <CardTitle>Monthly Income vs Expenses</CardTitle>
+          <CardTitle>Monthly Expenses Tracking</CardTitle>
           <CardDescription>
-            Track your financial trends over time
+            Track your spending patterns over time
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -215,7 +211,6 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
               <XAxis dataKey="month" />
               <YAxis tickFormatter={formatCurrency} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="income" fill="#10B981" name="Income" />
               <Bar dataKey="expenses" fill="#EF4444" name="Expenses" />
             </BarChart>
           </ResponsiveContainer>
