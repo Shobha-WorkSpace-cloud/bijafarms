@@ -22,22 +22,23 @@ const readExpenses = (): ExpenseRecord[] => {
 
     // Transform the data to match the expected format and ensure unique IDs
     return rawData.map((item: any, index: number) => {
-      // Convert date from MM/DD/YYYY to YYYY-MM-DD format
+      // Convert date from M/D/YYYY to YYYY-MM-DD format
       let formattedDate = new Date().toISOString().split("T")[0];
       const dateStr = item.Date || item.date;
       if (dateStr) {
         try {
           const dateParts = dateStr.split("/");
           if (dateParts.length === 3) {
-            let [month, day, year] = dateParts;
+            const [month, day, year] = dateParts;
 
-            // Fix obvious future dates - convert 2025 to 2024 for current records
-            if (year === "2025") {
-              year = "2024";
-              console.warn(`Corrected future date ${dateStr} to use year 2024`);
-            }
+            // Ensure proper padding for month and day
+            const paddedMonth = month.padStart(2, "0");
+            const paddedDay = day.padStart(2, "0");
 
-            formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+            formattedDate = `${year}-${paddedMonth}-${paddedDay}`;
+
+            // Log for debugging
+            console.log(`Converted ${dateStr} to ${formattedDate}`);
           }
         } catch (e) {
           console.warn(`Invalid date format: ${dateStr}`);
