@@ -18,6 +18,14 @@ export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
     "API Response - Has ID 321:",
     data.some((item: any) => item.id === "321"),
   );
+
+  // Debug first few dates
+  console.log("First 3 dates from API:", data.slice(0, 3).map((item: any) => ({
+    id: item.id,
+    originalDate: item.date,
+    parsedDate: new Date(item.date).toLocaleDateString("en-US")
+  })));
+
   return data;
 };
 
