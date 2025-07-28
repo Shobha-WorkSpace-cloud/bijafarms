@@ -70,12 +70,20 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
       .sort((a, b) => b.amount - a.amount);
   }, [expenses]);
 
-  // Monthly expenses tracking
+  // Monthly expenses tracking (last 12 months)
   const monthlyData: MonthlyChartData[] = useMemo(() => {
     const monthMap = new Map<string, { income: number; expenses: number }>();
 
+    // Calculate date range for last 12 months
+    const now = new Date();
+    const twelveMonthsAgo = new Date();
+    twelveMonthsAgo.setMonth(now.getMonth() - 12);
+
     expenses
-      .filter((expense) => expense.type === "Expense")
+      .filter((expense) => {
+        const expenseDate = new Date(expense.date);
+        return expense.type === "Expense" && expenseDate >= twelveMonthsAgo;
+      })
       .forEach((expense) => {
         const month = new Date(expense.date).toLocaleDateString("en-US", {
           year: "numeric",
@@ -201,7 +209,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
         <CardHeader>
           <CardTitle>Monthly Expenses Tracking</CardTitle>
           <CardDescription>
-            Track your spending patterns over time
+            Track your spending patterns over the last 12 months
           </CardDescription>
         </CardHeader>
         <CardContent>
