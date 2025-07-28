@@ -14,21 +14,34 @@ export function ClearCacheButton() {
           cacheNames.map(cacheName => caches.delete(cacheName))
         );
       }
-      
+
       // Clear localStorage and sessionStorage
       localStorage.clear();
       sessionStorage.clear();
-      
+
+      // Clear any indexedDB if present
+      if ('indexedDB' in window) {
+        try {
+          await new Promise((resolve, reject) => {
+            const deleteReq = indexedDB.deleteDatabase('expense-tracker');
+            deleteReq.onsuccess = () => resolve(undefined);
+            deleteReq.onerror = () => resolve(undefined); // Don't fail if DB doesn't exist
+          });
+        } catch (e) {
+          console.log('IndexedDB clearing skipped');
+        }
+      }
+
       toast({
         title: "Cache Cleared",
-        description: "Browser cache cleared. The page will reload now.",
+        description: "All browser caches cleared. Hard reload in 1 second...",
       });
-      
-      // Force hard reload after a brief delay
+
+      // Force hard reload with cache bypass after a brief delay
       setTimeout(() => {
-        window.location.reload();
+        window.location.href = window.location.href.split('?')[0] + '?nocache=' + Date.now();
       }, 1000);
-      
+
     } catch (error) {
       console.error('Error clearing cache:', error);
       toast({
