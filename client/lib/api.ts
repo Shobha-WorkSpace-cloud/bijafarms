@@ -5,21 +5,28 @@ const API_BASE = "/api/expenses";
 // Get all expenses
 export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
   const timestamp = Date.now();
+  const random = Math.random();
   const response = await fetch(
-    `${API_BASE}?t=${timestamp}&nocache=${Math.random()}`,
+    `${API_BASE}?t=${timestamp}&nocache=${random}&bust=${Date.now()}`,
     {
       method: "GET",
       headers: {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Cache-Control": "no-cache, no-store, must-revalidate, proxy-revalidate",
         Pragma: "no-cache",
         Expires: "0",
+        "If-Modified-Since": "0",
+        "If-None-Match": "no-match-for-this",
       },
     },
   );
   if (!response.ok) {
     throw new Error("Failed to fetch expenses");
   }
-  return response.json();
+  const data = await response.json();
+  console.log("API Response - Total records:", data.length);
+  console.log("API Response - Max ID:", Math.max(...data.map((item: any) => parseInt(item.id) || 0)));
+  console.log("API Response - Has ID 321:", data.some((item: any) => item.id === "321"));
+  return data;
 };
 
 // Add new expense
