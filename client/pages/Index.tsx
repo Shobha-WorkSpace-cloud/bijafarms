@@ -46,6 +46,7 @@ import { DataTable } from "@/components/DataTable";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseCharts } from "@/components/ExpenseCharts";
 import { ImportExport } from "@/components/ImportExport";
+import { ClearCacheButton } from "@/components/ClearCacheButton";
 
 import { useToast } from "@/hooks/use-toast";
 import * as api from "@/lib/api";
@@ -74,6 +75,9 @@ export default function Index() {
     const loadExpenses = async () => {
       try {
         const data = await api.fetchExpenses();
+        console.log('Initial load - expenses count:', data.length);
+        console.log('Initial load - sample IDs:', data.slice(0, 5).map(e => e.id));
+        console.log('Checking for ID 321:', data.find(e => e.id === '321') ? 'FOUND' : 'NOT FOUND');
         setExpenses(data);
         setFilteredExpenses(data);
       } catch (error) {
@@ -244,12 +248,28 @@ export default function Index() {
   const handleRefreshData = async () => {
     try {
       setLoading(true);
+
+      // Clear any browser caches
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(
+          cacheNames.map(cacheName => caches.delete(cacheName))
+        );
+      }
+
+      // Clear localStorage and sessionStorage
+      localStorage.clear();
+      sessionStorage.clear();
+
       const refreshedExpenses = await api.fetchExpenses();
+      console.log('Refreshed expenses data:', refreshedExpenses.length, 'records');
+      console.log('Sample IDs:', refreshedExpenses.slice(0, 5).map(e => e.id));
+
       setExpenses(refreshedExpenses);
       setFilteredExpenses(refreshedExpenses);
       toast({
         title: "Success",
-        description: "Data refreshed successfully",
+        description: "Data refreshed successfully - all caches cleared",
       });
     } catch (error) {
       console.error("Error refreshing expenses:", error);
@@ -466,6 +486,8 @@ export default function Index() {
                   />
                   Refresh
                 </Button>
+
+                <ClearCacheButton />
 
                 <Button variant="outline" onClick={exportToCSV}>
                   <Download className="h-4 w-4 mr-2" />
