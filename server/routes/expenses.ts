@@ -29,7 +29,14 @@ const readExpenses = (): ExpenseRecord[] => {
         try {
           const dateParts = dateStr.split("/");
           if (dateParts.length === 3) {
-            const [month, day, year] = dateParts;
+            let [month, day, year] = dateParts;
+
+            // Fix obvious future dates - convert 2025 to 2024 for current records
+            if (year === "2025") {
+              year = "2024";
+              console.warn(`Corrected future date ${dateStr} to use year 2024`);
+            }
+
             formattedDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
           }
         } catch (e) {
