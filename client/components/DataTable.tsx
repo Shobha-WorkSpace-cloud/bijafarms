@@ -43,7 +43,17 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const sortedExpenses = [...expenses].sort((a, b) => {
+  // Filter out invalid records before sorting
+  const validExpenses = expenses.filter((expense) =>
+    expense &&
+    expense.id &&
+    expense.id !== "" &&
+    expense.amount !== null &&
+    expense.amount !== undefined &&
+    !isNaN(expense.amount)
+  );
+
+  const sortedExpenses = [...validExpenses].sort((a, b) => {
     const aValue = a[sortField];
     const bValue = b[sortField];
 
