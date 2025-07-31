@@ -118,33 +118,33 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
       <CardHeader>
         <CardTitle>Transaction History</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
-          <Table>
+      <CardContent className="p-4 sm:p-6">
+        <div className="rounded-md border overflow-x-auto">
+          <Table className="min-w-[700px]">
             <TableHeader>
               <TableRow>
-                <TableHead>
+                <TableHead className="w-[100px]">
                   <SortButton field="date">Date</SortButton>
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[80px] hidden sm:table-cell">
                   <SortButton field="type">Type</SortButton>
                 </TableHead>
-                <TableHead>
+                <TableHead className="min-w-[200px]">
                   <SortButton field="description">Description</SortButton>
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[120px]">
                   <SortButton field="amount">Amount</SortButton>
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[100px] hidden md:table-cell">
                   <SortButton field="category">Category</SortButton>
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[80px] hidden lg:table-cell">
                   <SortButton field="paidBy">Paid By</SortButton>
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[80px] hidden lg:table-cell">
                   <SortButton field="source">Source</SortButton>
                 </TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
+                <TableHead className="w-[60px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
