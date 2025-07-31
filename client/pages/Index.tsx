@@ -419,9 +419,10 @@ export default function Index() {
 
         {/* Action Bar */}
         <Card>
-          <CardContent className="p-6">
-            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-3 flex-1">
+          <CardContent className="p-4 sm:p-6">
+            <div className="space-y-4">
+              {/* Search and Filters Row */}
+              <div className="flex flex-col space-y-3">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                   <Input
@@ -433,82 +434,94 @@ export default function Index() {
                         search: e.target.value,
                       }))
                     }
-                    className="pl-10 w-64"
+                    className="pl-10 w-full"
                   />
                 </div>
 
-                <Select
-                  value={filters.type || "all"}
-                  onValueChange={(value) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      type: value === "all" ? "" : value,
-                    }))
-                  }
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue placeholder="Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="Income">Income</SelectItem>
-                    <SelectItem value="Expense">Expense</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Select
+                    value={filters.type || "all"}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        type: value === "all" ? "" : value,
+                      }))
+                    }
+                  >
+                    <SelectTrigger className="w-full sm:w-32">
+                      <SelectValue placeholder="Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      <SelectItem value="Income">Income</SelectItem>
+                      <SelectItem value="Expense">Expense</SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                <Select
-                  value={filters.category || "all"}
-                  onValueChange={(value) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      category: value === "all" ? "" : value,
-                    }))
-                  }
-                >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {uniqueCategories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  <Select
+                    value={filters.category || "all"}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        category: value === "all" ? "" : value,
+                      }))
+                    }
+                  >
+                    <SelectTrigger className="w-full sm:w-40">
+                      <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {uniqueCategories.map((category) => (
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={handleRefreshData}
-                  disabled={loading}
-                >
-                  <RefreshCw
-                    className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
-                  />
-                  Refresh
-                </Button>
+              {/* Action Buttons Row */}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <div className="flex gap-2 flex-wrap">
+                  <Button
+                    variant="outline"
+                    onClick={handleRefreshData}
+                    disabled={loading}
+                    size="sm"
+                    className="flex-1 sm:flex-none"
+                  >
+                    <RefreshCw
+                      className={`h-4 w-4 sm:mr-2 ${loading ? "animate-spin" : ""}`}
+                    />
+                    <span className="hidden sm:inline">Refresh</span>
+                  </Button>
 
-                <ClearCacheButton />
+                  <ClearCacheButton />
 
-                <Button variant="outline" onClick={exportToCSV}>
-                  <Download className="h-4 w-4 mr-2" />
-                  Export
-                </Button>
+                  <Button
+                    variant="outline"
+                    onClick={exportToCSV}
+                    size="sm"
+                    className="flex-1 sm:flex-none"
+                  >
+                    <Download className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">Export</span>
+                  </Button>
+                </div>
 
                 <Dialog
                   open={isAddDialogOpen}
                   onOpenChange={setIsAddDialogOpen}
                 >
                   <DialogTrigger asChild>
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Button className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                       <Plus className="h-4 w-4 mr-2" />
                       Add Transaction
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-md">
+                  <DialogContent className="max-w-md mx-4">
                     <DialogHeader>
                       <DialogTitle>Add New Transaction</DialogTitle>
                       <DialogDescription>
