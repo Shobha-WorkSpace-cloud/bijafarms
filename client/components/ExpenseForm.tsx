@@ -309,24 +309,33 @@ export function ExpenseForm({
       {/* Sub-Category */}
       <div className="space-y-2">
         <Label>Sub-Category</Label>
-        <Select
-          value={formData.subCategory || undefined}
-          onValueChange={(value) =>
-            setFormData((prev) => ({ ...prev, subCategory: value }))
-          }
-          disabled={!availableSubCategories.length}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Select sub-category" />
-          </SelectTrigger>
-          <SelectContent>
-            {availableSubCategories.map((subCategory) => (
-              <SelectItem key={subCategory} value={subCategory}>
-                {subCategory}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {availableSubCategories.length > 0 ? (
+          <Select
+            value={formData.subCategory || undefined}
+            onValueChange={(value) =>
+              setFormData((prev) => ({ ...prev, subCategory: value }))
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select sub-category" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableSubCategories.map((subCategory) => (
+                <SelectItem key={subCategory} value={subCategory}>
+                  {subCategory}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <Input
+            value={formData.subCategory}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, subCategory: e.target.value }))
+            }
+            placeholder="Enter sub-category"
+          />
+        )}
       </div>
 
       {/* Paid By */}
