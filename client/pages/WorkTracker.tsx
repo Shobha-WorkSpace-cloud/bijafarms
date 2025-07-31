@@ -1,18 +1,25 @@
 import { useState, useEffect } from "react";
-import { 
-  Plus, 
-  Calendar, 
-  Check, 
-  Clock, 
-  Stethoscope, 
-  Heart, 
+import {
+  Plus,
+  Calendar,
+  Check,
+  Clock,
+  Stethoscope,
+  Heart,
   AlertTriangle,
   ArrowLeft,
   Beef,
   Syringe,
   Thermometer,
   ShieldCheck,
-  Search
+  Search,
+  Tractor,
+  Sprout,
+  Droplets,
+  Scissors,
+  Wrench,
+  Users,
+  Bell
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,8 +37,8 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  animalType: "goat" | "sheep";
-  taskType: "vaccination" | "checkup" | "treatment" | "feeding" | "cleaning" | "other";
+  category: "animal-health" | "crop-management" | "equipment" | "irrigation" | "harvesting" | "maintenance" | "general";
+  taskType: "vaccination" | "checkup" | "treatment" | "feeding" | "cleaning" | "planting" | "watering" | "fertilizing" | "harvesting" | "equipment-maintenance" | "repair" | "inspection" | "other";
   priority: "low" | "medium" | "high";
   status: "pending" | "in-progress" | "completed";
   dueDate: string;
@@ -39,6 +46,7 @@ interface Task {
   notes: string;
   createdAt: string;
   completedAt?: string;
+  reminderSent?: boolean;
 }
 
 const taskTypeColors = {
@@ -47,6 +55,13 @@ const taskTypeColors = {
   treatment: "bg-red-100 text-red-800 border-red-200",
   feeding: "bg-yellow-100 text-yellow-800 border-yellow-200",
   cleaning: "bg-purple-100 text-purple-800 border-purple-200",
+  planting: "bg-emerald-100 text-emerald-800 border-emerald-200",
+  watering: "bg-cyan-100 text-cyan-800 border-cyan-200",
+  fertilizing: "bg-lime-100 text-lime-800 border-lime-200",
+  harvesting: "bg-orange-100 text-orange-800 border-orange-200",
+  "equipment-maintenance": "bg-slate-100 text-slate-800 border-slate-200",
+  repair: "bg-rose-100 text-rose-800 border-rose-200",
+  inspection: "bg-indigo-100 text-indigo-800 border-indigo-200",
   other: "bg-gray-100 text-gray-800 border-gray-200"
 };
 
@@ -61,7 +76,7 @@ export default function WorkTracker() {
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [filterAnimal, setFilterAnimal] = useState<string>("all");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const { toast } = useToast();
 
@@ -69,8 +84,8 @@ export default function WorkTracker() {
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
-    animalType: "goat" as "goat" | "sheep",
-    taskType: "checkup" as Task["taskType"],
+    category: "general" as Task["category"],
+    taskType: "other" as Task["taskType"],
     priority: "medium" as Task["priority"],
     dueDate: "",
     assignedTo: "",
@@ -91,7 +106,7 @@ export default function WorkTracker() {
           id: "1",
           title: "Monthly Health Checkup - Goats",
           description: "Routine health examination for all goats",
-          animalType: "goat",
+          category: "animal-health",
           taskType: "checkup",
           priority: "medium",
           status: "pending",
@@ -102,15 +117,28 @@ export default function WorkTracker() {
         },
         {
           id: "2",
-          title: "Vaccination - Sheep Flock",
-          description: "Annual vaccination for the sheep flock",
-          animalType: "sheep",
-          taskType: "vaccination",
+          title: "Plant Winter Wheat",
+          description: "Prepare and plant winter wheat in the north field",
+          category: "crop-management",
+          taskType: "planting",
           priority: "high",
           status: "pending",
           dueDate: "2024-01-10",
           assignedTo: "Farm Team",
-          notes: "PPR and FMD vaccines required",
+          notes: "Soil preparation completed, seeds ready",
+          createdAt: "2024-01-01"
+        },
+        {
+          id: "3",
+          title: "Irrigation System Maintenance",
+          description: "Check and clean irrigation pipes and sprinklers",
+          category: "irrigation",
+          taskType: "equipment-maintenance",
+          priority: "medium",
+          status: "pending",
+          dueDate: "2024-01-12",
+          assignedTo: "Maintenance Team",
+          notes: "Focus on section B pipes that showed low pressure",
           createdAt: "2024-01-01"
         }
       ];
@@ -136,8 +164,8 @@ export default function WorkTracker() {
       filtered = filtered.filter(task => task.status === filterStatus);
     }
 
-    if (filterAnimal !== "all") {
-      filtered = filtered.filter(task => task.animalType === filterAnimal);
+    if (filterCategory !== "all") {
+      filtered = filtered.filter(task => task.category === filterCategory);
     }
 
     setFilteredTasks(filtered);
@@ -167,8 +195,8 @@ export default function WorkTracker() {
     setNewTask({
       title: "",
       description: "",
-      animalType: "goat",
-      taskType: "checkup",
+      category: "general",
+      taskType: "other",
       priority: "medium",
       dueDate: "",
       assignedTo: "",
@@ -211,6 +239,13 @@ export default function WorkTracker() {
       case "treatment": return <Heart className="h-4 w-4" />;
       case "feeding": return <Beef className="h-4 w-4" />;
       case "cleaning": return <ShieldCheck className="h-4 w-4" />;
+      case "planting": return <Sprout className="h-4 w-4" />;
+      case "watering": return <Droplets className="h-4 w-4" />;
+      case "fertilizing": return <Sprout className="h-4 w-4" />;
+      case "harvesting": return <Scissors className="h-4 w-4" />;
+      case "equipment-maintenance": return <Wrench className="h-4 w-4" />;
+      case "repair": return <Wrench className="h-4 w-4" />;
+      case "inspection": return <Search className="h-4 w-4" />;
       default: return <Clock className="h-4 w-4" />;
     }
   };
