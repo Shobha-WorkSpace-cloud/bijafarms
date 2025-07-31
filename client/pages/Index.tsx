@@ -13,6 +13,7 @@ import {
   FileText,
   FileSpreadsheet,
   ChevronDown,
+  ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link } from "react-router-dom";
 import {
   ExpenseRecord,
   ExpenseFilters,
@@ -327,7 +329,7 @@ export default function Index() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `expenses_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `expenses_${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -343,7 +345,7 @@ export default function Index() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `expenses_${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `expenses_${new Date().toISOString().split("T")[0]}.json`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -385,11 +387,13 @@ export default function Index() {
 
     // Add BOM for UTF-8 encoding
     const BOM = "\uFEFF";
-    const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([BOM + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `expenses_${new Date().toISOString().split('T')[0]}.xls`;
+    a.download = `expenses_${new Date().toISOString().split("T")[0]}.xls`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -411,16 +415,39 @@ export default function Index() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-2 sm:p-4">
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        {/* Header */}
-        <div className="text-center py-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">
-            Bija Expense Tracker
-          </h1>
-          <p className="text-slate-600 text-lg">Manage finances with ease</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Link to="/">
+                <Button variant="ghost" size="sm">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Main
+                </Button>
+              </Link>
+              <div className="flex items-center space-x-3">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800"
+                  alt="Bija Farms Logo"
+                  className="h-12 w-auto"
+                />
+                <div>
+                  <h1 className="text-3xl font-bold text-slate-900">
+                    Bija Expense Tracker
+                  </h1>
+                  <p className="text-slate-600">
+                    Manage farm finances with ease
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </header>
 
+      <div className="max-w-7xl mx-auto p-2 sm:p-4 space-y-4 sm:space-y-6">
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
