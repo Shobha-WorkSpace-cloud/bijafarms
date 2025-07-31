@@ -240,8 +240,6 @@ export default function Index() {
     }
   };
 
-
-
   const handleRefreshData = async () => {
     try {
       setLoading(true);
@@ -546,8 +544,12 @@ export default function Index() {
         {/* Main Content */}
         <Tabs defaultValue="table" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
-            <TabsTrigger value="table" className="text-sm">Data Table</TabsTrigger>
-            <TabsTrigger value="charts" className="text-sm">Analytics</TabsTrigger>
+            <TabsTrigger value="table" className="text-sm">
+              Data Table
+            </TabsTrigger>
+            <TabsTrigger value="charts" className="text-sm">
+              Analytics
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="table">

@@ -44,13 +44,14 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   // Filter out invalid records before sorting
-  const validExpenses = expenses.filter((expense) =>
-    expense &&
-    expense.id &&
-    expense.id !== "" &&
-    expense.amount !== null &&
-    expense.amount !== undefined &&
-    !isNaN(expense.amount)
+  const validExpenses = expenses.filter(
+    (expense) =>
+      expense &&
+      expense.id &&
+      expense.id !== "" &&
+      expense.amount !== null &&
+      expense.amount !== undefined &&
+      !isNaN(expense.amount),
   );
 
   const sortedExpenses = [...validExpenses].sort((a, b) => {
@@ -185,11 +186,15 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="font-medium text-sm line-clamp-2">{expense.description}</div>
+                        <div className="font-medium text-sm line-clamp-2">
+                          {expense.description}
+                        </div>
                         <div className="sm:hidden text-xs text-slate-500 mt-1">
                           <Badge
                             variant={
-                              expense.type === "Income" ? "default" : "secondary"
+                              expense.type === "Income"
+                                ? "default"
+                                : "secondary"
                             }
                             className={`text-xs mr-1 ${
                               expense.type === "Income"
@@ -218,15 +223,21 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
                       <div>
-                        <div className="font-medium text-sm">{expense.category}</div>
+                        <div className="font-medium text-sm">
+                          {expense.category}
+                        </div>
                         <div className="text-xs text-slate-500">
                           {expense.subCategory}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell className="hidden lg:table-cell text-sm">{expense.paidBy}</TableCell>
+                    <TableCell className="hidden lg:table-cell text-sm">
+                      {expense.paidBy}
+                    </TableCell>
                     <TableCell className="hidden lg:table-cell">
-                      <Badge variant="outline" className="text-xs">{expense.source}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {expense.source}
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
@@ -243,7 +254,10 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                               if (expense && expense.id) {
                                 onEdit(expense);
                               } else {
-                                console.error("Invalid expense for edit:", expense);
+                                console.error(
+                                  "Invalid expense for edit:",
+                                  expense,
+                                );
                               }
                             }}
                           >
@@ -252,11 +266,17 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => {
-                              console.log("Delete clicked for expense ID:", expense.id);
+                              console.log(
+                                "Delete clicked for expense ID:",
+                                expense.id,
+                              );
                               if (expense && expense.id) {
                                 setDeleteId(expense.id);
                               } else {
-                                console.error("Invalid expense ID for delete:", expense);
+                                console.error(
+                                  "Invalid expense ID for delete:",
+                                  expense,
+                                );
                               }
                             }}
                             className="text-red-600"
@@ -278,10 +298,12 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
         {sortedExpenses.length > 0 && (
           <div className="flex items-center justify-between space-x-2 py-4">
             <div className="text-sm text-slate-500">
-              Showing {sortedExpenses.length} of {validExpenses.length} valid transactions
+              Showing {sortedExpenses.length} of {validExpenses.length} valid
+              transactions
               {validExpenses.length < expenses.length && (
                 <span className="text-orange-600 ml-2">
-                  ({expenses.length - validExpenses.length} invalid records hidden)
+                  ({expenses.length - validExpenses.length} invalid records
+                  hidden)
                 </span>
               )}
             </div>

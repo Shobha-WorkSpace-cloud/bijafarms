@@ -49,13 +49,14 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
     const categoryMap = new Map<string, { amount: number; count: number }>();
 
     expenses
-      .filter((expense) =>
-        expense.type === "Expense" &&
-        expense.amount > 0 &&
-        expense.description &&
-        expense.description.trim() !== "" &&
-        expense.description !== "No description" &&
-        expense.category !== "Other"
+      .filter(
+        (expense) =>
+          expense.type === "Expense" &&
+          expense.amount > 0 &&
+          expense.description &&
+          expense.description.trim() !== "" &&
+          expense.description !== "No description" &&
+          expense.category !== "Other",
       )
       .forEach((expense) => {
         const existing = categoryMap.get(expense.category) || {
@@ -89,12 +90,14 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
     expenses
       .filter((expense) => {
         const expenseDate = new Date(expense.date);
-        return expense.type === "Expense" &&
-               expenseDate >= twelveMonthsAgo &&
-               expense.amount > 0 &&
-               expense.description &&
-               expense.description.trim() !== "" &&
-               expense.description !== "No description";
+        return (
+          expense.type === "Expense" &&
+          expenseDate >= twelveMonthsAgo &&
+          expense.amount > 0 &&
+          expense.description &&
+          expense.description.trim() !== "" &&
+          expense.description !== "No description"
+        );
       })
       .forEach((expense) => {
         const month = new Date(expense.date).toLocaleDateString("en-US", {
@@ -296,7 +299,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
                 <XAxis
                   type="number"
                   tickFormatter={formatCurrency}
-                  domain={[0, 'dataMax']}
+                  domain={[0, "dataMax"]}
                 />
                 <YAxis
                   dataKey="category"
