@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Edit, Trash2, ArrowUpDown, MoreHorizontal } from "lucide-react";
+import * as React from "react";
+import { Edit, Trash2, ArrowUpDown, MoreHorizontal, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,8 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   // Filter out invalid records before sorting
   const validExpenses = expenses.filter(
@@ -71,6 +74,24 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
       return bStr.localeCompare(aStr);
     }
   });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(sortedExpenses.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedExpenses = sortedExpenses.slice(startIndex, endIndex);
+
+  // Reset page when data changes
+  const resetPage = () => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  };
+
+  // Call resetPage when sortedExpenses changes
+  React.useEffect(() => {
+    resetPage();
+  }, [sortedExpenses.length, itemsPerPage]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -149,7 +170,7 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedExpenses.length === 0 ? (
+              {paginatedExpenses.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={8}
@@ -160,7 +181,7 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                   </TableCell>
                 </TableRow>
               ) : (
-                sortedExpenses.map((expense, index) => (
+                paginatedExpenses.map((expense, index) => (
                   <TableRow
                     key={`${expense.id}-${index}`}
                     className="hover:bg-slate-50"
@@ -294,19 +315,103 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
           </Table>
         </div>
 
-        {/* Pagination could be added here for large datasets */}
+        {/* Pagination Controls */}
         {sortedExpenses.length > 0 && (
-          <div className="flex items-center justify-between space-x-2 py-4">
-            <div className="text-sm text-slate-500">
-              Showing {sortedExpenses.length} of {validExpenses.length} valid
-              transactions
-              {validExpenses.length < expenses.length && (
-                <span className="text-orange-600 ml-2">
-                  ({expenses.length - validExpenses.length} invalid records
-                  hidden)
-                </span>
-              )}
+          <div className="flex flex-col gap-4 py-4">
+            {/* Items per page selector */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm text-slate-700">Rows per page:</p>
+                <select
+                  value={itemsPerPage}
+                  onChange={(e) => {
+                    setItemsPerPage(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="border border-slate-300 rounded px-2 py-1 text-sm bg-white"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+              </div>
+              <div className="text-sm text-slate-500">
+                Showing {startIndex + 1}-{Math.min(endIndex, sortedExpenses.length)} of {sortedExpenses.length} transactions
+                {validExpenses.length < expenses.length && (
+                  <span className="text-orange-600 ml-2">
+                    ({expenses.length - validExpenses.length} invalid records hidden)
+                  </span>
+                )}
+              </div>
             </div>
+
+            {/* Pagination buttons */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronsLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                <div className="flex items-center space-x-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <Button
+                        key={pageNumber}
+                        variant={currentPage === pageNumber ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  })}
+                </div>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                >
+                  <ChevronsRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </CardContent>
