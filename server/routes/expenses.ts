@@ -22,20 +22,26 @@ const readExpenses = (): ExpenseRecord[] => {
 
     // Transform the data to match the expected format and ensure unique IDs
     return rawData.map((item: any, index: number) => {
-      // Convert date from M/D/YYYY to YYYY-MM-DD format
+      // Handle date format - check if already in YYYY-MM-DD format or needs conversion from M/D/YYYY
       let formattedDate = new Date().toISOString().split("T")[0];
       const dateStr = item.Date || item.date;
       if (dateStr) {
         try {
-          const dateParts = dateStr.split("/");
-          if (dateParts.length === 3) {
-            const [month, day, year] = dateParts;
+          // Check if already in YYYY-MM-DD format
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            formattedDate = dateStr;
+          } else {
+            // Try to parse M/D/YYYY format
+            const dateParts = dateStr.split("/");
+            if (dateParts.length === 3) {
+              const [month, day, year] = dateParts;
 
-            // Ensure proper padding for month and day
-            const paddedMonth = month.padStart(2, "0");
-            const paddedDay = day.padStart(2, "0");
+              // Ensure proper padding for month and day
+              const paddedMonth = month.padStart(2, "0");
+              const paddedDay = day.padStart(2, "0");
 
-            formattedDate = `${year}-${paddedMonth}-${paddedDay}`;
+              formattedDate = `${year}-${paddedMonth}-${paddedDay}`;
+            }
           }
         } catch (e) {
           console.warn(`Invalid date format: ${dateStr}`);
