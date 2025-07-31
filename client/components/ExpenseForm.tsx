@@ -95,6 +95,43 @@ const subCategoryMap: Record<string, string[]> = {
   ],
   "Rental Income": ["House Rent", "Shop Rent", "Vehicle Rent"],
   Bonus: ["Performance Bonus", "Festival Bonus", "Commission", "Incentives"],
+
+  // Business-specific categories
+  Power: ["General", "Line Work", "Electrical Equipment", "Maintenance"],
+  PreCast: ["General", "Materials", "Labor", "Transportation"],
+  Water: ["General", "Borewell", "Motor", "Plumbing", "Maintenance"],
+  Land: [
+    "General",
+    "Survey",
+    "Registration",
+    "Development",
+    "Misc",
+    "Iron Work",
+  ],
+  Business: [
+    "General",
+    "Watchmen",
+    "Agriculture",
+    "Equipment",
+    "Training",
+    "Agri",
+  ],
+  Rooms: [
+    "General",
+    "Precast",
+    "Iron Work",
+    "Plumbing",
+    "Cement Work",
+    "Flooring",
+    "Electric",
+    "Painting Work",
+    "Kitchen",
+    "Doors",
+    "Solar",
+    "Furniture",
+    "Misc",
+  ],
+  Misc: ["General", "Food & Dining", "Others"],
 };
 
 export function ExpenseForm({
