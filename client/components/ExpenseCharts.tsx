@@ -245,81 +245,41 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Expense Categories Pie Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Expenses by Category</CardTitle>
-            <CardDescription>
-              Breakdown of your spending categories
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ category, percent }) =>
-                    `${category} ${(percent * 100).toFixed(0)}%`
-                  }
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="amount"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip content={<PieTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Category Spending Bar Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Spending Categories</CardTitle>
-            <CardDescription>Your highest expense categories</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart
-                data={expenseCategoryData.slice(0, 6)}
-                layout="horizontal"
-                margin={{ left: 120, right: 20, top: 20, bottom: 20 }}
+      {/* Expense Categories Pie Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Expenses by Category</CardTitle>
+          <CardDescription>
+            Breakdown of your spending categories
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={400}>
+            <PieChart>
+              <Pie
+                data={pieData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ category, percent }) =>
+                  `${category} ${(percent * 100).toFixed(0)}%`
+                }
+                outerRadius={120}
+                fill="#8884d8"
+                dataKey="amount"
               >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  type="number"
-                  tickFormatter={formatCurrency}
-                  domain={[0, "dataMax"]}
-                />
-                <YAxis
-                  dataKey="category"
-                  type="category"
-                  width={100}
-                  tick={{ fontSize: 12 }}
-                />
-                <Tooltip
-                  formatter={(value: number) => [
-                    formatCurrency(value),
-                    "Amount",
-                  ]}
-                  labelFormatter={(label) => `Category: ${label}`}
-                />
-                <Bar dataKey="amount" fill="#3B82F6" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+                {pieData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+                ))}
+              </Pie>
+              <Tooltip content={<PieTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       {/* Daily Spending Trend */}
       {dailyTrend.length > 0 && (
