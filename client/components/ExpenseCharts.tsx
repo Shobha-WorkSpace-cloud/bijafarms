@@ -89,7 +89,12 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
     expenses
       .filter((expense) => {
         const expenseDate = new Date(expense.date);
-        return expense.type === "Expense" && expenseDate >= twelveMonthsAgo;
+        return expense.type === "Expense" &&
+               expenseDate >= twelveMonthsAgo &&
+               expense.amount > 0 &&
+               expense.description &&
+               expense.description.trim() !== "" &&
+               expense.description !== "No description";
       })
       .forEach((expense) => {
         const month = new Date(expense.date).toLocaleDateString("en-US", {
@@ -138,7 +143,12 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
     expenses
       .filter(
         (expense) =>
-          expense.type === "Expense" && new Date(expense.date) >= thirtyDaysAgo,
+          expense.type === "Expense" &&
+          new Date(expense.date) >= thirtyDaysAgo &&
+          expense.amount > 0 &&
+          expense.description &&
+          expense.description.trim() !== "" &&
+          expense.description !== "No description",
       )
       .forEach((expense) => {
         const date = expense.date;
