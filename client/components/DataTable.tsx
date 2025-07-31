@@ -210,12 +210,28 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => onEdit(expense)}>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              console.log("Edit clicked for expense:", expense);
+                              if (expense && expense.id) {
+                                onEdit(expense);
+                              } else {
+                                console.error("Invalid expense for edit:", expense);
+                              }
+                            }}
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           <DropdownMenuItem
-                            onClick={() => setDeleteId(expense.id)}
+                            onClick={() => {
+                              console.log("Delete clicked for expense ID:", expense.id);
+                              if (expense && expense.id) {
+                                setDeleteId(expense.id);
+                              } else {
+                                console.error("Invalid expense ID for delete:", expense);
+                              }
+                            }}
                             className="text-red-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
