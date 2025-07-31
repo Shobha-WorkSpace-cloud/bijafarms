@@ -169,7 +169,7 @@ export default function WorkTracker() {
     }
 
     setFilteredTasks(filtered);
-  }, [tasks, searchTerm, filterStatus, filterAnimal]);
+  }, [tasks, searchTerm, filterStatus, filterCategory]);
 
   const addTask = () => {
     if (!newTask.title || !newTask.dueDate || !newTask.assignedTo) {
