@@ -1177,14 +1177,14 @@
   },
   {
     "id": "99",
-    "date": "2025-07-31",
+    "date": "2025-07-28",
     "type": "Expense",
-    "description": "No description",
-    "amount": 0,
-    "paidBy": "Unknown",
-    "category": "Other",
+    "description": "Cultivation wages",
+    "amount": 5500,
+    "paidBy": "Madhava",
+    "category": "Business",
     "subCategory": "General",
-    "source": "Unknown",
+    "source": "Self",
     "notes": ""
   },
   {
