@@ -1,17 +1,23 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { 
-  Calculator, 
-  Clipboard, 
-  IndianRupee, 
-  Heart, 
-  Users, 
+import {
+  Calculator,
+  Clipboard,
+  IndianRupee,
+  Heart,
+  Users,
   TrendingUp,
   ChevronRight,
   Beef,
-  Stethoscope
+  Stethoscope,
 } from "lucide-react";
 
 export default function MainPage() {
@@ -21,9 +27,9 @@ export default function MainPage() {
       <header className="bg-white/80 backdrop-blur-sm border-b border-green-200">
         <div className="max-w-6xl mx-auto px-4 py-6">
           <div className="flex items-center justify-center space-x-4">
-            <img 
-              src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800" 
-              alt="Bija Farms Logo" 
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800"
+              alt="Bija Farms Logo"
               className="h-20 w-auto"
             />
           </div>
@@ -31,7 +37,9 @@ export default function MainPage() {
             <h1 className="text-4xl font-bold text-green-800 mb-2">
               Bija Farms Management
             </h1>
-            <p className="text-green-600 text-lg">Integrated farming solutions for modern agriculture</p>
+            <p className="text-green-600 text-lg">
+              Integrated farming solutions for modern agriculture
+            </p>
           </div>
         </div>
       </header>
@@ -39,7 +47,6 @@ export default function MainPage() {
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          
           {/* Expense Tracker Card */}
           <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-green-200 hover:border-green-300 bg-white/90 backdrop-blur-sm">
             <CardHeader className="pb-4">
@@ -49,7 +56,9 @@ export default function MainPage() {
                     <IndianRupee className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl text-slate-800">Bija Expense Tracker</CardTitle>
+                    <CardTitle className="text-2xl text-slate-800">
+                      Bija Expense Tracker
+                    </CardTitle>
                     <CardDescription className="text-slate-600 mt-1">
                       Track farm finances and manage budgets
                     </CardDescription>
@@ -69,7 +78,7 @@ export default function MainPage() {
                   <span className="text-sm">Expense analytics</span>
                 </div>
               </div>
-              
+
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
                 <h4 className="font-semibold text-blue-800 mb-2">Features:</h4>
                 <ul className="text-sm text-blue-700 space-y-1">
@@ -100,7 +109,9 @@ export default function MainPage() {
                     <Heart className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl text-slate-800">Bija Work Tracker</CardTitle>
+                    <CardTitle className="text-2xl text-slate-800">
+                      Bija Work Tracker
+                    </CardTitle>
                     <CardDescription className="text-slate-600 mt-1">
                       Manage goat & sheep health tasks
                     </CardDescription>
@@ -120,7 +131,7 @@ export default function MainPage() {
                   <span className="text-sm">Livestock care</span>
                 </div>
               </div>
-              
+
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
                 <h4 className="font-semibold text-green-800 mb-2">Features:</h4>
                 <ul className="text-sm text-green-700 space-y-1">
@@ -145,22 +156,36 @@ export default function MainPage() {
 
         {/* Quick Stats Section */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-green-200 p-8">
-          <h2 className="text-2xl font-bold text-green-800 mb-6 text-center">Farm Overview</h2>
+          <h2 className="text-2xl font-bold text-green-800 mb-6 text-center">
+            Farm Overview
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
               <IndianRupee className="h-12 w-12 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-blue-800 mb-1">Financial Management</h3>
-              <p className="text-blue-600 text-sm">Track expenses and revenue</p>
+              <h3 className="font-semibold text-blue-800 mb-1">
+                Financial Management
+              </h3>
+              <p className="text-blue-600 text-sm">
+                Track expenses and revenue
+              </p>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
               <Heart className="h-12 w-12 text-green-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-green-800 mb-1">Animal Health</h3>
-              <p className="text-green-600 text-sm">Monitor livestock wellness</p>
+              <h3 className="font-semibold text-green-800 mb-1">
+                Animal Health
+              </h3>
+              <p className="text-green-600 text-sm">
+                Monitor livestock wellness
+              </p>
             </div>
             <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
               <Users className="h-12 w-12 text-purple-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-purple-800 mb-1">Farm Management</h3>
-              <p className="text-purple-600 text-sm">Organize daily operations</p>
+              <h3 className="font-semibold text-purple-800 mb-1">
+                Farm Management
+              </h3>
+              <p className="text-purple-600 text-sm">
+                Organize daily operations
+              </p>
             </div>
           </div>
         </div>
@@ -170,13 +195,16 @@ export default function MainPage() {
       <footer className="bg-green-800 text-white py-8 mt-16">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-4 mb-4">
-            <img 
-              src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800" 
-              alt="Bija Farms Logo" 
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800"
+              alt="Bija Farms Logo"
               className="h-12 w-auto filter brightness-0 invert"
             />
           </div>
-          <p className="text-green-200">© 2024 Bija Farms. Integrated farming solutions for sustainable agriculture.</p>
+          <p className="text-green-200">
+            © 2024 Bija Farms. Integrated farming solutions for sustainable
+            agriculture.
+          </p>
         </div>
       </footer>
     </div>

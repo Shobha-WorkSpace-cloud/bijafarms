@@ -19,15 +19,34 @@ import {
   Scissors,
   Wrench,
   Users,
-  Bell
+  Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
@@ -37,8 +56,28 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  category: "animal-health" | "crop-management" | "equipment" | "irrigation" | "harvesting" | "maintenance" | "general";
-  taskType: "vaccination" | "checkup" | "treatment" | "feeding" | "cleaning" | "planting" | "watering" | "fertilizing" | "harvesting" | "equipment-maintenance" | "repair" | "inspection" | "other";
+  category:
+    | "animal-health"
+    | "crop-management"
+    | "equipment"
+    | "irrigation"
+    | "harvesting"
+    | "maintenance"
+    | "general";
+  taskType:
+    | "vaccination"
+    | "checkup"
+    | "treatment"
+    | "feeding"
+    | "cleaning"
+    | "planting"
+    | "watering"
+    | "fertilizing"
+    | "harvesting"
+    | "equipment-maintenance"
+    | "repair"
+    | "inspection"
+    | "other";
   priority: "low" | "medium" | "high";
   status: "pending" | "in-progress" | "completed";
   dueDate: string;
@@ -62,13 +101,13 @@ const taskTypeColors = {
   "equipment-maintenance": "bg-slate-100 text-slate-800 border-slate-200",
   repair: "bg-rose-100 text-rose-800 border-rose-200",
   inspection: "bg-indigo-100 text-indigo-800 border-indigo-200",
-  other: "bg-gray-100 text-gray-800 border-gray-200"
+  other: "bg-gray-100 text-gray-800 border-gray-200",
 };
 
 const priorityColors = {
   low: "bg-gray-100 text-gray-700",
   medium: "bg-orange-100 text-orange-700",
-  high: "bg-red-100 text-red-700"
+  high: "bg-red-100 text-red-700",
 };
 
 export default function WorkTracker() {
@@ -89,7 +128,7 @@ export default function WorkTracker() {
     priority: "medium" as Task["priority"],
     dueDate: "",
     assignedTo: "",
-    notes: ""
+    notes: "",
   });
 
   // Load tasks from localStorage on component mount
@@ -113,7 +152,7 @@ export default function WorkTracker() {
           dueDate: "2024-01-15",
           assignedTo: "Dr. Sharma",
           notes: "Check weight, temperature, and general condition",
-          createdAt: "2024-01-01"
+          createdAt: "2024-01-01",
         },
         {
           id: "2",
@@ -126,7 +165,7 @@ export default function WorkTracker() {
           dueDate: "2024-01-10",
           assignedTo: "Farm Team",
           notes: "Soil preparation completed, seeds ready",
-          createdAt: "2024-01-01"
+          createdAt: "2024-01-01",
         },
         {
           id: "3",
@@ -139,8 +178,8 @@ export default function WorkTracker() {
           dueDate: "2024-01-12",
           assignedTo: "Maintenance Team",
           notes: "Focus on section B pipes that showed low pressure",
-          createdAt: "2024-01-01"
-        }
+          createdAt: "2024-01-01",
+        },
       ];
       setTasks(sampleTasks);
       setFilteredTasks(sampleTasks);
@@ -153,19 +192,20 @@ export default function WorkTracker() {
     let filtered = tasks;
 
     if (searchTerm) {
-      filtered = filtered.filter(task => 
-        task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        task.assignedTo.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(
+        (task) =>
+          task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          task.assignedTo.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     if (filterStatus !== "all") {
-      filtered = filtered.filter(task => task.status === filterStatus);
+      filtered = filtered.filter((task) => task.status === filterStatus);
     }
 
     if (filterCategory !== "all") {
-      filtered = filtered.filter(task => task.category === filterCategory);
+      filtered = filtered.filter((task) => task.category === filterCategory);
     }
 
     setFilteredTasks(filtered);
@@ -176,7 +216,7 @@ export default function WorkTracker() {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
@@ -185,13 +225,13 @@ export default function WorkTracker() {
       id: Date.now().toString(),
       ...newTask,
       status: "pending",
-      createdAt: new Date().toISOString().split('T')[0]
+      createdAt: new Date().toISOString().split("T")[0],
     };
 
     const updatedTasks = [task, ...tasks];
     setTasks(updatedTasks);
     localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
-    
+
     setNewTask({
       title: "",
       description: "",
@@ -200,67 +240,92 @@ export default function WorkTracker() {
       priority: "medium",
       dueDate: "",
       assignedTo: "",
-      notes: ""
+      notes: "",
     });
     setIsAddDialogOpen(false);
-    
+
     toast({
       title: "Success",
-      description: "Task added successfully"
+      description: "Task added successfully",
     });
   };
 
   const updateTaskStatus = (taskId: string, newStatus: Task["status"]) => {
-    const updatedTasks = tasks.map(task => {
+    const updatedTasks = tasks.map((task) => {
       if (task.id === taskId) {
-        const updatedTask = { 
-          ...task, 
+        const updatedTask = {
+          ...task,
           status: newStatus,
-          completedAt: newStatus === "completed" ? new Date().toISOString().split('T')[0] : undefined
+          completedAt:
+            newStatus === "completed"
+              ? new Date().toISOString().split("T")[0]
+              : undefined,
         };
         return updatedTask;
       }
       return task;
     });
-    
+
     setTasks(updatedTasks);
     localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
-    
+
     toast({
       title: "Success",
-      description: `Task marked as ${newStatus}`
+      description: `Task marked as ${newStatus}`,
     });
   };
 
   const getTaskIcon = (taskType: Task["taskType"]) => {
     switch (taskType) {
-      case "vaccination": return <Syringe className="h-4 w-4" />;
-      case "checkup": return <Stethoscope className="h-4 w-4" />;
-      case "treatment": return <Heart className="h-4 w-4" />;
-      case "feeding": return <Beef className="h-4 w-4" />;
-      case "cleaning": return <ShieldCheck className="h-4 w-4" />;
-      case "planting": return <Sprout className="h-4 w-4" />;
-      case "watering": return <Droplets className="h-4 w-4" />;
-      case "fertilizing": return <Sprout className="h-4 w-4" />;
-      case "harvesting": return <Scissors className="h-4 w-4" />;
-      case "equipment-maintenance": return <Wrench className="h-4 w-4" />;
-      case "repair": return <Wrench className="h-4 w-4" />;
-      case "inspection": return <Search className="h-4 w-4" />;
-      default: return <Clock className="h-4 w-4" />;
+      case "vaccination":
+        return <Syringe className="h-4 w-4" />;
+      case "checkup":
+        return <Stethoscope className="h-4 w-4" />;
+      case "treatment":
+        return <Heart className="h-4 w-4" />;
+      case "feeding":
+        return <Beef className="h-4 w-4" />;
+      case "cleaning":
+        return <ShieldCheck className="h-4 w-4" />;
+      case "planting":
+        return <Sprout className="h-4 w-4" />;
+      case "watering":
+        return <Droplets className="h-4 w-4" />;
+      case "fertilizing":
+        return <Sprout className="h-4 w-4" />;
+      case "harvesting":
+        return <Scissors className="h-4 w-4" />;
+      case "equipment-maintenance":
+        return <Wrench className="h-4 w-4" />;
+      case "repair":
+        return <Wrench className="h-4 w-4" />;
+      case "inspection":
+        return <Search className="h-4 w-4" />;
+      default:
+        return <Clock className="h-4 w-4" />;
     }
   };
 
   const getStatusIcon = (status: Task["status"]) => {
     switch (status) {
-      case "completed": return <Check className="h-4 w-4 text-green-600" />;
-      case "in-progress": return <Clock className="h-4 w-4 text-orange-600" />;
-      default: return <AlertTriangle className="h-4 w-4 text-gray-600" />;
+      case "completed":
+        return <Check className="h-4 w-4 text-green-600" />;
+      case "in-progress":
+        return <Clock className="h-4 w-4 text-orange-600" />;
+      default:
+        return <AlertTriangle className="h-4 w-4 text-gray-600" />;
     }
   };
 
-  const pendingTasks = filteredTasks.filter(task => task.status === "pending");
-  const inProgressTasks = filteredTasks.filter(task => task.status === "in-progress");
-  const completedTasks = filteredTasks.filter(task => task.status === "completed");
+  const pendingTasks = filteredTasks.filter(
+    (task) => task.status === "pending",
+  );
+  const inProgressTasks = filteredTasks.filter(
+    (task) => task.status === "in-progress",
+  );
+  const completedTasks = filteredTasks.filter(
+    (task) => task.status === "completed",
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
@@ -276,14 +341,18 @@ export default function WorkTracker() {
                 </Button>
               </Link>
               <div className="flex items-center space-x-3">
-                <img 
-                  src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800" 
-                  alt="Bija Farms Logo" 
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800"
+                  alt="Bija Farms Logo"
                   className="h-12 w-auto"
                 />
                 <div>
-                  <h1 className="text-3xl font-bold text-green-800">Bija Work Tracker</h1>
-                  <p className="text-green-600">Complete Farm Task Management</p>
+                  <h1 className="text-3xl font-bold text-green-800">
+                    Bija Work Tracker
+                  </h1>
+                  <p className="text-green-600">
+                    Complete Farm Task Management
+                  </p>
                 </div>
               </div>
             </div>
@@ -302,7 +371,9 @@ export default function WorkTracker() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-900">{pendingTasks.length}</div>
+              <div className="text-2xl font-bold text-blue-900">
+                {pendingTasks.length}
+              </div>
             </CardContent>
           </Card>
 
@@ -314,7 +385,9 @@ export default function WorkTracker() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-orange-900">{inProgressTasks.length}</div>
+              <div className="text-2xl font-bold text-orange-900">
+                {inProgressTasks.length}
+              </div>
             </CardContent>
           </Card>
 
@@ -326,7 +399,9 @@ export default function WorkTracker() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-900">{completedTasks.length}</div>
+              <div className="text-2xl font-bold text-green-900">
+                {completedTasks.length}
+              </div>
             </CardContent>
           </Card>
 
@@ -338,7 +413,9 @@ export default function WorkTracker() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-900">{tasks.length}</div>
+              <div className="text-2xl font-bold text-purple-900">
+                {tasks.length}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -368,14 +445,19 @@ export default function WorkTracker() {
                     <SelectItem value="completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <Select
+                  value={filterCategory}
+                  onValueChange={setFilterCategory}
+                >
                   <SelectTrigger className="w-full sm:w-40">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
                     <SelectItem value="animal-health">Animal Health</SelectItem>
-                    <SelectItem value="crop-management">Crop Management</SelectItem>
+                    <SelectItem value="crop-management">
+                      Crop Management
+                    </SelectItem>
                     <SelectItem value="equipment">Equipment</SelectItem>
                     <SelectItem value="irrigation">Irrigation</SelectItem>
                     <SelectItem value="harvesting">Harvesting</SelectItem>
@@ -384,7 +466,7 @@ export default function WorkTracker() {
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-green-600 hover:bg-green-700">
@@ -405,7 +487,9 @@ export default function WorkTracker() {
                       <Input
                         id="title"
                         value={newTask.title}
-                        onChange={(e) => setNewTask({...newTask, title: e.target.value})}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, title: e.target.value })
+                        }
                         placeholder="Task title"
                       />
                     </div>
@@ -414,47 +498,84 @@ export default function WorkTracker() {
                       <Textarea
                         id="description"
                         value={newTask.description}
-                        onChange={(e) => setNewTask({...newTask, description: e.target.value})}
+                        onChange={(e) =>
+                          setNewTask({
+                            ...newTask,
+                            description: e.target.value,
+                          })
+                        }
                         placeholder="Task description"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="category">Category</Label>
-                        <Select value={newTask.category} onValueChange={(value: Task["category"]) => setNewTask({...newTask, category: value})}>
+                        <Select
+                          value={newTask.category}
+                          onValueChange={(value: Task["category"]) =>
+                            setNewTask({ ...newTask, category: value })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="animal-health">Animal Health</SelectItem>
-                            <SelectItem value="crop-management">Crop Management</SelectItem>
+                            <SelectItem value="animal-health">
+                              Animal Health
+                            </SelectItem>
+                            <SelectItem value="crop-management">
+                              Crop Management
+                            </SelectItem>
                             <SelectItem value="equipment">Equipment</SelectItem>
-                            <SelectItem value="irrigation">Irrigation</SelectItem>
-                            <SelectItem value="harvesting">Harvesting</SelectItem>
-                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="irrigation">
+                              Irrigation
+                            </SelectItem>
+                            <SelectItem value="harvesting">
+                              Harvesting
+                            </SelectItem>
+                            <SelectItem value="maintenance">
+                              Maintenance
+                            </SelectItem>
                             <SelectItem value="general">General</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
                         <Label htmlFor="taskType">Task Type</Label>
-                        <Select value={newTask.taskType} onValueChange={(value: Task["taskType"]) => setNewTask({...newTask, taskType: value})}>
+                        <Select
+                          value={newTask.taskType}
+                          onValueChange={(value: Task["taskType"]) =>
+                            setNewTask({ ...newTask, taskType: value })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="vaccination">Vaccination</SelectItem>
-                            <SelectItem value="checkup">Health Checkup</SelectItem>
+                            <SelectItem value="vaccination">
+                              Vaccination
+                            </SelectItem>
+                            <SelectItem value="checkup">
+                              Health Checkup
+                            </SelectItem>
                             <SelectItem value="treatment">Treatment</SelectItem>
                             <SelectItem value="feeding">Feeding</SelectItem>
                             <SelectItem value="cleaning">Cleaning</SelectItem>
                             <SelectItem value="planting">Planting</SelectItem>
                             <SelectItem value="watering">Watering</SelectItem>
-                            <SelectItem value="fertilizing">Fertilizing</SelectItem>
-                            <SelectItem value="harvesting">Harvesting</SelectItem>
-                            <SelectItem value="equipment-maintenance">Equipment Maintenance</SelectItem>
+                            <SelectItem value="fertilizing">
+                              Fertilizing
+                            </SelectItem>
+                            <SelectItem value="harvesting">
+                              Harvesting
+                            </SelectItem>
+                            <SelectItem value="equipment-maintenance">
+                              Equipment Maintenance
+                            </SelectItem>
                             <SelectItem value="repair">Repair</SelectItem>
-                            <SelectItem value="inspection">Inspection</SelectItem>
+                            <SelectItem value="inspection">
+                              Inspection
+                            </SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
@@ -463,7 +584,12 @@ export default function WorkTracker() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="priority">Priority</Label>
-                        <Select value={newTask.priority} onValueChange={(value: Task["priority"]) => setNewTask({...newTask, priority: value})}>
+                        <Select
+                          value={newTask.priority}
+                          onValueChange={(value: Task["priority"]) =>
+                            setNewTask({ ...newTask, priority: value })
+                          }
+                        >
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -480,7 +606,9 @@ export default function WorkTracker() {
                           id="dueDate"
                           type="date"
                           value={newTask.dueDate}
-                          onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
+                          onChange={(e) =>
+                            setNewTask({ ...newTask, dueDate: e.target.value })
+                          }
                         />
                       </div>
                     </div>
@@ -489,7 +617,9 @@ export default function WorkTracker() {
                       <Input
                         id="assignedTo"
                         value={newTask.assignedTo}
-                        onChange={(e) => setNewTask({...newTask, assignedTo: e.target.value})}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, assignedTo: e.target.value })
+                        }
                         placeholder="Person responsible"
                       />
                     </div>
@@ -498,15 +628,24 @@ export default function WorkTracker() {
                       <Textarea
                         id="notes"
                         value={newTask.notes}
-                        onChange={(e) => setNewTask({...newTask, notes: e.target.value})}
+                        onChange={(e) =>
+                          setNewTask({ ...newTask, notes: e.target.value })
+                        }
                         placeholder="Additional notes"
                       />
                     </div>
                     <div className="flex gap-2 pt-4">
-                      <Button onClick={addTask} className="flex-1 bg-green-600 hover:bg-green-700">
+                      <Button
+                        onClick={addTask}
+                        className="flex-1 bg-green-600 hover:bg-green-700"
+                      >
                         Add Task
                       </Button>
-                      <Button variant="outline" onClick={() => setIsAddDialogOpen(false)} className="flex-1">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsAddDialogOpen(false)}
+                        className="flex-1"
+                      >
                         Cancel
                       </Button>
                     </div>
@@ -532,33 +671,52 @@ export default function WorkTracker() {
                 <Card>
                   <CardContent className="p-8 text-center">
                     <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">No tasks found. Add your first farm task!</p>
+                    <p className="text-gray-600">
+                      No tasks found. Add your first farm task!
+                    </p>
                   </CardContent>
                 </Card>
               ) : (
                 filteredTasks.map((task) => (
-                  <Card key={task.id} className="hover:shadow-md transition-shadow">
+                  <Card
+                    key={task.id}
+                    className="hover:shadow-md transition-shadow"
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-lg">{task.title}</h3>
+                            <h3 className="font-semibold text-lg">
+                              {task.title}
+                            </h3>
                             {getStatusIcon(task.status)}
                           </div>
                           {task.description && (
-                            <p className="text-gray-600 mb-3">{task.description}</p>
+                            <p className="text-gray-600 mb-3">
+                              {task.description}
+                            </p>
                           )}
                           <div className="flex flex-wrap gap-2 mb-3">
-                            <Badge className={taskTypeColors[task.taskType]} variant="outline">
+                            <Badge
+                              className={taskTypeColors[task.taskType]}
+                              variant="outline"
+                            >
                               {getTaskIcon(task.taskType)}
-                              <span className="ml-1 capitalize">{task.taskType}</span>
+                              <span className="ml-1 capitalize">
+                                {task.taskType}
+                              </span>
                             </Badge>
-                            <Badge className={priorityColors[task.priority]} variant="outline">
-                              <span className="capitalize">{task.priority} Priority</span>
+                            <Badge
+                              className={priorityColors[task.priority]}
+                              variant="outline"
+                            >
+                              <span className="capitalize">
+                                {task.priority} Priority
+                              </span>
                             </Badge>
                             <Badge variant="outline">
                               <Tractor className="h-3 w-3 mr-1" />
-                              {task.category.replace('-', ' ')}
+                              {task.category.replace("-", " ")}
                             </Badge>
                           </div>
                           <div className="text-sm text-gray-600 space-y-1">
@@ -572,26 +730,31 @@ export default function WorkTracker() {
                         </div>
                         <div className="flex flex-col gap-2 ml-4">
                           {task.status === "pending" && (
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               variant="outline"
-                              onClick={() => updateTaskStatus(task.id, "in-progress")}
+                              onClick={() =>
+                                updateTaskStatus(task.id, "in-progress")
+                              }
                             >
                               Start
                             </Button>
                           )}
                           {task.status === "in-progress" && (
-                            <Button 
-                              size="sm" 
+                            <Button
+                              size="sm"
                               className="bg-green-600 hover:bg-green-700"
-                              onClick={() => updateTaskStatus(task.id, "completed")}
+                              onClick={() =>
+                                updateTaskStatus(task.id, "completed")
+                              }
                             >
                               Complete
                             </Button>
                           )}
                           {task.status === "completed" && task.completedAt && (
                             <div className="text-xs text-green-600">
-                              Completed: {new Date(task.completedAt).toLocaleDateString()}
+                              Completed:{" "}
+                              {new Date(task.completedAt).toLocaleDateString()}
                             </div>
                           )}
                         </div>
@@ -606,24 +769,41 @@ export default function WorkTracker() {
           <TabsContent value="pending">
             <div className="grid gap-4">
               {pendingTasks.map((task) => (
-                <Card key={task.id} className="hover:shadow-md transition-shadow border-l-4 border-l-orange-400">
+                <Card
+                  key={task.id}
+                  className="hover:shadow-md transition-shadow border-l-4 border-l-orange-400"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-lg">{task.title}</h3>
+                          <h3 className="font-semibold text-lg">
+                            {task.title}
+                          </h3>
                           <AlertTriangle className="h-4 w-4 text-orange-600" />
                         </div>
                         {task.description && (
-                          <p className="text-gray-600 mb-3">{task.description}</p>
+                          <p className="text-gray-600 mb-3">
+                            {task.description}
+                          </p>
                         )}
                         <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge className={taskTypeColors[task.taskType]} variant="outline">
+                          <Badge
+                            className={taskTypeColors[task.taskType]}
+                            variant="outline"
+                          >
                             {getTaskIcon(task.taskType)}
-                            <span className="ml-1 capitalize">{task.taskType}</span>
+                            <span className="ml-1 capitalize">
+                              {task.taskType}
+                            </span>
                           </Badge>
-                          <Badge className={priorityColors[task.priority]} variant="outline">
-                            <span className="capitalize">{task.priority} Priority</span>
+                          <Badge
+                            className={priorityColors[task.priority]}
+                            variant="outline"
+                          >
+                            <span className="capitalize">
+                              {task.priority} Priority
+                            </span>
                           </Badge>
                           <Badge variant="outline">
                             <Beef className="h-3 w-3 mr-1" />
@@ -639,8 +819,8 @@ export default function WorkTracker() {
                           {task.notes && <div>Notes: {task.notes}</div>}
                         </div>
                       </div>
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         variant="outline"
                         onClick={() => updateTaskStatus(task.id, "in-progress")}
                       >
@@ -656,24 +836,41 @@ export default function WorkTracker() {
           <TabsContent value="in-progress">
             <div className="grid gap-4">
               {inProgressTasks.map((task) => (
-                <Card key={task.id} className="hover:shadow-md transition-shadow border-l-4 border-l-blue-400">
+                <Card
+                  key={task.id}
+                  className="hover:shadow-md transition-shadow border-l-4 border-l-blue-400"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-lg">{task.title}</h3>
+                          <h3 className="font-semibold text-lg">
+                            {task.title}
+                          </h3>
                           <Clock className="h-4 w-4 text-blue-600" />
                         </div>
                         {task.description && (
-                          <p className="text-gray-600 mb-3">{task.description}</p>
+                          <p className="text-gray-600 mb-3">
+                            {task.description}
+                          </p>
                         )}
                         <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge className={taskTypeColors[task.taskType]} variant="outline">
+                          <Badge
+                            className={taskTypeColors[task.taskType]}
+                            variant="outline"
+                          >
                             {getTaskIcon(task.taskType)}
-                            <span className="ml-1 capitalize">{task.taskType}</span>
+                            <span className="ml-1 capitalize">
+                              {task.taskType}
+                            </span>
                           </Badge>
-                          <Badge className={priorityColors[task.priority]} variant="outline">
-                            <span className="capitalize">{task.priority} Priority</span>
+                          <Badge
+                            className={priorityColors[task.priority]}
+                            variant="outline"
+                          >
+                            <span className="capitalize">
+                              {task.priority} Priority
+                            </span>
                           </Badge>
                           <Badge variant="outline">
                             <Beef className="h-3 w-3 mr-1" />
@@ -689,8 +886,8 @@ export default function WorkTracker() {
                           {task.notes && <div>Notes: {task.notes}</div>}
                         </div>
                       </div>
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         className="bg-green-600 hover:bg-green-700"
                         onClick={() => updateTaskStatus(task.id, "completed")}
                       >
@@ -706,24 +903,41 @@ export default function WorkTracker() {
           <TabsContent value="completed">
             <div className="grid gap-4">
               {completedTasks.map((task) => (
-                <Card key={task.id} className="hover:shadow-md transition-shadow border-l-4 border-l-green-400">
+                <Card
+                  key={task.id}
+                  className="hover:shadow-md transition-shadow border-l-4 border-l-green-400"
+                >
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-lg">{task.title}</h3>
+                          <h3 className="font-semibold text-lg">
+                            {task.title}
+                          </h3>
                           <Check className="h-4 w-4 text-green-600" />
                         </div>
                         {task.description && (
-                          <p className="text-gray-600 mb-3">{task.description}</p>
+                          <p className="text-gray-600 mb-3">
+                            {task.description}
+                          </p>
                         )}
                         <div className="flex flex-wrap gap-2 mb-3">
-                          <Badge className={taskTypeColors[task.taskType]} variant="outline">
+                          <Badge
+                            className={taskTypeColors[task.taskType]}
+                            variant="outline"
+                          >
                             {getTaskIcon(task.taskType)}
-                            <span className="ml-1 capitalize">{task.taskType}</span>
+                            <span className="ml-1 capitalize">
+                              {task.taskType}
+                            </span>
                           </Badge>
-                          <Badge className={priorityColors[task.priority]} variant="outline">
-                            <span className="capitalize">{task.priority} Priority</span>
+                          <Badge
+                            className={priorityColors[task.priority]}
+                            variant="outline"
+                          >
+                            <span className="capitalize">
+                              {task.priority} Priority
+                            </span>
                           </Badge>
                           <Badge variant="outline">
                             <Beef className="h-3 w-3 mr-1" />
@@ -738,7 +952,8 @@ export default function WorkTracker() {
                           <div>Assigned to: {task.assignedTo}</div>
                           {task.completedAt && (
                             <div className="text-green-600 font-medium">
-                              Completed: {new Date(task.completedAt).toLocaleDateString()}
+                              Completed:{" "}
+                              {new Date(task.completedAt).toLocaleDateString()}
                             </div>
                           )}
                           {task.notes && <div>Notes: {task.notes}</div>}

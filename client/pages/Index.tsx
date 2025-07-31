@@ -329,7 +329,7 @@ export default function Index() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `expenses_${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `expenses_${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -345,7 +345,7 @@ export default function Index() {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `expenses_${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `expenses_${new Date().toISOString().split("T")[0]}.json`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -387,11 +387,13 @@ export default function Index() {
 
     // Add BOM for UTF-8 encoding
     const BOM = "\uFEFF";
-    const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" });
+    const blob = new Blob([BOM + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `expenses_${new Date().toISOString().split('T')[0]}.xls`;
+    a.download = `expenses_${new Date().toISOString().split("T")[0]}.xls`;
     a.click();
     window.URL.revokeObjectURL(url);
 
@@ -432,8 +434,12 @@ export default function Index() {
                   className="h-12 w-auto"
                 />
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900">Bija Expense Tracker</h1>
-                  <p className="text-slate-600">Manage farm finances with ease</p>
+                  <h1 className="text-3xl font-bold text-slate-900">
+                    Bija Expense Tracker
+                  </h1>
+                  <p className="text-slate-600">
+                    Manage farm finances with ease
+                  </p>
                 </div>
               </div>
             </div>
@@ -442,7 +448,6 @@ export default function Index() {
       </header>
 
       <div className="max-w-7xl mx-auto p-2 sm:p-4 space-y-4 sm:space-y-6">
-
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
