@@ -164,28 +164,45 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                     key={`${expense.id}-${index}`}
                     className="hover:bg-slate-50"
                   >
-                    <TableCell className="font-medium">
-                      {formatDate(expense.date)}
+                    <TableCell className="font-medium text-xs sm:text-sm">
+                      <div className="whitespace-nowrap">
+                        {formatDate(expense.date)}
+                      </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden sm:table-cell">
                       <Badge
                         variant={
                           expense.type === "Income" ? "default" : "secondary"
                         }
-                        className={
+                        className={`text-xs ${
                           expense.type === "Income"
                             ? "bg-green-100 text-green-800"
                             : "bg-red-100 text-red-800"
-                        }
+                        }`}
                       >
                         {expense.type}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{expense.description}</div>
+                        <div className="font-medium text-sm line-clamp-2">{expense.description}</div>
+                        <div className="sm:hidden text-xs text-slate-500 mt-1">
+                          <Badge
+                            variant={
+                              expense.type === "Income" ? "default" : "secondary"
+                            }
+                            className={`text-xs mr-1 ${
+                              expense.type === "Income"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {expense.type}
+                          </Badge>
+                          {expense.category}
+                        </div>
                         {expense.notes && (
-                          <div className="text-sm text-slate-500 mt-1">
+                          <div className="text-xs text-slate-500 mt-1 hidden sm:block">
                             {expense.notes}
                           </div>
                         )}
@@ -193,23 +210,23 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`font-semibold ${expense.type === "Income" ? "text-green-600" : "text-red-600"}`}
+                        className={`font-semibold text-sm ${expense.type === "Income" ? "text-green-600" : "text-red-600"}`}
                       >
                         {expense.type === "Income" ? "+" : "-"}
                         {formatCurrency(expense.amount)}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="hidden md:table-cell">
                       <div>
-                        <div className="font-medium">{expense.category}</div>
-                        <div className="text-sm text-slate-500">
+                        <div className="font-medium text-sm">{expense.category}</div>
+                        <div className="text-xs text-slate-500">
                           {expense.subCategory}
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>{expense.paidBy}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{expense.source}</Badge>
+                    <TableCell className="hidden lg:table-cell text-sm">{expense.paidBy}</TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      <Badge variant="outline" className="text-xs">{expense.source}</Badge>
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
