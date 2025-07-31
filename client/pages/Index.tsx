@@ -10,6 +10,9 @@ import {
   TrendingDown,
   Receipt,
   RefreshCw,
+  FileText,
+  FileSpreadsheet,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,6 +38,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -303,24 +312,91 @@ export default function Index() {
         [
           expense.date,
           expense.type,
-          `"${expense.description}"`,
+          `"${expense.description.replace(/"/g, '""')}"`,
           expense.amount,
-          `"${expense.paidBy}"`,
-          `"${expense.category}"`,
-          `"${expense.subCategory}"`,
-          `"${expense.source}"`,
-          `"${expense.notes}"`,
+          `"${expense.paidBy.replace(/"/g, '""')}"`,
+          `"${expense.category.replace(/"/g, '""')}"`,
+          `"${expense.subCategory.replace(/"/g, '""')}"`,
+          `"${expense.source.replace(/"/g, '""')}"`,
+          `"${expense.notes.replace(/"/g, '""')}"`,
         ].join(","),
       ),
     ].join("\n");
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "expenses.csv";
+    a.download = `expenses_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Export Complete",
+      description: `Successfully exported ${filteredExpenses.length} transactions to CSV`,
+    });
+  };
+
+  const exportToJSON = () => {
+    const jsonContent = JSON.stringify(filteredExpenses, null, 2);
+    const blob = new Blob([jsonContent], { type: "application/json" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `expenses_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Export Complete",
+      description: `Successfully exported ${filteredExpenses.length} transactions to JSON`,
+    });
+  };
+
+  const exportToExcel = () => {
+    // Create Excel-compatible CSV with BOM for proper UTF-8 encoding
+    const headers = [
+      "Date",
+      "Type",
+      "Description",
+      "Amount",
+      "Paid By",
+      "Category",
+      "Sub-Category",
+      "Source",
+      "Notes",
+    ];
+    const csvContent = [
+      headers.join("\t"), // Use tab separator for better Excel compatibility
+      ...filteredExpenses.map((expense) =>
+        [
+          expense.date,
+          expense.type,
+          expense.description.replace(/\t/g, " "), // Replace tabs with spaces
+          expense.amount,
+          expense.paidBy.replace(/\t/g, " "),
+          expense.category.replace(/\t/g, " "),
+          expense.subCategory.replace(/\t/g, " "),
+          expense.source.replace(/\t/g, " "),
+          expense.notes.replace(/\t/g, " "),
+        ].join("\t"),
+      ),
+    ].join("\n");
+
+    // Add BOM for UTF-8 encoding
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `expenses_${new Date().toISOString().split('T')[0]}.xls`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Export Complete",
+      description: `Successfully exported ${filteredExpenses.length} transactions to Excel format`,
+    });
   };
 
   if (loading) {
