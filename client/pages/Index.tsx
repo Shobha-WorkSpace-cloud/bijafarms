@@ -551,10 +551,9 @@ export default function Index() {
 
         {/* Main Content */}
         <Tabs defaultValue="table" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
+          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
             <TabsTrigger value="table">Data Table</TabsTrigger>
             <TabsTrigger value="charts">Analytics</TabsTrigger>
-            <TabsTrigger value="import">Import/Export</TabsTrigger>
           </TabsList>
 
           <TabsContent value="table">
@@ -567,10 +566,6 @@ export default function Index() {
 
           <TabsContent value="charts">
             <ExpenseCharts expenses={filteredExpenses} />
-          </TabsContent>
-
-          <TabsContent value="import">
-            <ImportExport expenses={expenses} onImport={handleImportExpenses} />
           </TabsContent>
         </Tabs>
 
