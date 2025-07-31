@@ -261,7 +261,12 @@ export function DataTable({ expenses, onEdit, onDelete }: DataTableProps) {
         {sortedExpenses.length > 0 && (
           <div className="flex items-center justify-between space-x-2 py-4">
             <div className="text-sm text-slate-500">
-              Showing {sortedExpenses.length} of {expenses.length} transactions
+              Showing {sortedExpenses.length} of {validExpenses.length} valid transactions
+              {validExpenses.length < expenses.length && (
+                <span className="text-orange-600 ml-2">
+                  ({expenses.length - validExpenses.length} invalid records hidden)
+                </span>
+              )}
             </div>
           </div>
         )}
