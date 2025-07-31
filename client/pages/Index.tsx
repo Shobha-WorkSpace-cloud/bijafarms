@@ -45,7 +45,6 @@ import {
 import { DataTable } from "@/components/DataTable";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseCharts } from "@/components/ExpenseCharts";
-import { ImportExport } from "@/components/ImportExport";
 import { ClearCacheButton } from "@/components/ClearCacheButton";
 
 import { useToast } from "@/hooks/use-toast";
@@ -241,25 +240,7 @@ export default function Index() {
     }
   };
 
-  const handleImportExpenses = async (importedExpenses: ExpenseRecord[]) => {
-    try {
-      await api.importExpenses(importedExpenses);
-      // Reload all expenses from server to get the latest data
-      const refreshedExpenses = await api.fetchExpenses();
-      setExpenses(refreshedExpenses);
-      toast({
-        title: "Success",
-        description: `Imported ${importedExpenses.length} expenses successfully`,
-      });
-    } catch (error) {
-      console.error("Error importing expenses:", error);
-      toast({
-        title: "Error",
-        description: "Failed to import expenses. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+
 
   const handleRefreshData = async () => {
     try {
