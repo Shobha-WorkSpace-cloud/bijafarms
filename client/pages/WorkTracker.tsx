@@ -283,7 +283,7 @@ export default function WorkTracker() {
                 />
                 <div>
                   <h1 className="text-3xl font-bold text-green-800">Bija Work Tracker</h1>
-                  <p className="text-green-600">Goat & Sheep Health Management</p>
+                  <p className="text-green-600">Complete Farm Task Management</p>
                 </div>
               </div>
             </div>
@@ -368,14 +368,19 @@ export default function WorkTracker() {
                     <SelectItem value="completed">Completed</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select value={filterAnimal} onValueChange={setFilterAnimal}>
+                <Select value={filterCategory} onValueChange={setFilterCategory}>
                   <SelectTrigger className="w-full sm:w-40">
-                    <SelectValue placeholder="Animal" />
+                    <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Animals</SelectItem>
-                    <SelectItem value="goat">Goats</SelectItem>
-                    <SelectItem value="sheep">Sheep</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="animal-health">Animal Health</SelectItem>
+                    <SelectItem value="crop-management">Crop Management</SelectItem>
+                    <SelectItem value="equipment">Equipment</SelectItem>
+                    <SelectItem value="irrigation">Irrigation</SelectItem>
+                    <SelectItem value="harvesting">Harvesting</SelectItem>
+                    <SelectItem value="maintenance">Maintenance</SelectItem>
+                    <SelectItem value="general">General</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -391,7 +396,7 @@ export default function WorkTracker() {
                   <DialogHeader>
                     <DialogTitle>Add New Task</DialogTitle>
                     <DialogDescription>
-                      Create a new health task for goats or sheep
+                      Create a new farm task for any agricultural activity
                     </DialogDescription>
                   </DialogHeader>
                   <div className="space-y-4">
@@ -415,14 +420,19 @@ export default function WorkTracker() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="animalType">Animal Type</Label>
-                        <Select value={newTask.animalType} onValueChange={(value: "goat" | "sheep") => setNewTask({...newTask, animalType: value})}>
+                        <Label htmlFor="category">Category</Label>
+                        <Select value={newTask.category} onValueChange={(value: Task["category"]) => setNewTask({...newTask, category: value})}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="goat">Goat</SelectItem>
-                            <SelectItem value="sheep">Sheep</SelectItem>
+                            <SelectItem value="animal-health">Animal Health</SelectItem>
+                            <SelectItem value="crop-management">Crop Management</SelectItem>
+                            <SelectItem value="equipment">Equipment</SelectItem>
+                            <SelectItem value="irrigation">Irrigation</SelectItem>
+                            <SelectItem value="harvesting">Harvesting</SelectItem>
+                            <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="general">General</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -434,10 +444,17 @@ export default function WorkTracker() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="vaccination">Vaccination</SelectItem>
-                            <SelectItem value="checkup">Checkup</SelectItem>
+                            <SelectItem value="checkup">Health Checkup</SelectItem>
                             <SelectItem value="treatment">Treatment</SelectItem>
                             <SelectItem value="feeding">Feeding</SelectItem>
                             <SelectItem value="cleaning">Cleaning</SelectItem>
+                            <SelectItem value="planting">Planting</SelectItem>
+                            <SelectItem value="watering">Watering</SelectItem>
+                            <SelectItem value="fertilizing">Fertilizing</SelectItem>
+                            <SelectItem value="harvesting">Harvesting</SelectItem>
+                            <SelectItem value="equipment-maintenance">Equipment Maintenance</SelectItem>
+                            <SelectItem value="repair">Repair</SelectItem>
+                            <SelectItem value="inspection">Inspection</SelectItem>
                             <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
@@ -515,7 +532,7 @@ export default function WorkTracker() {
                 <Card>
                   <CardContent className="p-8 text-center">
                     <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">No tasks found. Add your first health task!</p>
+                    <p className="text-gray-600">No tasks found. Add your first farm task!</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -540,8 +557,8 @@ export default function WorkTracker() {
                               <span className="capitalize">{task.priority} Priority</span>
                             </Badge>
                             <Badge variant="outline">
-                              <Beef className="h-3 w-3 mr-1" />
-                              {task.animalType}
+                              <Tractor className="h-3 w-3 mr-1" />
+                              {task.category.replace('-', ' ')}
                             </Badge>
                           </div>
                           <div className="text-sm text-gray-600 space-y-1">
