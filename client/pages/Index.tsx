@@ -545,9 +545,9 @@ export default function Index() {
 
         {/* Main Content */}
         <Tabs defaultValue="table" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
-            <TabsTrigger value="table">Data Table</TabsTrigger>
-            <TabsTrigger value="charts">Analytics</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+            <TabsTrigger value="table" className="text-sm">Data Table</TabsTrigger>
+            <TabsTrigger value="charts" className="text-sm">Analytics</TabsTrigger>
           </TabsList>
 
           <TabsContent value="table">
