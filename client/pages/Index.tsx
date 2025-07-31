@@ -191,6 +191,11 @@ export default function Index() {
 
   const handleEditExpense = async (updatedExpense: ExpenseRecord) => {
     try {
+      if (!updatedExpense || !updatedExpense.id) {
+        throw new Error("Invalid expense data for update");
+      }
+
+      console.log("Updating expense:", updatedExpense);
       const updated = await api.updateExpense(
         updatedExpense.id,
         updatedExpense,
@@ -215,6 +220,11 @@ export default function Index() {
 
   const handleDeleteExpense = async (id: string) => {
     try {
+      if (!id || id.trim() === "") {
+        throw new Error("Invalid expense ID for deletion");
+      }
+
+      console.log("Deleting expense with ID:", id);
       await api.deleteExpense(id);
       setExpenses((prev) => prev.filter((expense) => expense.id !== id));
       toast({
