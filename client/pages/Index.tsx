@@ -574,15 +574,33 @@ export default function Index() {
 
                   <ClearCacheButton />
 
-                  <Button
-                    variant="outline"
-                    onClick={exportToCSV}
-                    size="sm"
-                    className="flex-1 sm:flex-none"
-                  >
-                    <Download className="h-4 w-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Export</span>
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 sm:flex-none"
+                      >
+                        <Download className="h-4 w-4 sm:mr-2" />
+                        <span className="hidden sm:inline">Export</span>
+                        <ChevronDown className="h-4 w-4 sm:ml-2" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={exportToCSV}>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Export as CSV
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={exportToExcel}>
+                        <FileSpreadsheet className="mr-2 h-4 w-4" />
+                        Export as Excel
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={exportToJSON}>
+                        <FileText className="mr-2 h-4 w-4" />
+                        Export as JSON
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
 
                 <Dialog
