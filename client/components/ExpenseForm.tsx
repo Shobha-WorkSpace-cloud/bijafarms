@@ -97,25 +97,9 @@ const subCategoryMap: Record<string, string[]> = {
   Bonus: ["Performance Bonus", "Festival Bonus", "Commission", "Incentives"],
 
   // Business-specific categories
-  Power: [
-    "General",
-    "Line Work",
-    "Electrical Equipment",
-    "Maintenance",
-  ],
-  PreCast: [
-    "General",
-    "Materials",
-    "Labor",
-    "Transportation",
-  ],
-  Water: [
-    "General",
-    "Borewell",
-    "Motor",
-    "Plumbing",
-    "Maintenance",
-  ],
+  Power: ["General", "Line Work", "Electrical Equipment", "Maintenance"],
+  PreCast: ["General", "Materials", "Labor", "Transportation"],
+  Water: ["General", "Borewell", "Motor", "Plumbing", "Maintenance"],
   Land: [
     "General",
     "Survey",
@@ -147,11 +131,7 @@ const subCategoryMap: Record<string, string[]> = {
     "Furniture",
     "Misc",
   ],
-  Misc: [
-    "General",
-    "Food & Dining",
-    "Others",
-  ],
+  Misc: ["General", "Food & Dining", "Others"],
 };
 
 export function ExpenseForm({
