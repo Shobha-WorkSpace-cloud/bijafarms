@@ -290,11 +290,20 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
               <BarChart
                 data={expenseCategoryData.slice(0, 6)}
                 layout="horizontal"
-                margin={{ left: 80 }}
+                margin={{ left: 120, right: 20, top: 20, bottom: 20 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" tickFormatter={formatCurrency} />
-                <YAxis dataKey="category" type="category" width={80} />
+                <XAxis
+                  type="number"
+                  tickFormatter={formatCurrency}
+                  domain={[0, 'dataMax']}
+                />
+                <YAxis
+                  dataKey="category"
+                  type="category"
+                  width={100}
+                  tick={{ fontSize: 12 }}
+                />
                 <Tooltip
                   formatter={(value: number) => [
                     formatCurrency(value),
@@ -302,7 +311,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
                   ]}
                   labelFormatter={(label) => `Category: ${label}`}
                 />
-                <Bar dataKey="amount" fill="#3B82F6" />
+                <Bar dataKey="amount" fill="#3B82F6" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
