@@ -44,12 +44,19 @@ const COLORS = [
 ];
 
 export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
-  // Category breakdown for expenses
+  // Category breakdown for expenses (filter out invalid records)
   const expenseCategoryData: CategoryChartData[] = useMemo(() => {
     const categoryMap = new Map<string, { amount: number; count: number }>();
 
     expenses
-      .filter((expense) => expense.type === "Expense")
+      .filter((expense) =>
+        expense.type === "Expense" &&
+        expense.amount > 0 &&
+        expense.description &&
+        expense.description.trim() !== "" &&
+        expense.description !== "No description" &&
+        expense.category !== "Other"
+      )
       .forEach((expense) => {
         const existing = categoryMap.get(expense.category) || {
           amount: 0,
