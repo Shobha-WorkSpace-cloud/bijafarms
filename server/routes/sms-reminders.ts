@@ -65,40 +65,41 @@ const sendWhatsAppReminder = async (
   }
 };
 
-export const sendSMSReminder: RequestHandler = async (req, res) => {
+export const sendWhatsAppReminderEndpoint: RequestHandler = async (req, res) => {
   try {
-    const { phone, message, taskTitle, dueDate }: SMSReminderRequest = req.body;
+    const { phone, message, taskTitle, dueDate }: WhatsAppReminderRequest = req.body;
 
     console.log(
-      `SMS Reminder - Phone: ${phone}, Task: ${taskTitle}, Due: ${dueDate}`,
+      `WhatsApp Reminder - Phone: ${phone}, Task: ${taskTitle}, Due: ${dueDate}`,
     );
 
-    // Send SMS via SMSIndiaHub
-    const smsResponse = await sendSMSViaSMSIndiaHub(phone, message);
+    // Generate WhatsApp URL
+    const whatsappResponse = await sendWhatsAppReminder(phone, message);
 
-    if (smsResponse.status === "success" || smsResponse.status === "Success") {
+    if (whatsappResponse.success) {
       res.json({
         success: true,
-        message: "SMS reminder sent successfully via SMSIndiaHub",
+        message: "WhatsApp reminder URL generated successfully",
         phone: phone,
         taskTitle: taskTitle,
-        sentAt: new Date().toISOString(),
-        provider: "SMSIndiaHub",
-        providerResponse: smsResponse,
+        generatedAt: new Date().toISOString(),
+        provider: "WhatsApp",
+        whatsappUrl: whatsappResponse.whatsappUrl,
+        providerResponse: whatsappResponse,
       });
     } else {
-      console.error("SMSIndiaHub error:", smsResponse);
+      console.error("WhatsApp error:", whatsappResponse);
       res.status(400).json({
         success: false,
-        error: "Failed to send SMS via SMSIndiaHub",
-        details: smsResponse.message || "Unknown error",
+        error: "Failed to generate WhatsApp URL",
+        details: whatsappResponse.message || "Unknown error",
       });
     }
   } catch (error) {
-    console.error("Error sending SMS reminder:", error);
+    console.error("Error generating WhatsApp reminder:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to send SMS reminder",
+      error: "Failed to generate WhatsApp reminder",
       details: error instanceof Error ? error.message : "Unknown error",
     });
   }
