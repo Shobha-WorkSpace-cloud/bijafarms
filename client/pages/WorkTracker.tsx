@@ -592,29 +592,7 @@ export default function WorkTracker() {
                 </Select>
               </div>
 
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  onClick={sendTestWhatsAppSimple}
-                  disabled={loading}
-                  className="bg-green-50 hover:bg-green-100 border-green-200"
-                  size="sm"
-                >
-                  <Bell className="h-4 w-4 mr-2" />
-                  {loading ? "Testing..." : "Simple Test"}
-                </Button>
-
-                <Button
-                  variant="outline"
-                  onClick={sendTestWhatsApp}
-                  disabled={loading}
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                >
-                  <Bell className="h-4 w-4 mr-2" />
-                  {loading ? "Opening..." : "Test WhatsApp"}
-                </Button>
-
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-green-600 hover:bg-green-700">
                       <Plus className="h-4 w-4 mr-2" />
@@ -799,7 +777,6 @@ export default function WorkTracker() {
                   </div>
                 </DialogContent>
                 </Dialog>
-              </div>
             </div>
           </CardContent>
         </Card>
