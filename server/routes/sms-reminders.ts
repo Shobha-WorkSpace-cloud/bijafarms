@@ -165,7 +165,8 @@ export const sendTestSMSSimple: RequestHandler = async (req, res) => {
 export const sendTestSMS: RequestHandler = async (req, res) => {
   try {
     console.log("=== Test SMS Request Started ===");
-    console.log("API Key available:", !!process.env.SMSINDIAHUB_API_KEY);
+    console.log("User available:", !!process.env.SMSINDIAHUB_USER);
+    console.log("Password available:", !!process.env.SMSINDIAHUB_PASSWORD);
     console.log("Sender ID:", process.env.SMSINDIAHUB_SENDER_ID);
 
     const testMessage = `TEST MESSAGE from Bija Farms: SMSIndiaHub integration is working! Sent at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
