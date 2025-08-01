@@ -117,6 +117,7 @@ export default function WorkTracker() {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
   // Form state for new task
