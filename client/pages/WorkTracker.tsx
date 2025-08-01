@@ -284,19 +284,16 @@ export default function WorkTracker() {
     setIsAddDialogOpen(false);
   };
 
-  const sendTestSMSSimple = async () => {
+  const sendTestWhatsAppSimple = async () => {
     try {
       setLoading(true);
-      console.log("Calling simple test endpoint...");
+      console.log("Calling simple WhatsApp test endpoint...");
 
-      const response = await fetch("/api/test-sms-simple", {
+      const response = await fetch("/api/test-whatsapp-simple", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({})
       });
-
-      console.log("Response status:", response.status);
-      console.log("Response ok:", response.ok);
 
       const result = await response.json();
       console.log("Parsed result:", result);
@@ -304,7 +301,7 @@ export default function WorkTracker() {
       if (result.success) {
         toast({
           title: "Simple Test Works! ✅",
-          description: "Basic endpoint is working",
+          description: "WhatsApp endpoint is working",
         });
       } else {
         toast({
@@ -325,46 +322,42 @@ export default function WorkTracker() {
     }
   };
 
-  const sendTestSMS = async () => {
+  const sendTestWhatsApp = async () => {
     try {
       setLoading(true);
 
-      const response = await fetch("/api/test-sms", {
+      const response = await fetch("/api/test-whatsapp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({}), // Empty body for test
+        body: JSON.stringify({})
       });
 
-      // Always try to parse as JSON since our API returns JSON
       const result = await response.json();
 
-      // Check for success after parsing
-      if (!response.ok || !result.success) {
-        const errorMsg = result.details || result.error || `HTTP ${response.status}`;
-        throw new Error(errorMsg);
-      }
+      if (result.success && result.whatsappUrl) {
+        // Open WhatsApp URL in new window
+        window.open(result.whatsappUrl, '_blank');
 
-      if (result.success) {
         toast({
-          title: "Test SMS Sent! ✅",
-          description: `SMS sent successfully to +919985442209 via SMSIndiaHub`,
+          title: "WhatsApp Message Ready! 📱",
+          description: `WhatsApp opened with message for +919985442209`,
         });
-        console.log("Test SMS Result:", result);
+        console.log("Test WhatsApp Result:", result);
       } else {
         toast({
-          title: "Test SMS Failed ❌",
-          description: result.details || result.error || "Failed to send test SMS",
+          title: "WhatsApp Test Failed ❌",
+          description: result.details || result.error || "Failed to generate WhatsApp message",
           variant: "destructive",
         });
-        console.error("SMS API Error:", result);
+        console.error("WhatsApp API Error:", result);
       }
     } catch (error) {
-      console.error("Test SMS error:", error);
+      console.error("Test WhatsApp error:", error);
       const errorMessage = error instanceof Error ? error.message : "Unknown network error";
       toast({
-        title: "Test SMS Error ❌",
+        title: "WhatsApp Test Error ❌",
         description: `Error: ${errorMessage}`,
         variant: "destructive",
       });
