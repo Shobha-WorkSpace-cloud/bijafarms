@@ -41,6 +41,7 @@ export function createServer() {
   // SMS reminder routes
   app.post("/api/send-sms-reminder", sendSMSReminder);
   app.post("/api/schedule-reminder", scheduleReminder);
+  app.post("/api/test-sms", sendTestSMS);
 
   return app;
 }
