@@ -296,21 +296,13 @@ export default function WorkTracker() {
         body: JSON.stringify({}), // Empty body for test
       });
 
-      // Parse response based on status
-      let result;
-      if (!response.ok) {
-        try {
-          // Try to parse as JSON first (in case server returns JSON error)
-          result = await response.json();
-        } catch {
-          // If JSON parsing fails, get text
-          const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${errorText}`);
-        }
-        // If we got JSON but response not ok, treat as error
-        throw new Error(result.details || result.error || `HTTP ${response.status}`);
-      } else {
-        result = await response.json();
+      // Always try to parse as JSON since our API returns JSON
+      const result = await response.json();
+
+      // Check for success after parsing
+      if (!response.ok || !result.success) {
+        const errorMsg = result.details || result.error || `HTTP ${response.status}`;
+        throw new Error(errorMsg);
       }
 
       if (result.success) {
