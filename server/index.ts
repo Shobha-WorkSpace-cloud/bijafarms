@@ -11,7 +11,12 @@ import {
   bulkDeleteExpenses,
   backupExpenses,
 } from "./routes/expenses";
-import { sendSMSReminder, scheduleReminder, sendTestSMS, sendTestSMSSimple } from "./routes/sms-reminders";
+import {
+  sendWhatsAppReminderEndpoint,
+  scheduleReminder,
+  sendTestWhatsApp,
+  sendTestWhatsAppSimple
+} from "./routes/sms-reminders";
 
 export function createServer() {
   const app = express();
