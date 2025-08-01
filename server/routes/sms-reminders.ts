@@ -118,13 +118,26 @@ export const sendSMSReminder: RequestHandler = async (req, res) => {
 // Test SMS endpoint to validate SMSIndiaHub integration
 export const sendTestSMS: RequestHandler = async (req, res) => {
   try {
-    const testMessage = `🧪 TEST MESSAGE from Bija Farms: SMSIndiaHub integration is working! Sent at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
+    console.log("=== Test SMS Request Started ===");
+    console.log("API Key available:", !!process.env.SMSINDIAHUB_API_KEY);
+    console.log("Sender ID:", process.env.SMSINDIAHUB_SENDER_ID);
+
+    const testMessage = `TEST MESSAGE from Bija Farms: SMSIndiaHub integration is working! Sent at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
 
     console.log("Sending test SMS to +919985442209...");
+    console.log("Test message:", testMessage);
 
     const smsResponse = await sendSMSViaSMSIndiaHub("+919985442209", testMessage);
+    console.log("SMS Response received:", smsResponse);
 
-    if (smsResponse.status === "success" || smsResponse.status === "Success") {
+    // Check various success indicators
+    const isSuccess = smsResponse.status === "success" ||
+                     smsResponse.status === "Success" ||
+                     smsResponse.status === "OK" ||
+                     (smsResponse.code && smsResponse.code === "200");
+
+    if (isSuccess) {
+      console.log("✅ Test SMS sent successfully");
       res.json({
         success: true,
         message: "Test SMS sent successfully via SMSIndiaHub",
@@ -135,16 +148,16 @@ export const sendTestSMS: RequestHandler = async (req, res) => {
         providerResponse: smsResponse,
       });
     } else {
-      console.error("SMSIndiaHub test error:", smsResponse);
+      console.error("❌ SMSIndiaHub test error:", smsResponse);
       res.status(400).json({
         success: false,
         error: "Failed to send test SMS via SMSIndiaHub",
-        details: smsResponse.message || "Unknown error",
+        details: smsResponse.message || smsResponse.description || "Unknown error",
         providerResponse: smsResponse,
       });
     }
   } catch (error) {
-    console.error("Error sending test SMS:", error);
+    console.error("❌ Error sending test SMS:", error);
     res.status(500).json({
       success: false,
       error: "Failed to send test SMS",
