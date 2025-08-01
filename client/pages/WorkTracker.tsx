@@ -284,6 +284,47 @@ export default function WorkTracker() {
     setIsAddDialogOpen(false);
   };
 
+  const sendTestSMSSimple = async () => {
+    try {
+      setLoading(true);
+      console.log("Calling simple test endpoint...");
+
+      const response = await fetch("/api/test-sms-simple", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({})
+      });
+
+      console.log("Response status:", response.status);
+      console.log("Response ok:", response.ok);
+
+      const result = await response.json();
+      console.log("Parsed result:", result);
+
+      if (result.success) {
+        toast({
+          title: "Simple Test Works! ✅",
+          description: "Basic endpoint is working",
+        });
+      } else {
+        toast({
+          title: "Simple Test Failed ❌",
+          description: result.error || "Unknown error",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Simple test error:", error);
+      toast({
+        title: "Simple Test Error ❌",
+        description: String(error),
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const sendTestSMS = async () => {
     try {
       setLoading(true);
