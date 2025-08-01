@@ -14,21 +14,9 @@ interface WhatsAppResponse {
   data?: any;
 }
 
-// SMSIndiaHub API integration using correct format
-const sendSMSViaSMSIndiaHub = async (
-  phone: string,
-  message: string
-): Promise<SMSIndiaHubResponse> => {
-  const user = process.env.SMSINDIAHUB_USER || "mrrevuri";
-  const password = process.env.SMSINDIAHUB_PASSWORD || "Urmilaoct9@1";
-  const senderId = process.env.SMSINDIAHUB_SENDER_ID || "BIJAFM";
-  const baseUrl = "http://cloud.smsindiahub.in/api/mt/SendSMS";
-
-  if (!user || !password) {
-    throw new Error("SMSIndiaHub credentials not configured");
-  }
-
-  // Format phone number - ensure it starts with 91 for India
+// WhatsApp Web URL generator for farm task reminders
+const generateWhatsAppURL = (phone: string, message: string): string => {
+  // Format phone number - ensure it starts with 91 for India (without +)
   const formattedPhone = phone.startsWith("+91")
     ? phone.substring(1) // Remove + but keep 91
     : phone.startsWith("91")
@@ -37,58 +25,43 @@ const sendSMSViaSMSIndiaHub = async (
         ? "91" + phone.substring(1) // Replace 0 with 91
         : "91" + phone; // Add 91 prefix
 
-  // Build query parameters
-  const params = new URLSearchParams({
-    user: user,
-    password: password,
-    senderid: senderId,
-    channel: "Trans", // Using Trans for transactional
-    DCS: "0",
-    flashsms: "0",
-    number: formattedPhone,
-    text: message,
-    route: "1" // Route 1 for transactional
-  });
+  // Encode the message for URL
+  const encodedMessage = encodeURIComponent(message);
 
-  const apiUrl = `${baseUrl}?${params.toString()}`;
+  // Generate WhatsApp Web URL
+  const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
 
-  console.log(`Sending SMS via SMSIndiaHub to: ${formattedPhone}`);
+  console.log(`Generated WhatsApp URL for: ${formattedPhone}`);
   console.log(`Message: ${message}`);
-  console.log(`API URL: ${apiUrl.replace(password, '***')}`); // Hide password in logs
 
+  return whatsappUrl;
+};
+
+// Send WhatsApp reminder (generates URL for manual sending)
+const sendWhatsAppReminder = async (
+  phone: string,
+  message: string
+): Promise<WhatsAppResponse> => {
   try {
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "Accept": "text/plain",
-      },
-    });
-
-    console.log(`SMSIndiaHub response status: ${response.status}`);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`SMSIndiaHub API error: ${response.status} ${response.statusText}`, errorText);
-      throw new Error(`SMSIndiaHub API error: ${response.status} ${response.statusText}`);
-    }
-
-    const responseText = await response.text();
-    console.log("SMSIndiaHub response:", responseText);
-
-    // SMSIndiaHub typically returns simple text responses
-    // Success responses usually contain message IDs or "success"
-    const isSuccess = responseText.toLowerCase().includes('success') ||
-                     responseText.includes('sent') ||
-                     /^\d+$/.test(responseText.trim()); // Message ID is numeric
+    const whatsappUrl = generateWhatsAppURL(phone, message);
 
     return {
-      status: isSuccess ? "success" : "error",
-      message: responseText,
-      data: responseText
+      success: true,
+      message: "WhatsApp URL generated successfully",
+      whatsappUrl: whatsappUrl,
+      data: {
+        phone: phone,
+        formattedPhone: phone.startsWith("+91") ? phone.substring(1) : phone,
+        message: message
+      }
     };
-  } catch (fetchError) {
-    console.error("Error calling SMSIndiaHub API:", fetchError);
-    throw fetchError;
+  } catch (error) {
+    console.error("Error generating WhatsApp URL:", error);
+    return {
+      success: false,
+      message: "Failed to generate WhatsApp URL",
+      data: error instanceof Error ? error.message : "Unknown error"
+    };
   }
 };
 
