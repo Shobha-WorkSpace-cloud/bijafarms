@@ -17,6 +17,15 @@ import {
   sendTestWhatsApp,
   sendTestWhatsAppSimple
 } from "./routes/sms-reminders";
+import {
+  getTasks,
+  addTask,
+  updateTask,
+  deleteTask,
+  bulkDeleteTasks,
+  backupTasks,
+  importTasks,
+} from "./routes/tasks";
 
 export function createServer() {
   const app = express();
