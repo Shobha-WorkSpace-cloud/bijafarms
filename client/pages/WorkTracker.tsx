@@ -201,16 +201,19 @@ export default function WorkTracker() {
       status: "pending",
     });
 
+    const updatedTasks = [createdTask, ...tasks];
+    setTasks(updatedTasks);
+
     // Schedule WhatsApp reminder
     try {
       const reminderResponse = await fetch("/api/schedule-reminder", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          taskId: task.id,
-          title: task.title,
-          dueDate: task.dueDate,
-          description: task.description || task.notes,
+          taskId: createdTask.id,
+          title: createdTask.title,
+          dueDate: createdTask.dueDate,
+          description: createdTask.description || createdTask.notes,
         }),
       });
 
