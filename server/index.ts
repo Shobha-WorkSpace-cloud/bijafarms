@@ -42,6 +42,7 @@ export function createServer() {
   app.post("/api/send-sms-reminder", sendSMSReminder);
   app.post("/api/schedule-reminder", scheduleReminder);
   app.post("/api/test-sms", sendTestSMS);
+  app.post("/api/test-sms-simple", sendTestSMSSimple);
 
   return app;
 }
