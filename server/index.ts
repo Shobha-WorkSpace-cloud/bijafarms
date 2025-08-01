@@ -58,5 +58,14 @@ export function createServer() {
   app.post("/api/test-whatsapp", sendTestWhatsApp);
   app.post("/api/test-whatsapp-simple", sendTestWhatsAppSimple);
 
+  // Task management routes
+  app.get("/api/tasks", getTasks);
+  app.post("/api/tasks", addTask);
+  app.put("/api/tasks/:id", updateTask);
+  app.delete("/api/tasks/:id", deleteTask);
+  app.post("/api/tasks/bulk-delete", bulkDeleteTasks);
+  app.get("/api/tasks/backup", backupTasks);
+  app.post("/api/tasks/import", importTasks);
+
   return app;
 }
