@@ -43,11 +43,11 @@ export function createServer() {
   app.post("/api/expenses/bulk-delete", bulkDeleteExpenses);
   app.get("/api/expenses/backup", backupExpenses);
 
-  // SMS reminder routes
-  app.post("/api/send-sms-reminder", sendSMSReminder);
+  // WhatsApp reminder routes
+  app.post("/api/send-whatsapp-reminder", sendWhatsAppReminderEndpoint);
   app.post("/api/schedule-reminder", scheduleReminder);
-  app.post("/api/test-sms", sendTestSMS);
-  app.post("/api/test-sms-simple", sendTestSMSSimple);
+  app.post("/api/test-whatsapp", sendTestWhatsApp);
+  app.post("/api/test-whatsapp-simple", sendTestWhatsAppSimple);
 
   return app;
 }
