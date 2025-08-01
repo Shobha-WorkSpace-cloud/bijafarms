@@ -47,20 +47,33 @@ const sendSMSViaSMSIndiaHub = async (
 
   console.log(`Sending SMS via SMSIndiaHub to: ${formattedPhone}`);
   console.log(`Message: ${message}`);
+  console.log(`Request body:`, requestBody);
 
-  const response = await fetch(apiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(requestBody),
-  });
+  try {
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
 
-  if (!response.ok) {
-    throw new Error(`SMSIndiaHub API error: ${response.status} ${response.statusText}`);
+    console.log(`SMSIndiaHub response status: ${response.status}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`SMSIndiaHub API error: ${response.status} ${response.statusText}`, errorText);
+      throw new Error(`SMSIndiaHub API error: ${response.status} ${response.statusText}`);
+    }
+
+    const responseData = await response.json();
+    console.log("SMSIndiaHub response:", responseData);
+    return responseData;
+  } catch (fetchError) {
+    console.error("Error calling SMSIndiaHub API:", fetchError);
+    throw fetchError;
   }
-
-  return await response.json();
 };
 
 export const sendSMSReminder: RequestHandler = async (req, res) => {
