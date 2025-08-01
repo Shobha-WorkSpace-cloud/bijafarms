@@ -882,6 +882,25 @@ export default function WorkTracker() {
                           </div>
                         </div>
                         <div className="flex flex-col gap-2 ml-4">
+                          <div className="flex gap-2 mb-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditTask(task)}
+                              className="text-blue-600 hover:text-blue-700"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDeleteTask(task.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+
                           {task.status === "pending" && (
                             <Button
                               size="sm"
