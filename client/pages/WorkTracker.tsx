@@ -233,7 +233,7 @@ export default function WorkTracker() {
     setTasks(updatedTasks);
     localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
 
-    // Schedule SMS reminder via SMSIndiaHub
+    // Schedule WhatsApp reminder
     try {
       const reminderResponse = await fetch("/api/schedule-reminder", {
         method: "POST",
@@ -249,24 +249,33 @@ export default function WorkTracker() {
       const reminderResult = await reminderResponse.json();
 
       if (reminderResult.success) {
-        console.log("SMS reminder scheduled successfully:", reminderResult);
+        console.log("WhatsApp reminder scheduled successfully:", reminderResult);
         toast({
-          title: "Success",
-          description: `Task added successfully. SMS reminder scheduled for +919985442209`,
+          title: "Success ✅",
+          description: `Task added successfully. WhatsApp reminder scheduled for +919985442209`,
         });
+
+        // If immediate reminder was generated, optionally open WhatsApp
+        if (reminderResult.whatsappUrl && reminderResult.scheduledFor === "immediate") {
+          setTimeout(() => {
+            if (confirm("This task is due soon! Open WhatsApp to send reminder now?")) {
+              window.open(reminderResult.whatsappUrl, '_blank');
+            }
+          }, 1000);
+        }
       } else {
-        console.error("Failed to schedule SMS reminder:", reminderResult);
+        console.error("Failed to schedule WhatsApp reminder:", reminderResult);
         toast({
           title: "Task Added",
-          description: "Task created but SMS reminder scheduling failed",
+          description: "Task created but WhatsApp reminder scheduling failed",
           variant: "destructive",
         });
       }
     } catch (error) {
-      console.error("Error scheduling SMS reminder:", error);
+      console.error("Error scheduling WhatsApp reminder:", error);
       toast({
         title: "Task Added",
-        description: "Task created but SMS reminder scheduling failed",
+        description: "Task created but WhatsApp reminder scheduling failed",
         variant: "destructive",
       });
     }
