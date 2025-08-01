@@ -190,26 +190,26 @@ export const scheduleReminder: RequestHandler = async (req, res) => {
     const now = new Date();
     const timeUntilReminder = reminderDate.getTime() - now.getTime();
 
-    // If reminder date is in the past or today, send immediately
+    // If reminder date is in the past or today, generate immediate WhatsApp URL
     if (timeUntilReminder <= 0) {
-      const message = `URGENT: Farm task "${title}" is due ${dueDate === now.toISOString().split("T")[0] ? "TODAY" : "OVERDUE"}! Please complete: ${description}`;
+      const message = `🚨 URGENT: Farm task "${title}" is due ${dueDate === now.toISOString().split("T")[0] ? "TODAY" : "OVERDUE"}! Please complete: ${description}`;
 
-      // Send immediate SMS via SMSIndiaHub
       try {
-        const smsResponse = await sendSMSViaSMSIndiaHub("+919985442209", message);
+        const whatsappResponse = await sendWhatsAppReminder("+919985442209", message);
 
         return res.json({
           success: true,
-          message: "Immediate reminder sent via SMSIndiaHub (task is due soon)",
+          message: "Immediate reminder WhatsApp URL generated (task is due soon)",
           scheduledFor: "immediate",
-          provider: "SMSIndiaHub",
-          smsStatus: smsResponse.status,
+          provider: "WhatsApp",
+          whatsappUrl: whatsappResponse.whatsappUrl,
+          whatsappStatus: whatsappResponse.success ? "generated" : "failed",
         });
       } catch (error) {
-        console.error("Failed to send immediate SMS:", error);
+        console.error("Failed to generate immediate WhatsApp URL:", error);
         return res.status(500).json({
           success: false,
-          error: "Failed to send immediate SMS reminder",
+          error: "Failed to generate immediate WhatsApp reminder",
           details: error instanceof Error ? error.message : "Unknown error",
         });
       }
@@ -217,13 +217,14 @@ export const scheduleReminder: RequestHandler = async (req, res) => {
 
     // Schedule reminder for 1 day before
     setTimeout(async () => {
-      const message = `Reminder: Farm task "${title}" is due tomorrow (${dueDate}). Description: ${description}. Please prepare accordingly.`;
+      const message = `⏰ Reminder: Farm task "${title}" is due tomorrow (${dueDate}). Description: ${description}. Please prepare accordingly.`;
 
       try {
-        await sendSMSViaSMSIndiaHub("+919985442209", message);
-        console.log(`SMS reminder sent via SMSIndiaHub for task: ${title}`);
+        const whatsappResponse = await sendWhatsAppReminder("+919985442209", message);
+        console.log(`WhatsApp reminder URL generated for task: ${title}`);
+        console.log(`WhatsApp URL: ${whatsappResponse.whatsappUrl}`);
       } catch (error) {
-        console.error(`Failed to send SMS reminder for task ${title}:`, error);
+        console.error(`Failed to generate WhatsApp reminder for task ${title}:`, error);
       }
     }, timeUntilReminder);
 
