@@ -116,45 +116,38 @@ export const scheduleReminder: RequestHandler = async (req, res) => {
 
     // If reminder date is in the past or today, send immediately
     if (timeUntilReminder <= 0) {
-      const message = `🚨 URGENT: Farm task "${title}" is due ${dueDate === now.toISOString().split("T")[0] ? "TODAY" : "OVERDUE"}! Please complete: ${description}`;
+      const message = `URGENT: Farm task "${title}" is due ${dueDate === now.toISOString().split("T")[0] ? "TODAY" : "OVERDUE"}! Please complete: ${description}`;
 
-      // Send immediate SMS
-      const smsResponse = await fetch("/api/send-sms-reminder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: "+919985442209",
-          message,
-          taskTitle: title,
-          dueDate,
-        }),
-      });
+      // Send immediate SMS via SMSIndiaHub
+      try {
+        const smsResponse = await sendSMSViaSMSIndiaHub("+919985442209", message);
 
-      return res.json({
-        success: true,
-        message: "Immediate reminder sent (task is due soon)",
-        scheduledFor: "immediate",
-      });
+        return res.json({
+          success: true,
+          message: "Immediate reminder sent via SMSIndiaHub (task is due soon)",
+          scheduledFor: "immediate",
+          provider: "SMSIndiaHub",
+          smsStatus: smsResponse.status,
+        });
+      } catch (error) {
+        console.error("Failed to send immediate SMS:", error);
+        return res.status(500).json({
+          success: false,
+          error: "Failed to send immediate SMS reminder",
+          details: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
     }
 
     // Schedule reminder for 1 day before
     setTimeout(async () => {
-      const message = `⏰ Reminder: Farm task "${title}" is due tomorrow (${dueDate}). Description: ${description}. Please prepare accordingly.`;
+      const message = `Reminder: Farm task "${title}" is due tomorrow (${dueDate}). Description: ${description}. Please prepare accordingly.`;
 
       try {
-        await fetch("/api/send-sms-reminder", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone: "+919985442209",
-            message,
-            taskTitle: title,
-            dueDate,
-          }),
-        });
-        console.log(`Reminder sent for task: ${title}`);
+        await sendSMSViaSMSIndiaHub("+919985442209", message);
+        console.log(`SMS reminder sent via SMSIndiaHub for task: ${title}`);
       } catch (error) {
-        console.error(`Failed to send reminder for task ${title}:`, error);
+        console.error(`Failed to send SMS reminder for task ${title}:`, error);
       }
     }, timeUntilReminder);
 
