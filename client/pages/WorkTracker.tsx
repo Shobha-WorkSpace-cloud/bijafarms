@@ -346,29 +346,86 @@ export default function WorkTracker() {
     }
   };
 
-  const updateTaskStatus = (taskId: string, newStatus: Task["status"]) => {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        const updatedTask = {
-          ...task,
-          status: newStatus,
-          completedAt:
-            newStatus === "completed"
-              ? new Date().toISOString().split("T")[0]
-              : undefined,
-        };
-        return updatedTask;
+  const updateTaskStatus = async (taskId: string, newStatus: Task["status"]) => {
+    try {
+      const updateData: Partial<Task> = { status: newStatus };
+      if (newStatus === "completed") {
+        updateData.completedAt = new Date().toISOString().split("T")[0];
       }
-      return task;
-    });
 
-    setTasks(updatedTasks);
-    localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
+      const updatedTask = await taskApi.updateTask(taskId, updateData);
+      const updatedTasks = tasks.map((task) =>
+        task.id === taskId ? updatedTask : task
+      );
 
-    toast({
-      title: "Success",
-      description: `Task marked as ${newStatus}`,
-    });
+      setTasks(updatedTasks);
+
+      toast({
+        title: "Success",
+        description: `Task marked as ${newStatus}`,
+      });
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update task status",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateTask = async (updatedTask: Task) => {
+    try {
+      const updated = await taskApi.updateTask(updatedTask.id, updatedTask);
+      const updatedTasks = tasks.map((task) =>
+        task.id === updatedTask.id ? updated : task
+      );
+
+      setTasks(updatedTasks);
+      setIsEditDialogOpen(false);
+      setEditingTask(null);
+
+      toast({
+        title: "Success",
+        description: "Task updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating task:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update task",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm("Are you sure you want to delete this task?")) {
+      return;
+    }
+
+    try {
+      await taskApi.deleteTask(taskId);
+      const updatedTasks = tasks.filter((task) => task.id !== taskId);
+      setTasks(updatedTasks);
+
+      toast({
+        title: "Success",
+        description: "Task deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete task",
+        variant: "destructive",
+      });
+    }
   };
 
   const getTaskIcon = (taskType: Task["taskType"]) => {
