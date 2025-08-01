@@ -287,10 +287,20 @@ export default function WorkTracker() {
   const sendTestSMS = async () => {
     try {
       setLoading(true);
+
       const response = await fetch("/api/test-sms", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}), // Empty body for test
       });
+
+      // Check if response is ok before trying to parse JSON
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
 
       const result = await response.json();
 
@@ -299,18 +309,21 @@ export default function WorkTracker() {
           title: "Test SMS Sent! ✅",
           description: `SMS sent successfully to +919985442209 via SMSIndiaHub`,
         });
+        console.log("Test SMS Result:", result);
       } else {
         toast({
           title: "Test SMS Failed ❌",
-          description: result.details || "Failed to send test SMS",
+          description: result.details || result.error || "Failed to send test SMS",
           variant: "destructive",
         });
+        console.error("SMS API Error:", result);
       }
     } catch (error) {
       console.error("Test SMS error:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown network error";
       toast({
         title: "Test SMS Error ❌",
-        description: "Network error while sending test SMS",
+        description: `Error: ${errorMessage}`,
         variant: "destructive",
       });
     } finally {
