@@ -220,17 +220,27 @@ export default function WorkTracker() {
       const reminderResult = await reminderResponse.json();
 
       if (reminderResult.success) {
-        console.log("WhatsApp reminder scheduled successfully:", reminderResult);
+        console.log(
+          "WhatsApp reminder scheduled successfully:",
+          reminderResult,
+        );
         toast({
           title: "Success ✅",
           description: `Task added successfully. WhatsApp reminder scheduled for +919985442209`,
         });
 
         // If immediate reminder was generated, optionally open WhatsApp
-        if (reminderResult.whatsappUrl && reminderResult.scheduledFor === "immediate") {
+        if (
+          reminderResult.whatsappUrl &&
+          reminderResult.scheduledFor === "immediate"
+        ) {
           setTimeout(() => {
-            if (confirm("This task is due soon! Open WhatsApp to send reminder now?")) {
-              window.open(reminderResult.whatsappUrl, '_blank');
+            if (
+              confirm(
+                "This task is due soon! Open WhatsApp to send reminder now?",
+              )
+            ) {
+              window.open(reminderResult.whatsappUrl, "_blank");
             }
           }, 1000);
         }
@@ -264,9 +274,10 @@ export default function WorkTracker() {
     setIsAddDialogOpen(false);
   };
 
-
-
-  const updateTaskStatus = async (taskId: string, newStatus: Task["status"]) => {
+  const updateTaskStatus = async (
+    taskId: string,
+    newStatus: Task["status"],
+  ) => {
     try {
       const updateData: Partial<Task> = { status: newStatus };
       if (newStatus === "completed") {
@@ -275,7 +286,7 @@ export default function WorkTracker() {
 
       const updatedTask = await taskApi.updateTask(taskId, updateData);
       const updatedTasks = tasks.map((task) =>
-        task.id === taskId ? updatedTask : task
+        task.id === taskId ? updatedTask : task,
       );
 
       setTasks(updatedTasks);
@@ -303,7 +314,7 @@ export default function WorkTracker() {
     try {
       const updated = await taskApi.updateTask(updatedTask.id, updatedTask);
       const updatedTasks = tasks.map((task) =>
-        task.id === updatedTask.id ? updated : task
+        task.id === updatedTask.id ? updated : task,
       );
 
       setTasks(updatedTasks);
@@ -541,12 +552,12 @@ export default function WorkTracker() {
               </div>
 
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="bg-green-600 hover:bg-green-700">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Task
-                    </Button>
-                  </DialogTrigger>
+                <DialogTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Task
+                  </Button>
+                </DialogTrigger>
                 <DialogContent className="max-w-md">
                   <DialogHeader>
                     <DialogTitle>Add New Task</DialogTitle>
@@ -724,7 +735,7 @@ export default function WorkTracker() {
                     </div>
                   </div>
                 </DialogContent>
-                </Dialog>
+              </Dialog>
             </div>
           </CardContent>
         </Card>
@@ -1121,7 +1132,10 @@ export default function WorkTracker() {
                       type="date"
                       value={editingTask.dueDate}
                       onChange={(e) =>
-                        setEditingTask({ ...editingTask, dueDate: e.target.value })
+                        setEditingTask({
+                          ...editingTask,
+                          dueDate: e.target.value,
+                        })
                       }
                     />
                   </div>
@@ -1132,7 +1146,10 @@ export default function WorkTracker() {
                     id="edit-assignedTo"
                     value={editingTask.assignedTo}
                     onChange={(e) =>
-                      setEditingTask({ ...editingTask, assignedTo: e.target.value })
+                      setEditingTask({
+                        ...editingTask,
+                        assignedTo: e.target.value,
+                      })
                     }
                     placeholder="Person responsible"
                   />

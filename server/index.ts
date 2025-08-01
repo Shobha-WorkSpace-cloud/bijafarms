@@ -15,7 +15,7 @@ import {
   sendWhatsAppReminderEndpoint,
   scheduleReminder,
   sendTestWhatsApp,
-  sendTestWhatsAppSimple
+  sendTestWhatsAppSimple,
 } from "./routes/sms-reminders";
 import {
   getTasks,

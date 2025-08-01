@@ -24,7 +24,9 @@ export const fetchTasks = async (): Promise<Task[]> => {
 };
 
 // Create a new task
-export const createTask = async (task: Omit<Task, "id" | "createdAt">): Promise<Task> => {
+export const createTask = async (
+  task: Omit<Task, "id" | "createdAt">,
+): Promise<Task> => {
   const response = await fetch("/api/tasks", {
     method: "POST",
     headers: {
@@ -40,7 +42,10 @@ export const createTask = async (task: Omit<Task, "id" | "createdAt">): Promise<
 };
 
 // Update an existing task
-export const updateTask = async (id: string, task: Partial<Task>): Promise<Task> => {
+export const updateTask = async (
+  id: string,
+  task: Partial<Task>,
+): Promise<Task> => {
   const response = await fetch(`/api/tasks/${id}`, {
     method: "PUT",
     headers: {

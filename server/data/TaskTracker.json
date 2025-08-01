@@ -6,12 +6,13 @@
     "category": "animal-health",
     "taskType": "checkup",
     "priority": "medium",
-    "status": "pending",
-    "dueDate": "2024-01-15",
+    "status": "completed",
+    "dueDate": "2025-08-01",
     "assignedTo": "Dr. Sharma",
     "notes": "Check weight, temperature, and general condition",
     "createdAt": "2024-01-01",
-    "reminderSent": false
+    "reminderSent": false,
+    "completedAt": "2025-08-01"
   },
   {
     "id": "2",
@@ -24,20 +25,6 @@
     "dueDate": "2024-01-10",
     "assignedTo": "Farm Team",
     "notes": "Soil preparation completed, seeds ready",
-    "createdAt": "2024-01-01",
-    "reminderSent": false
-  },
-  {
-    "id": "3",
-    "title": "Irrigation System Maintenance",
-    "description": "Check and clean irrigation pipes and sprinklers",
-    "category": "irrigation",
-    "taskType": "equipment-maintenance",
-    "priority": "medium",
-    "status": "pending",
-    "dueDate": "2024-01-12",
-    "assignedTo": "Maintenance Team",
-    "notes": "Focus on section B pipes that showed low pressure",
     "createdAt": "2024-01-01",
     "reminderSent": false
   }

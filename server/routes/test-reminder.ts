@@ -32,25 +32,27 @@ const writeTasks = (tasks: any[]) => {
 export const createTestReminderTask: RequestHandler = (req, res) => {
   try {
     console.log("=== Creating Test Reminder Task ===");
-    
+
     // Calculate tomorrow's date
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowDate = tomorrow.toISOString().split("T")[0];
-    
+
     const testTask = {
       id: `test-${Date.now()}`,
       title: "🧪 TEST REMINDER - Goat Health Check",
-      description: "This is a test task to validate WhatsApp reminder functionality. It should trigger a reminder today for tomorrow's due date.",
+      description:
+        "This is a test task to validate WhatsApp reminder functionality. It should trigger a reminder today for tomorrow's due date.",
       category: "animal-health",
       taskType: "checkup",
       priority: "high",
       status: "pending",
       dueDate: tomorrowDate,
       assignedTo: "Test Farmer",
-      notes: "TEST TASK: This validates that reminders are sent 1 day before due date.",
+      notes:
+        "TEST TASK: This validates that reminders are sent 1 day before due date.",
       createdAt: new Date().toISOString().split("T")[0],
-      reminderSent: false
+      reminderSent: false,
     };
 
     const tasks = readTasks();
@@ -67,16 +69,16 @@ export const createTestReminderTask: RequestHandler = (req, res) => {
       reminderInfo: {
         taskDueDate: tomorrowDate,
         reminderShouldTrigger: "today",
-        expectedBehavior: "WhatsApp reminder URL should be generated automatically"
-      }
+        expectedBehavior:
+          "WhatsApp reminder URL should be generated automatically",
+      },
     });
-
   } catch (error) {
     console.error("Error creating test reminder task:", error);
     res.status(500).json({
       success: false,
       error: "Failed to create test reminder task",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };
@@ -85,18 +87,21 @@ export const createTestReminderTask: RequestHandler = (req, res) => {
 export const checkReminderValidation: RequestHandler = (req, res) => {
   try {
     console.log("=== Checking Reminder Validation ===");
-    
+
     const tasks = readTasks();
-    const testTasks = tasks.filter((task: any) => task.id.startsWith('test-'));
-    
+    const testTasks = tasks.filter((task: any) => task.id.startsWith("test-"));
+
     const today = new Date().toISOString().split("T")[0];
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const tomorrowDate = tomorrow.toISOString().split("T")[0];
-    
+
     const validationResults = testTasks.map((task: any) => {
-      const daysDifference = Math.ceil((new Date(task.dueDate).getTime() - new Date(today).getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysDifference = Math.ceil(
+        (new Date(task.dueDate).getTime() - new Date(today).getTime()) /
+          (1000 * 60 * 60 * 24),
+      );
+
       return {
         taskId: task.id,
         title: task.title,
@@ -104,7 +109,7 @@ export const checkReminderValidation: RequestHandler = (req, res) => {
         daysDifference: daysDifference,
         shouldTriggerReminder: daysDifference === 1,
         reminderSent: task.reminderSent || false,
-        status: task.status
+        status: task.status,
       };
     });
 
@@ -116,17 +121,18 @@ export const checkReminderValidation: RequestHandler = (req, res) => {
       testTasksFound: testTasks.length,
       validationResults: validationResults,
       summary: {
-        tasksNeedingReminders: validationResults.filter(r => r.shouldTriggerReminder && !r.reminderSent).length,
-        remindersSent: validationResults.filter(r => r.reminderSent).length
-      }
+        tasksNeedingReminders: validationResults.filter(
+          (r) => r.shouldTriggerReminder && !r.reminderSent,
+        ).length,
+        remindersSent: validationResults.filter((r) => r.reminderSent).length,
+      },
     });
-
   } catch (error) {
     console.error("Error checking reminder validation:", error);
     res.status(500).json({
       success: false,
       error: "Failed to check reminder validation",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };
@@ -135,11 +141,13 @@ export const checkReminderValidation: RequestHandler = (req, res) => {
 export const cleanupTestTasks: RequestHandler = (req, res) => {
   try {
     console.log("=== Cleaning Up Test Tasks ===");
-    
+
     const tasks = readTasks();
-    const nonTestTasks = tasks.filter((task: any) => !task.id.startsWith('test-'));
+    const nonTestTasks = tasks.filter(
+      (task: any) => !task.id.startsWith("test-"),
+    );
     const deletedCount = tasks.length - nonTestTasks.length;
-    
+
     writeTasks(nonTestTasks);
 
     console.log(`🗑️ Removed ${deletedCount} test tasks`);
@@ -148,15 +156,14 @@ export const cleanupTestTasks: RequestHandler = (req, res) => {
       success: true,
       message: "Test tasks cleaned up successfully",
       deletedCount: deletedCount,
-      remainingTasks: nonTestTasks.length
+      remainingTasks: nonTestTasks.length,
     });
-
   } catch (error) {
     console.error("Error cleaning up test tasks:", error);
     res.status(500).json({
       success: false,
       error: "Failed to cleanup test tasks",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };

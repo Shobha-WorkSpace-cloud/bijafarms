@@ -78,7 +78,8 @@ export const addTask: RequestHandler = (req, res) => {
 
     // Set default values
     newTask.status = newTask.status || "pending";
-    newTask.createdAt = newTask.createdAt || new Date().toISOString().split("T")[0];
+    newTask.createdAt =
+      newTask.createdAt || new Date().toISOString().split("T")[0];
     newTask.reminderSent = false;
 
     const tasks = readTasks();
@@ -106,7 +107,10 @@ export const updateTask: RequestHandler = (req, res) => {
     }
 
     // If status is being changed to completed, set completedAt
-    if (updatedTask.status === "completed" && tasks[index].status !== "completed") {
+    if (
+      updatedTask.status === "completed" &&
+      tasks[index].status !== "completed"
+    ) {
       updatedTask.completedAt = new Date().toISOString().split("T")[0];
     }
 
@@ -135,9 +139,9 @@ export const deleteTask: RequestHandler = (req, res) => {
     const deletedTask = tasks.splice(index, 1)[0];
     writeTasks(tasks);
 
-    res.json({ 
-      message: "Task deleted successfully", 
-      deletedTask: deletedTask 
+    res.json({
+      message: "Task deleted successfully",
+      deletedTask: deletedTask,
     });
   } catch (error) {
     console.error("Error deleting task:", error);
@@ -155,9 +159,7 @@ export const bulkDeleteTasks: RequestHandler = (req, res) => {
     }
 
     const tasks = readTasks();
-    const filteredTasks = tasks.filter(
-      (task) => !ids.includes(task.id),
-    );
+    const filteredTasks = tasks.filter((task) => !ids.includes(task.id));
     writeTasks(filteredTasks);
 
     res.json({

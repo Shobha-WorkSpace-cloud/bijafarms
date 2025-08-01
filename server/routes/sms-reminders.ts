@@ -40,7 +40,7 @@ const generateWhatsAppURL = (phone: string, message: string): string => {
 // Send WhatsApp reminder (generates URL for manual sending)
 const sendWhatsAppReminder = async (
   phone: string,
-  message: string
+  message: string,
 ): Promise<WhatsAppResponse> => {
   try {
     const whatsappUrl = generateWhatsAppURL(phone, message);
@@ -52,22 +52,26 @@ const sendWhatsAppReminder = async (
       data: {
         phone: phone,
         formattedPhone: phone.startsWith("+91") ? phone.substring(1) : phone,
-        message: message
-      }
+        message: message,
+      },
     };
   } catch (error) {
     console.error("Error generating WhatsApp URL:", error);
     return {
       success: false,
       message: "Failed to generate WhatsApp URL",
-      data: error instanceof Error ? error.message : "Unknown error"
+      data: error instanceof Error ? error.message : "Unknown error",
     };
   }
 };
 
-export const sendWhatsAppReminderEndpoint: RequestHandler = async (req, res) => {
+export const sendWhatsAppReminderEndpoint: RequestHandler = async (
+  req,
+  res,
+) => {
   try {
-    const { phone, message, taskTitle, dueDate }: WhatsAppReminderRequest = req.body;
+    const { phone, message, taskTitle, dueDate }: WhatsAppReminderRequest =
+      req.body;
 
     console.log(
       `WhatsApp Reminder - Phone: ${phone}, Task: ${taskTitle}, Due: ${dueDate}`,
@@ -110,7 +114,7 @@ export const sendWhatsAppReminderEndpoint: RequestHandler = async (req, res) => 
 export const sendTestWhatsAppSimple: RequestHandler = async (req, res) => {
   console.log("=== Simple Test WhatsApp Request ===");
 
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader("Content-Type", "application/json");
 
   try {
     const testMessage = `🧪 TEST: Bija Farms WhatsApp working! ${new Date().toLocaleTimeString()}`;
@@ -122,15 +126,14 @@ export const sendTestWhatsAppSimple: RequestHandler = async (req, res) => {
       phone: "+919985442209",
       testMessage: testMessage,
       generatedAt: new Date().toISOString(),
-      provider: "WhatsApp"
+      provider: "WhatsApp",
     });
-
   } catch (error) {
     console.error("Simple test error:", error);
     res.status(500).json({
       success: false,
       error: "Test failed",
-      details: String(error)
+      details: String(error),
     });
   }
 };
@@ -139,12 +142,15 @@ export const sendTestWhatsApp: RequestHandler = async (req, res) => {
   try {
     console.log("=== Test WhatsApp Request Started ===");
 
-    const testMessage = `🧪 TEST MESSAGE from Bija Farms: WhatsApp integration is working! Sent at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
+    const testMessage = `🧪 TEST MESSAGE from Bija Farms: WhatsApp integration is working! Sent at ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}`;
 
     console.log("Generating test WhatsApp URL for +919985442209...");
     console.log("Test message:", testMessage);
 
-    const whatsappResponse = await sendWhatsAppReminder("+919985442209", testMessage);
+    const whatsappResponse = await sendWhatsAppReminder(
+      "+919985442209",
+      testMessage,
+    );
     console.log("WhatsApp Response received:", whatsappResponse);
 
     if (whatsappResponse.success) {
@@ -195,11 +201,15 @@ export const scheduleReminder: RequestHandler = async (req, res) => {
       const message = `🚨 URGENT: Farm task "${title}" is due ${dueDate === now.toISOString().split("T")[0] ? "TODAY" : "OVERDUE"}! Please complete: ${description}`;
 
       try {
-        const whatsappResponse = await sendWhatsAppReminder("+919985442209", message);
+        const whatsappResponse = await sendWhatsAppReminder(
+          "+919985442209",
+          message,
+        );
 
         return res.json({
           success: true,
-          message: "Immediate reminder WhatsApp URL generated (task is due soon)",
+          message:
+            "Immediate reminder WhatsApp URL generated (task is due soon)",
           scheduledFor: "immediate",
           provider: "WhatsApp",
           whatsappUrl: whatsappResponse.whatsappUrl,
@@ -220,11 +230,17 @@ export const scheduleReminder: RequestHandler = async (req, res) => {
       const message = `⏰ Reminder: Farm task "${title}" is due tomorrow (${dueDate}). Description: ${description}. Please prepare accordingly.`;
 
       try {
-        const whatsappResponse = await sendWhatsAppReminder("+919985442209", message);
+        const whatsappResponse = await sendWhatsAppReminder(
+          "+919985442209",
+          message,
+        );
         console.log(`WhatsApp reminder URL generated for task: ${title}`);
         console.log(`WhatsApp URL: ${whatsappResponse.whatsappUrl}`);
       } catch (error) {
-        console.error(`Failed to generate WhatsApp reminder for task ${title}:`, error);
+        console.error(
+          `Failed to generate WhatsApp reminder for task ${title}:`,
+          error,
+        );
       }
     }, timeUntilReminder);
 
