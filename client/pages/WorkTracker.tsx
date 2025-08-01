@@ -1058,6 +1058,120 @@ export default function WorkTracker() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Edit Task Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Edit Task</DialogTitle>
+              <DialogDescription>
+                Update the task details below.
+              </DialogDescription>
+            </DialogHeader>
+            {editingTask && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-title">Title *</Label>
+                  <Input
+                    id="edit-title"
+                    value={editingTask.title}
+                    onChange={(e) =>
+                      setEditingTask({ ...editingTask, title: e.target.value })
+                    }
+                    placeholder="Task title"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Textarea
+                    id="edit-description"
+                    value={editingTask.description}
+                    onChange={(e) =>
+                      setEditingTask({
+                        ...editingTask,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Task description"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-priority">Priority</Label>
+                    <Select
+                      value={editingTask.priority}
+                      onValueChange={(value: Task["priority"]) =>
+                        setEditingTask({ ...editingTask, priority: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-dueDate">Due Date *</Label>
+                    <Input
+                      id="edit-dueDate"
+                      type="date"
+                      value={editingTask.dueDate}
+                      onChange={(e) =>
+                        setEditingTask({ ...editingTask, dueDate: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="edit-assignedTo">Assigned To *</Label>
+                  <Input
+                    id="edit-assignedTo"
+                    value={editingTask.assignedTo}
+                    onChange={(e) =>
+                      setEditingTask({ ...editingTask, assignedTo: e.target.value })
+                    }
+                    placeholder="Person responsible"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-notes">Notes</Label>
+                  <Textarea
+                    id="edit-notes"
+                    value={editingTask.notes}
+                    onChange={(e) =>
+                      setEditingTask({ ...editingTask, notes: e.target.value })
+                    }
+                    placeholder="Additional notes"
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <Button
+                    onClick={() => handleUpdateTask(editingTask)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Update Task
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditDialogOpen(false);
+                      setEditingTask(null);
+                    }}
+                    className="flex-1"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
