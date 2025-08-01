@@ -18,10 +18,14 @@ const sendSMSViaSMSIndiaHub = async (
   phone: string,
   message: string
 ): Promise<SMSIndiaHubResponse> => {
-  const user = "mrrevuri";
-  const password = "Urmilaoct9@1";
-  const senderId = "BIJAFM";
+  const user = process.env.SMSINDIAHUB_USER || "mrrevuri";
+  const password = process.env.SMSINDIAHUB_PASSWORD || "Urmilaoct9@1";
+  const senderId = process.env.SMSINDIAHUB_SENDER_ID || "BIJAFM";
   const baseUrl = "http://cloud.smsindiahub.in/api/mt/SendSMS";
+
+  if (!user || !password) {
+    throw new Error("SMSIndiaHub credentials not configured");
+  }
 
   // Format phone number - ensure it starts with 91 for India
   const formattedPhone = phone.startsWith("+91")
