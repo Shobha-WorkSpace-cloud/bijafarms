@@ -196,16 +196,10 @@ export default function WorkTracker() {
       return;
     }
 
-    const task: Task = {
-      id: Date.now().toString(),
+    const createdTask = await taskApi.createTask({
       ...newTask,
       status: "pending",
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-
-    const updatedTasks = [task, ...tasks];
-    setTasks(updatedTasks);
-    localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
+    });
 
     // Schedule WhatsApp reminder
     try {
