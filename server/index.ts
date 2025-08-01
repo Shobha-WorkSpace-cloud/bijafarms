@@ -72,5 +72,10 @@ export function createServer() {
   app.get("/api/tasks/backup", backupTasks);
   app.post("/api/tasks/import", importTasks);
 
+  // Test reminder validation routes
+  app.post("/api/test-reminder-validation", createTestReminderTask);
+  app.get("/api/test-reminder-validation", checkReminderValidation);
+  app.delete("/api/test-reminder-validation", cleanupTestTasks);
+
   return app;
 }
