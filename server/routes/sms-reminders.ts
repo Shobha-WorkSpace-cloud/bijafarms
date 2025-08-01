@@ -1,15 +1,16 @@
 import { RequestHandler } from "express";
 
-interface SMSReminderRequest {
+interface WhatsAppReminderRequest {
   phone: string;
   message: string;
   taskTitle: string;
   dueDate: string;
 }
 
-interface SMSIndiaHubResponse {
-  status: string;
+interface WhatsAppResponse {
+  success: boolean;
   message: string;
+  whatsappUrl?: string;
   data?: any;
 }
 
