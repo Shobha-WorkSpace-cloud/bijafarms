@@ -593,6 +593,17 @@ export default function WorkTracker() {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
+                  onClick={sendTestSMSSimple}
+                  disabled={loading}
+                  className="bg-green-50 hover:bg-green-100 border-green-200"
+                  size="sm"
+                >
+                  <Bell className="h-4 w-4 mr-2" />
+                  {loading ? "Testing..." : "Simple Test"}
+                </Button>
+
+                <Button
+                  variant="outline"
                   onClick={sendTestSMS}
                   disabled={loading}
                   className="bg-blue-50 hover:bg-blue-100 border-blue-200"
