@@ -211,7 +211,7 @@ export default function WorkTracker() {
     setFilteredTasks(filtered);
   }, [tasks, searchTerm, filterStatus, filterCategory]);
 
-  const addTask = () => {
+  const addTask = async () => {
     if (!newTask.title || !newTask.dueDate || !newTask.assignedTo) {
       toast({
         title: "Error",
@@ -232,6 +232,44 @@ export default function WorkTracker() {
     setTasks(updatedTasks);
     localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
 
+    // Schedule SMS reminder via SMSIndiaHub
+    try {
+      const reminderResponse = await fetch("/api/schedule-reminder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          taskId: task.id,
+          title: task.title,
+          dueDate: task.dueDate,
+          description: task.description || task.notes,
+        }),
+      });
+
+      const reminderResult = await reminderResponse.json();
+
+      if (reminderResult.success) {
+        console.log("SMS reminder scheduled successfully:", reminderResult);
+        toast({
+          title: "Success",
+          description: `Task added successfully. SMS reminder scheduled for +919985442209`,
+        });
+      } else {
+        console.error("Failed to schedule SMS reminder:", reminderResult);
+        toast({
+          title: "Task Added",
+          description: "Task created but SMS reminder scheduling failed",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error scheduling SMS reminder:", error);
+      toast({
+        title: "Task Added",
+        description: "Task created but SMS reminder scheduling failed",
+        variant: "destructive",
+      });
+    }
+
     setNewTask({
       title: "",
       description: "",
@@ -243,11 +281,6 @@ export default function WorkTracker() {
       notes: "",
     });
     setIsAddDialogOpen(false);
-
-    toast({
-      title: "Success",
-      description: "Task added successfully",
-    });
   };
 
   const updateTaskStatus = (taskId: string, newStatus: Task["status"]) => {
