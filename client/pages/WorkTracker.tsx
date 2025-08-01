@@ -586,7 +586,7 @@ export default function WorkTracker() {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
-                  onClick={sendTestSMSSimple}
+                  onClick={sendTestWhatsAppSimple}
                   disabled={loading}
                   className="bg-green-50 hover:bg-green-100 border-green-200"
                   size="sm"
@@ -597,12 +597,12 @@ export default function WorkTracker() {
 
                 <Button
                   variant="outline"
-                  onClick={sendTestSMS}
+                  onClick={sendTestWhatsApp}
                   disabled={loading}
-                  className="bg-blue-50 hover:bg-blue-100 border-blue-200"
+                  className="bg-green-500 hover:bg-green-600 text-white"
                 >
                   <Bell className="h-4 w-4 mr-2" />
-                  {loading ? "Sending..." : "Test SMS"}
+                  {loading ? "Opening..." : "Test WhatsApp"}
                 </Button>
 
                 <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
