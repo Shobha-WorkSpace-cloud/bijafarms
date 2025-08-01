@@ -7,6 +7,62 @@ interface SMSReminderRequest {
   dueDate: string;
 }
 
+interface SMSIndiaHubResponse {
+  status: string;
+  message: string;
+  data?: any;
+}
+
+// SMSIndiaHub API integration
+const sendSMSViaSMSIndiaHub = async (
+  phone: string,
+  message: string
+): Promise<SMSIndiaHubResponse> => {
+  const apiKey = process.env.SMSINDIAHUB_API_KEY;
+  const senderId = process.env.SMSINDIAHUB_SENDER_ID || "BIJAFM";
+  const apiUrl = "https://api.smsindiahub.in/json/api.php";
+
+  if (!apiKey) {
+    throw new Error("SMSIndiaHub API key not configured");
+  }
+
+  // Format phone number - ensure it starts with 91 for India
+  const formattedPhone = phone.startsWith("+91")
+    ? phone.substring(3)
+    : phone.startsWith("91")
+      ? phone.substring(2)
+      : phone.startsWith("0")
+        ? phone.substring(1)
+        : phone;
+
+  const requestBody = {
+    key: apiKey,
+    campaign: "1", // 1 for transactional, 0 for promotional
+    routeid: "1", // Route ID (1 for transactional route)
+    type: "text",
+    contacts: formattedPhone,
+    senderid: senderId,
+    msg: message,
+  };
+
+  console.log(`Sending SMS via SMSIndiaHub to: ${formattedPhone}`);
+  console.log(`Message: ${message}`);
+
+  const response = await fetch(apiUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    throw new Error(`SMSIndiaHub API error: ${response.status} ${response.statusText}`);
+  }
+
+  return await response.json();
+};
+
 export const sendSMSReminder: RequestHandler = async (req, res) => {
   try {
     const { phone, message, taskTitle, dueDate }: SMSReminderRequest = req.body;
@@ -14,42 +70,34 @@ export const sendSMSReminder: RequestHandler = async (req, res) => {
     console.log(
       `SMS Reminder - Phone: ${phone}, Task: ${taskTitle}, Due: ${dueDate}`,
     );
-    console.log(`Message: ${message}`);
 
-    // In a real implementation, you would integrate with an SMS service like:
-    // - Twilio
-    // - AWS SNS
-    // - TextLocal (for India)
-    // - MSG91 (for India)
+    // Send SMS via SMSIndiaHub
+    const smsResponse = await sendSMSViaSMSIndiaHub(phone, message);
 
-    // For demo purposes, we'll simulate the SMS sending
-    // Here's an example of how you might integrate with Twilio:
-    /*
-    const twilio = require('twilio');
-    const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-    
-    await client.messages.create({
-      body: message,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      to: phone
-    });
-    */
-
-    // For now, we'll just log it and return success
-    // In production, you would actually send the SMS here
-
-    res.json({
-      success: true,
-      message: "SMS reminder sent successfully",
-      phone: phone,
-      taskTitle: taskTitle,
-      sentAt: new Date().toISOString(),
-    });
+    if (smsResponse.status === "success" || smsResponse.status === "Success") {
+      res.json({
+        success: true,
+        message: "SMS reminder sent successfully via SMSIndiaHub",
+        phone: phone,
+        taskTitle: taskTitle,
+        sentAt: new Date().toISOString(),
+        provider: "SMSIndiaHub",
+        providerResponse: smsResponse,
+      });
+    } else {
+      console.error("SMSIndiaHub error:", smsResponse);
+      res.status(400).json({
+        success: false,
+        error: "Failed to send SMS via SMSIndiaHub",
+        details: smsResponse.message || "Unknown error",
+      });
+    }
   } catch (error) {
     console.error("Error sending SMS reminder:", error);
     res.status(500).json({
       success: false,
       error: "Failed to send SMS reminder",
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };
