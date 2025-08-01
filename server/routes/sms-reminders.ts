@@ -13,50 +13,50 @@ interface SMSIndiaHubResponse {
   data?: any;
 }
 
-// SMSIndiaHub API integration
+// SMSIndiaHub API integration using correct format
 const sendSMSViaSMSIndiaHub = async (
   phone: string,
   message: string
 ): Promise<SMSIndiaHubResponse> => {
-  const apiKey = process.env.SMSINDIAHUB_API_KEY;
-  const senderId = process.env.SMSINDIAHUB_SENDER_ID || "BIJAFM";
-  const apiUrl = "https://api.smsindiahub.in/json/api.php";
-
-  if (!apiKey) {
-    throw new Error("SMSIndiaHub API key not configured");
-  }
+  const user = "mrrevuri";
+  const password = "Urmilaoct9@1";
+  const senderId = "BIJAFM";
+  const baseUrl = "http://cloud.smsindiahub.in/api/mt/SendSMS";
 
   // Format phone number - ensure it starts with 91 for India
   const formattedPhone = phone.startsWith("+91")
-    ? phone.substring(3)
+    ? phone.substring(1) // Remove + but keep 91
     : phone.startsWith("91")
-      ? phone.substring(2)
+      ? phone // Keep as is
       : phone.startsWith("0")
-        ? phone.substring(1)
-        : phone;
+        ? "91" + phone.substring(1) // Replace 0 with 91
+        : "91" + phone; // Add 91 prefix
 
-  const requestBody = {
-    key: apiKey,
-    campaign: "1", // 1 for transactional, 0 for promotional
-    routeid: "1", // Route ID (1 for transactional route)
-    type: "text",
-    contacts: formattedPhone,
+  // Build query parameters
+  const params = new URLSearchParams({
+    user: user,
+    password: password,
     senderid: senderId,
-    msg: message,
-  };
+    channel: "Trans", // Using Trans for transactional
+    DCS: "0",
+    flashsms: "0",
+    number: formattedPhone,
+    text: message,
+    route: "1" // Route 1 for transactional
+  });
+
+  const apiUrl = `${baseUrl}?${params.toString()}`;
 
   console.log(`Sending SMS via SMSIndiaHub to: ${formattedPhone}`);
   console.log(`Message: ${message}`);
-  console.log(`Request body:`, requestBody);
+  console.log(`API URL: ${apiUrl.replace(password, '***')}`); // Hide password in logs
 
   try {
     const response = await fetch(apiUrl, {
-      method: "POST",
+      method: "GET",
       headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
+        "Accept": "text/plain",
       },
-      body: JSON.stringify(requestBody),
     });
 
     console.log(`SMSIndiaHub response status: ${response.status}`);
@@ -67,9 +67,20 @@ const sendSMSViaSMSIndiaHub = async (
       throw new Error(`SMSIndiaHub API error: ${response.status} ${response.statusText}`);
     }
 
-    const responseData = await response.json();
-    console.log("SMSIndiaHub response:", responseData);
-    return responseData;
+    const responseText = await response.text();
+    console.log("SMSIndiaHub response:", responseText);
+
+    // SMSIndiaHub typically returns simple text responses
+    // Success responses usually contain message IDs or "success"
+    const isSuccess = responseText.toLowerCase().includes('success') ||
+                     responseText.includes('sent') ||
+                     /^\d+$/.test(responseText.trim()); // Message ID is numeric
+
+    return {
+      status: isSuccess ? "success" : "error",
+      message: responseText,
+      data: responseText
+    };
   } catch (fetchError) {
     console.error("Error calling SMSIndiaHub API:", fetchError);
     throw fetchError;
