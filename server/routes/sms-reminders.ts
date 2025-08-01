@@ -102,6 +102,44 @@ export const sendSMSReminder: RequestHandler = async (req, res) => {
   }
 };
 
+// Test SMS endpoint to validate SMSIndiaHub integration
+export const sendTestSMS: RequestHandler = async (req, res) => {
+  try {
+    const testMessage = `🧪 TEST MESSAGE from Bija Farms: SMSIndiaHub integration is working! Sent at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
+
+    console.log("Sending test SMS to +919985442209...");
+
+    const smsResponse = await sendSMSViaSMSIndiaHub("+919985442209", testMessage);
+
+    if (smsResponse.status === "success" || smsResponse.status === "Success") {
+      res.json({
+        success: true,
+        message: "Test SMS sent successfully via SMSIndiaHub",
+        phone: "+919985442209",
+        testMessage: testMessage,
+        sentAt: new Date().toISOString(),
+        provider: "SMSIndiaHub",
+        providerResponse: smsResponse,
+      });
+    } else {
+      console.error("SMSIndiaHub test error:", smsResponse);
+      res.status(400).json({
+        success: false,
+        error: "Failed to send test SMS via SMSIndiaHub",
+        details: smsResponse.message || "Unknown error",
+        providerResponse: smsResponse,
+      });
+    }
+  } catch (error) {
+    console.error("Error sending test SMS:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to send test SMS",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
 export const scheduleReminder: RequestHandler = async (req, res) => {
   try {
     const { taskId, title, dueDate, description } = req.body;
