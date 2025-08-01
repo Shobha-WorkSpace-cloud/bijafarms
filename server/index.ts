@@ -26,6 +26,11 @@ import {
   backupTasks,
   importTasks,
 } from "./routes/tasks";
+import {
+  createTestReminderTask,
+  checkReminderValidation,
+  cleanupTestTasks,
+} from "./routes/test-reminder";
 
 export function createServer() {
   const app = express();
