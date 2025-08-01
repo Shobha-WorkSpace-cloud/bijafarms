@@ -106,25 +106,23 @@ export const sendWhatsAppReminderEndpoint: RequestHandler = async (req, res) => 
 };
 
 // Test SMS endpoint to validate SMSIndiaHub integration
-// Simple test SMS endpoint with minimal error handling
-export const sendTestSMSSimple: RequestHandler = async (req, res) => {
-  console.log("=== Simple Test SMS Request ===");
+// Simple test WhatsApp endpoint
+export const sendTestWhatsAppSimple: RequestHandler = async (req, res) => {
+  console.log("=== Simple Test WhatsApp Request ===");
 
-  // Set proper headers
   res.setHeader('Content-Type', 'application/json');
 
   try {
-    const testMessage = `TEST: Bija Farms SMS working! ${new Date().toLocaleTimeString()}`;
+    const testMessage = `🧪 TEST: Bija Farms WhatsApp working! ${new Date().toLocaleTimeString()}`;
     console.log("Test message:", testMessage);
 
-    // Simple success response for now
     res.status(200).json({
       success: true,
-      message: "Test SMS endpoint working",
+      message: "Test WhatsApp endpoint working",
       phone: "+919985442209",
       testMessage: testMessage,
-      sentAt: new Date().toISOString(),
-      provider: "SMSIndiaHub"
+      generatedAt: new Date().toISOString(),
+      provider: "WhatsApp"
     });
 
   } catch (error) {
@@ -137,52 +135,44 @@ export const sendTestSMSSimple: RequestHandler = async (req, res) => {
   }
 };
 
-export const sendTestSMS: RequestHandler = async (req, res) => {
+export const sendTestWhatsApp: RequestHandler = async (req, res) => {
   try {
-    console.log("=== Test SMS Request Started ===");
-    console.log("User available:", !!process.env.SMSINDIAHUB_USER);
-    console.log("Password available:", !!process.env.SMSINDIAHUB_PASSWORD);
-    console.log("Sender ID:", process.env.SMSINDIAHUB_SENDER_ID);
+    console.log("=== Test WhatsApp Request Started ===");
 
-    const testMessage = `TEST MESSAGE from Bija Farms: SMSIndiaHub integration is working! Sent at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
+    const testMessage = `🧪 TEST MESSAGE from Bija Farms: WhatsApp integration is working! Sent at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}`;
 
-    console.log("Sending test SMS to +919985442209...");
+    console.log("Generating test WhatsApp URL for +919985442209...");
     console.log("Test message:", testMessage);
 
-    const smsResponse = await sendSMSViaSMSIndiaHub("+919985442209", testMessage);
-    console.log("SMS Response received:", smsResponse);
+    const whatsappResponse = await sendWhatsAppReminder("+919985442209", testMessage);
+    console.log("WhatsApp Response received:", whatsappResponse);
 
-    // Check various success indicators
-    const isSuccess = smsResponse.status === "success" ||
-                     smsResponse.status === "Success" ||
-                     smsResponse.status === "OK" ||
-                     (smsResponse.code && smsResponse.code === "200");
-
-    if (isSuccess) {
-      console.log("✅ Test SMS sent successfully");
+    if (whatsappResponse.success) {
+      console.log("✅ Test WhatsApp URL generated successfully");
       res.json({
         success: true,
-        message: "Test SMS sent successfully via SMSIndiaHub",
+        message: "Test WhatsApp URL generated successfully",
         phone: "+919985442209",
         testMessage: testMessage,
-        sentAt: new Date().toISOString(),
-        provider: "SMSIndiaHub",
-        providerResponse: smsResponse,
+        generatedAt: new Date().toISOString(),
+        provider: "WhatsApp",
+        whatsappUrl: whatsappResponse.whatsappUrl,
+        providerResponse: whatsappResponse,
       });
     } else {
-      console.error("❌ SMSIndiaHub test error:", smsResponse);
+      console.error("❌ WhatsApp test error:", whatsappResponse);
       res.status(400).json({
         success: false,
-        error: "Failed to send test SMS via SMSIndiaHub",
-        details: smsResponse.message || smsResponse.description || "Unknown error",
-        providerResponse: smsResponse,
+        error: "Failed to generate test WhatsApp URL",
+        details: whatsappResponse.message || "Unknown error",
+        providerResponse: whatsappResponse,
       });
     }
   } catch (error) {
-    console.error("❌ Error sending test SMS:", error);
+    console.error("❌ Error generating test WhatsApp:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to send test SMS",
+      error: "Failed to generate test WhatsApp",
       details: error instanceof Error ? error.message : "Unknown error",
     });
   }
