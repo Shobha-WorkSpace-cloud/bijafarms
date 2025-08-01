@@ -11,6 +11,26 @@ import {
   bulkDeleteExpenses,
   backupExpenses,
 } from "./routes/expenses";
+import {
+  sendWhatsAppReminderEndpoint,
+  scheduleReminder,
+  sendTestWhatsApp,
+  sendTestWhatsAppSimple,
+} from "./routes/sms-reminders";
+import {
+  getTasks,
+  addTask,
+  updateTask,
+  deleteTask,
+  bulkDeleteTasks,
+  backupTasks,
+  importTasks,
+} from "./routes/tasks";
+import {
+  createTestReminderTask,
+  checkReminderValidation,
+  cleanupTestTasks,
+} from "./routes/test-reminder";
 
 export function createServer() {
   const app = express();
@@ -36,6 +56,26 @@ export function createServer() {
   app.post("/api/expenses/import", importExpenses);
   app.post("/api/expenses/bulk-delete", bulkDeleteExpenses);
   app.get("/api/expenses/backup", backupExpenses);
+
+  // WhatsApp reminder routes
+  app.post("/api/send-whatsapp-reminder", sendWhatsAppReminderEndpoint);
+  app.post("/api/schedule-reminder", scheduleReminder);
+  app.post("/api/test-whatsapp", sendTestWhatsApp);
+  app.post("/api/test-whatsapp-simple", sendTestWhatsAppSimple);
+
+  // Task management routes
+  app.get("/api/tasks", getTasks);
+  app.post("/api/tasks", addTask);
+  app.put("/api/tasks/:id", updateTask);
+  app.delete("/api/tasks/:id", deleteTask);
+  app.post("/api/tasks/bulk-delete", bulkDeleteTasks);
+  app.get("/api/tasks/backup", backupTasks);
+  app.post("/api/tasks/import", importTasks);
+
+  // Test reminder validation routes
+  app.post("/api/test-reminder-validation", createTestReminderTask);
+  app.get("/api/test-reminder-validation", checkReminderValidation);
+  app.delete("/api/test-reminder-validation", cleanupTestTasks);
 
   return app;
 }

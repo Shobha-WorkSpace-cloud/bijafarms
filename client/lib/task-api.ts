@@ -1,0 +1,120 @@
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  taskType: string;
+  priority: "low" | "medium" | "high";
+  status: "pending" | "in-progress" | "completed";
+  dueDate: string;
+  assignedTo: string;
+  notes: string;
+  createdAt: string;
+  completedAt?: string;
+  reminderSent?: boolean;
+}
+
+// Fetch all tasks
+export const fetchTasks = async (): Promise<Task[]> => {
+  const response = await fetch("/api/tasks");
+  if (!response.ok) {
+    throw new Error(`Failed to fetch tasks: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+// Create a new task
+export const createTask = async (
+  task: Omit<Task, "id" | "createdAt">,
+): Promise<Task> => {
+  const response = await fetch("/api/tasks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(task),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to create task: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+// Update an existing task
+export const updateTask = async (
+  id: string,
+  task: Partial<Task>,
+): Promise<Task> => {
+  const response = await fetch(`/api/tasks/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(task),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update task: ${response.statusText}`);
+  }
+  return response.json();
+};
+
+// Delete a task
+export const deleteTask = async (id: string): Promise<void> => {
+  const response = await fetch(`/api/tasks/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to delete task: ${response.statusText}`);
+  }
+};
+
+// Bulk delete tasks
+export const bulkDeleteTasks = async (ids: string[]): Promise<void> => {
+  const response = await fetch("/api/tasks/bulk-delete", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ids }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to bulk delete tasks: ${response.statusText}`);
+  }
+};
+
+// Export tasks backup
+export const exportTasksBackup = async (): Promise<void> => {
+  const response = await fetch("/api/tasks/backup");
+  if (!response.ok) {
+    throw new Error(`Failed to export tasks: ${response.statusText}`);
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `tasks-backup-${new Date().toISOString().split("T")[0]}.json`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+};
+
+// Import tasks
+export const importTasks = async (tasks: Task[]): Promise<void> => {
+  const response = await fetch("/api/tasks/import", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(tasks),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to import tasks: ${response.statusText}`);
+  }
+};
+
+export type { Task };

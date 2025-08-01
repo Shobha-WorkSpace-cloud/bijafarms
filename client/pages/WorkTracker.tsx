@@ -20,6 +20,10 @@ import {
   Wrench,
   Users,
   Bell,
+  Edit,
+  Trash2,
+  Save,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +55,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import * as taskApi from "@/lib/task-api";
 
 interface Task {
   id: string;
@@ -117,6 +122,9 @@ export default function WorkTracker() {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
   // Form state for new task
@@ -131,61 +139,28 @@ export default function WorkTracker() {
     notes: "",
   });
 
-  // Load tasks from localStorage on component mount
+  // Load tasks from API on component mount
   useEffect(() => {
-    const savedTasks = localStorage.getItem("work-tracker-tasks");
-    if (savedTasks) {
-      const parsedTasks = JSON.parse(savedTasks);
-      setTasks(parsedTasks);
-      setFilteredTasks(parsedTasks);
-    } else {
-      // Add some sample tasks
-      const sampleTasks: Task[] = [
-        {
-          id: "1",
-          title: "Monthly Health Checkup - Goats",
-          description: "Routine health examination for all goats",
-          category: "animal-health",
-          taskType: "checkup",
-          priority: "medium",
-          status: "pending",
-          dueDate: "2024-01-15",
-          assignedTo: "Dr. Sharma",
-          notes: "Check weight, temperature, and general condition",
-          createdAt: "2024-01-01",
-        },
-        {
-          id: "2",
-          title: "Plant Winter Wheat",
-          description: "Prepare and plant winter wheat in the north field",
-          category: "crop-management",
-          taskType: "planting",
-          priority: "high",
-          status: "pending",
-          dueDate: "2024-01-10",
-          assignedTo: "Farm Team",
-          notes: "Soil preparation completed, seeds ready",
-          createdAt: "2024-01-01",
-        },
-        {
-          id: "3",
-          title: "Irrigation System Maintenance",
-          description: "Check and clean irrigation pipes and sprinklers",
-          category: "irrigation",
-          taskType: "equipment-maintenance",
-          priority: "medium",
-          status: "pending",
-          dueDate: "2024-01-12",
-          assignedTo: "Maintenance Team",
-          notes: "Focus on section B pipes that showed low pressure",
-          createdAt: "2024-01-01",
-        },
-      ];
-      setTasks(sampleTasks);
-      setFilteredTasks(sampleTasks);
-      localStorage.setItem("work-tracker-tasks", JSON.stringify(sampleTasks));
-    }
-  }, []);
+    const loadTasks = async () => {
+      try {
+        setLoading(true);
+        const data = await taskApi.fetchTasks();
+        console.log("Loaded tasks from API:", data.length);
+        setTasks(data);
+        setFilteredTasks(data);
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load tasks. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTasks();
+  }, [toast]);
 
   // Filter tasks based on search and filters
   useEffect(() => {
@@ -211,7 +186,7 @@ export default function WorkTracker() {
     setFilteredTasks(filtered);
   }, [tasks, searchTerm, filterStatus, filterCategory]);
 
-  const addTask = () => {
+  const addTask = async () => {
     if (!newTask.title || !newTask.dueDate || !newTask.assignedTo) {
       toast({
         title: "Error",
@@ -221,16 +196,70 @@ export default function WorkTracker() {
       return;
     }
 
-    const task: Task = {
-      id: Date.now().toString(),
+    const createdTask = await taskApi.createTask({
       ...newTask,
       status: "pending",
-      createdAt: new Date().toISOString().split("T")[0],
-    };
+    });
 
-    const updatedTasks = [task, ...tasks];
+    const updatedTasks = [createdTask, ...tasks];
     setTasks(updatedTasks);
-    localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
+
+    // Schedule WhatsApp reminder
+    try {
+      const reminderResponse = await fetch("/api/schedule-reminder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          taskId: createdTask.id,
+          title: createdTask.title,
+          dueDate: createdTask.dueDate,
+          description: createdTask.description || createdTask.notes,
+        }),
+      });
+
+      const reminderResult = await reminderResponse.json();
+
+      if (reminderResult.success) {
+        console.log(
+          "WhatsApp reminder scheduled successfully:",
+          reminderResult,
+        );
+        toast({
+          title: "Success ✅",
+          description: `Task added successfully. WhatsApp reminder scheduled for +919985442209`,
+        });
+
+        // If immediate reminder was generated, optionally open WhatsApp
+        if (
+          reminderResult.whatsappUrl &&
+          reminderResult.scheduledFor === "immediate"
+        ) {
+          setTimeout(() => {
+            if (
+              confirm(
+                "This task is due soon! Open WhatsApp to send reminder now?",
+              )
+            ) {
+              window.open(reminderResult.whatsappUrl, "_blank");
+            }
+          }, 1000);
+        }
+      } else {
+        console.error("Failed to schedule WhatsApp reminder:", reminderResult);
+        toast({
+          title: "Task Added",
+          description: "Task created but WhatsApp reminder scheduling failed",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Error scheduling WhatsApp reminder:", error);
+      toast({
+        title: "Task Added",
+        description: "Task created but WhatsApp reminder scheduling failed",
+        variant: "destructive",
+      });
+    }
 
     setNewTask({
       title: "",
@@ -243,36 +272,91 @@ export default function WorkTracker() {
       notes: "",
     });
     setIsAddDialogOpen(false);
-
-    toast({
-      title: "Success",
-      description: "Task added successfully",
-    });
   };
 
-  const updateTaskStatus = (taskId: string, newStatus: Task["status"]) => {
-    const updatedTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        const updatedTask = {
-          ...task,
-          status: newStatus,
-          completedAt:
-            newStatus === "completed"
-              ? new Date().toISOString().split("T")[0]
-              : undefined,
-        };
-        return updatedTask;
+  const updateTaskStatus = async (
+    taskId: string,
+    newStatus: Task["status"],
+  ) => {
+    try {
+      const updateData: Partial<Task> = { status: newStatus };
+      if (newStatus === "completed") {
+        updateData.completedAt = new Date().toISOString().split("T")[0];
       }
-      return task;
-    });
 
-    setTasks(updatedTasks);
-    localStorage.setItem("work-tracker-tasks", JSON.stringify(updatedTasks));
+      const updatedTask = await taskApi.updateTask(taskId, updateData);
+      const updatedTasks = tasks.map((task) =>
+        task.id === taskId ? updatedTask : task,
+      );
 
-    toast({
-      title: "Success",
-      description: `Task marked as ${newStatus}`,
-    });
+      setTasks(updatedTasks);
+
+      toast({
+        title: "Success",
+        description: `Task marked as ${newStatus}`,
+      });
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update task status",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEditTask = (task: Task) => {
+    setEditingTask(task);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateTask = async (updatedTask: Task) => {
+    try {
+      const updated = await taskApi.updateTask(updatedTask.id, updatedTask);
+      const updatedTasks = tasks.map((task) =>
+        task.id === updatedTask.id ? updated : task,
+      );
+
+      setTasks(updatedTasks);
+      setIsEditDialogOpen(false);
+      setEditingTask(null);
+
+      toast({
+        title: "Success",
+        description: "Task updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating task:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update task",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    if (!confirm("Are you sure you want to delete this task?")) {
+      return;
+    }
+
+    try {
+      await taskApi.deleteTask(taskId);
+      const updatedTasks = tasks.filter((task) => task.id !== taskId);
+      setTasks(updatedTasks);
+
+      toast({
+        title: "Success",
+        description: "Task deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete task",
+        variant: "destructive",
+      });
+    }
   };
 
   const getTaskIcon = (taskType: Task["taskType"]) => {
@@ -729,6 +813,25 @@ export default function WorkTracker() {
                           </div>
                         </div>
                         <div className="flex flex-col gap-2 ml-4">
+                          <div className="flex gap-2 mb-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditTask(task)}
+                              className="text-blue-600 hover:text-blue-700"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDeleteTask(task.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+
                           {task.status === "pending" && (
                             <Button
                               size="sm"
@@ -966,6 +1069,126 @@ export default function WorkTracker() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Edit Task Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Edit Task</DialogTitle>
+              <DialogDescription>
+                Update the task details below.
+              </DialogDescription>
+            </DialogHeader>
+            {editingTask && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="edit-title">Title *</Label>
+                  <Input
+                    id="edit-title"
+                    value={editingTask.title}
+                    onChange={(e) =>
+                      setEditingTask({ ...editingTask, title: e.target.value })
+                    }
+                    placeholder="Task title"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Textarea
+                    id="edit-description"
+                    value={editingTask.description}
+                    onChange={(e) =>
+                      setEditingTask({
+                        ...editingTask,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Task description"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="edit-priority">Priority</Label>
+                    <Select
+                      value={editingTask.priority}
+                      onValueChange={(value: Task["priority"]) =>
+                        setEditingTask({ ...editingTask, priority: value })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-dueDate">Due Date *</Label>
+                    <Input
+                      id="edit-dueDate"
+                      type="date"
+                      value={editingTask.dueDate}
+                      onChange={(e) =>
+                        setEditingTask({
+                          ...editingTask,
+                          dueDate: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="edit-assignedTo">Assigned To *</Label>
+                  <Input
+                    id="edit-assignedTo"
+                    value={editingTask.assignedTo}
+                    onChange={(e) =>
+                      setEditingTask({
+                        ...editingTask,
+                        assignedTo: e.target.value,
+                      })
+                    }
+                    placeholder="Person responsible"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="edit-notes">Notes</Label>
+                  <Textarea
+                    id="edit-notes"
+                    value={editingTask.notes}
+                    onChange={(e) =>
+                      setEditingTask({ ...editingTask, notes: e.target.value })
+                    }
+                    placeholder="Additional notes"
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <Button
+                    onClick={() => handleUpdateTask(editingTask)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Update Task
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditDialogOpen(false);
+                      setEditingTask(null);
+                    }}
+                    className="flex-1"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
