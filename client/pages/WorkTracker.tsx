@@ -535,13 +535,24 @@ export default function WorkTracker() {
                 </Select>
               </div>
 
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Task
-                  </Button>
-                </DialogTrigger>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={sendTestSMS}
+                  disabled={loading}
+                  className="bg-blue-50 hover:bg-blue-100 border-blue-200"
+                >
+                  <Bell className="h-4 w-4 mr-2" />
+                  {loading ? "Sending..." : "Test SMS"}
+                </Button>
+
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Task
+                    </Button>
+                  </DialogTrigger>
                 <DialogContent className="max-w-md">
                   <DialogHeader>
                     <DialogTitle>Add New Task</DialogTitle>
@@ -719,7 +730,8 @@ export default function WorkTracker() {
                     </div>
                   </div>
                 </DialogContent>
-              </Dialog>
+                </Dialog>
+              </div>
             </div>
           </CardContent>
         </Card>
