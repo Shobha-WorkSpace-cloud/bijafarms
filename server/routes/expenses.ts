@@ -112,8 +112,6 @@ export const addExpense: RequestHandler = (req, res) => {
 
     // Set new ID as next integer
     newExpense.id = (maxId + 1).toString();
-
-    const expenses = readExpenses();
     expenses.unshift(newExpense); // Add to beginning of array
     writeExpenses(expenses);
 
