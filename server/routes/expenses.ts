@@ -98,10 +98,20 @@ export const addExpense: RequestHandler = (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Generate ID if not provided
-    if (!newExpense.id) {
-      newExpense.id = Date.now().toString();
-    }
+    // Generate auto-increment integer ID
+    const expenses = readExpenses();
+    let maxId = 0;
+
+    // Find the highest existing ID
+    expenses.forEach(expense => {
+      const numId = parseInt(expense.id);
+      if (!isNaN(numId) && numId > maxId) {
+        maxId = numId;
+      }
+    });
+
+    // Set new ID as next integer
+    newExpense.id = (maxId + 1).toString();
 
     const expenses = readExpenses();
     expenses.unshift(newExpense); // Add to beginning of array
