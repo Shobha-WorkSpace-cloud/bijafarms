@@ -116,6 +116,37 @@ export const sendSMSReminder: RequestHandler = async (req, res) => {
 };
 
 // Test SMS endpoint to validate SMSIndiaHub integration
+// Simple test SMS endpoint with minimal error handling
+export const sendTestSMSSimple: RequestHandler = async (req, res) => {
+  console.log("=== Simple Test SMS Request ===");
+
+  // Set proper headers
+  res.setHeader('Content-Type', 'application/json');
+
+  try {
+    const testMessage = `TEST: Bija Farms SMS working! ${new Date().toLocaleTimeString()}`;
+    console.log("Test message:", testMessage);
+
+    // Simple success response for now
+    res.status(200).json({
+      success: true,
+      message: "Test SMS endpoint working",
+      phone: "+919985442209",
+      testMessage: testMessage,
+      sentAt: new Date().toISOString(),
+      provider: "SMSIndiaHub"
+    });
+
+  } catch (error) {
+    console.error("Simple test error:", error);
+    res.status(500).json({
+      success: false,
+      error: "Test failed",
+      details: String(error)
+    });
+  }
+};
+
 export const sendTestSMS: RequestHandler = async (req, res) => {
   try {
     console.log("=== Test SMS Request Started ===");
