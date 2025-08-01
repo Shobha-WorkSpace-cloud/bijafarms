@@ -139,61 +139,28 @@ export default function WorkTracker() {
     notes: "",
   });
 
-  // Load tasks from localStorage on component mount
+  // Load tasks from API on component mount
   useEffect(() => {
-    const savedTasks = localStorage.getItem("work-tracker-tasks");
-    if (savedTasks) {
-      const parsedTasks = JSON.parse(savedTasks);
-      setTasks(parsedTasks);
-      setFilteredTasks(parsedTasks);
-    } else {
-      // Add some sample tasks
-      const sampleTasks: Task[] = [
-        {
-          id: "1",
-          title: "Monthly Health Checkup - Goats",
-          description: "Routine health examination for all goats",
-          category: "animal-health",
-          taskType: "checkup",
-          priority: "medium",
-          status: "pending",
-          dueDate: "2024-01-15",
-          assignedTo: "Dr. Sharma",
-          notes: "Check weight, temperature, and general condition",
-          createdAt: "2024-01-01",
-        },
-        {
-          id: "2",
-          title: "Plant Winter Wheat",
-          description: "Prepare and plant winter wheat in the north field",
-          category: "crop-management",
-          taskType: "planting",
-          priority: "high",
-          status: "pending",
-          dueDate: "2024-01-10",
-          assignedTo: "Farm Team",
-          notes: "Soil preparation completed, seeds ready",
-          createdAt: "2024-01-01",
-        },
-        {
-          id: "3",
-          title: "Irrigation System Maintenance",
-          description: "Check and clean irrigation pipes and sprinklers",
-          category: "irrigation",
-          taskType: "equipment-maintenance",
-          priority: "medium",
-          status: "pending",
-          dueDate: "2024-01-12",
-          assignedTo: "Maintenance Team",
-          notes: "Focus on section B pipes that showed low pressure",
-          createdAt: "2024-01-01",
-        },
-      ];
-      setTasks(sampleTasks);
-      setFilteredTasks(sampleTasks);
-      localStorage.setItem("work-tracker-tasks", JSON.stringify(sampleTasks));
-    }
-  }, []);
+    const loadTasks = async () => {
+      try {
+        setLoading(true);
+        const data = await taskApi.fetchTasks();
+        console.log("Loaded tasks from API:", data.length);
+        setTasks(data);
+        setFilteredTasks(data);
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load tasks. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadTasks();
+  }, [toast]);
 
   // Filter tasks based on search and filters
   useEffect(() => {
