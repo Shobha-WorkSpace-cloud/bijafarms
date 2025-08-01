@@ -283,6 +283,40 @@ export default function WorkTracker() {
     setIsAddDialogOpen(false);
   };
 
+  const sendTestSMS = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/test-sms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast({
+          title: "Test SMS Sent! ✅",
+          description: `SMS sent successfully to +919985442209 via SMSIndiaHub`,
+        });
+      } else {
+        toast({
+          title: "Test SMS Failed ❌",
+          description: result.details || "Failed to send test SMS",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Test SMS error:", error);
+      toast({
+        title: "Test SMS Error ❌",
+        description: "Network error while sending test SMS",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateTaskStatus = (taskId: string, newStatus: Task["status"]) => {
     const updatedTasks = tasks.map((task) => {
       if (task.id === taskId) {
