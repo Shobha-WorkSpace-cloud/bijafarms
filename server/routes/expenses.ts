@@ -103,7 +103,7 @@ export const addExpense: RequestHandler = (req, res) => {
     let maxId = 0;
 
     // Find the highest existing ID
-    expenses.forEach(expense => {
+    expenses.forEach((expense) => {
       const numId = parseInt(expense.id);
       if (!isNaN(numId) && numId > maxId) {
         maxId = numId;
