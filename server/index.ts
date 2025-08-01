@@ -38,5 +38,9 @@ export function createServer() {
   app.post("/api/expenses/bulk-delete", bulkDeleteExpenses);
   app.get("/api/expenses/backup", backupExpenses);
 
+  // SMS reminder routes
+  app.post("/api/send-sms-reminder", sendSMSReminder);
+  app.post("/api/schedule-reminder", scheduleReminder);
+
   return app;
 }
