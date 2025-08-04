@@ -61,6 +61,7 @@ export function createServer() {
   app.get("/api/expenses/backup", backupExpenses);
   app.get("/api/expenses/categories", getCategories);
   app.post("/api/expenses/categories", saveCategories);
+  app.post("/api/expenses/populate-categories", populateCategories);
 
   // WhatsApp reminder routes
   app.post("/api/send-whatsapp-reminder", sendWhatsAppReminderEndpoint);
