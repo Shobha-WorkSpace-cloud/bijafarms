@@ -1,5 +1,5 @@
 {
-  "homepage":"https://Shobha-WorkSpace-cloud.github.io/builder-aura-haven",
+  "homepage": "https://Shobha-WorkSpace-cloud.github.io/builder-aura-haven",
   "name": "fusion-starter",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "build:server": "vite build --config vite.config.server.ts",
     "start": "node dist/server/node-build.mjs",
     "predeploy": "npm run build",
-    "deploy":"gh-pages -d build",
+    "deploy": "gh-pages -d dist/spa",
     "test": "vitest --run",
     "format.fix": "prettier --write .",
     "typecheck": "tsc"
@@ -79,6 +79,7 @@
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
     "framer-motion": "^12.6.2",
+    "gh-pages": "^6.3.0",
     "globals": "^15.9.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
