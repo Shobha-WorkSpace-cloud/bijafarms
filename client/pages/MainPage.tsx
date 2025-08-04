@@ -518,13 +518,6 @@ export default function MainPage() {
       {/* Footer */}
       <footer className="bg-green-800 text-white py-8 mt-16">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-4 mb-4">
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800"
-              alt="Bija Farms Logo"
-              className="h-12 w-auto"
-            />
-          </div>
           <p className="text-green-200">
             © 2024 Bija Farms. Integrated farming solutions for sustainable
             agriculture.
