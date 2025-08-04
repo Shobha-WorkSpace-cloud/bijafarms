@@ -34,6 +34,22 @@ import {
   checkReminderValidation,
   cleanupTestTasks,
 } from "./routes/test-reminder";
+import {
+  getAnimals,
+  addAnimal,
+  updateAnimal,
+  deleteAnimal,
+  getWeightRecords,
+  addWeightRecord,
+  getBreedingRecords,
+  addBreedingRecord,
+  getVaccinationRecords,
+  addVaccinationRecord,
+  getHealthRecords,
+  addHealthRecord,
+  getAnimalSummary,
+  backupAnimals,
+} from "./routes/animals";
 
 export function createServer() {
   const app = express();
