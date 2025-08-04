@@ -99,5 +99,23 @@ export function createServer() {
   app.get("/api/test-reminder-validation", checkReminderValidation);
   app.delete("/api/test-reminder-validation", cleanupTestTasks);
 
+  // Animal management routes
+  app.get("/api/animals", getAnimals);
+  app.post("/api/animals", addAnimal);
+  app.put("/api/animals/:id", updateAnimal);
+  app.delete("/api/animals/:id", deleteAnimal);
+  app.get("/api/animals/summary", getAnimalSummary);
+  app.get("/api/animals/backup", backupAnimals);
+
+  // Animal record routes
+  app.get("/api/weight-records", getWeightRecords);
+  app.post("/api/weight-records", addWeightRecord);
+  app.get("/api/breeding-records", getBreedingRecords);
+  app.post("/api/breeding-records", addBreedingRecord);
+  app.get("/api/vaccination-records", getVaccinationRecords);
+  app.post("/api/vaccination-records", addVaccinationRecord);
+  app.get("/api/health-records", getHealthRecords);
+  app.post("/api/health-records", addHealthRecord);
+
   return app;
 }
