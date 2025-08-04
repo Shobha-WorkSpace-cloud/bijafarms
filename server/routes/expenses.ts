@@ -78,6 +78,30 @@ const writeExpenses = (expenses: ExpenseRecord[]): void => {
   }
 };
 
+// Helper function to read categories from JSON file
+const readCategories = (): CategoryManagementData => {
+  try {
+    if (!fs.existsSync(CATEGORIES_FILE)) {
+      return { categories: [], lastUpdated: new Date().toISOString() };
+    }
+    const data = fs.readFileSync(CATEGORIES_FILE, "utf8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading categories:", error);
+    return { categories: [], lastUpdated: new Date().toISOString() };
+  }
+};
+
+// Helper function to write categories to JSON file
+const writeCategories = (data: CategoryManagementData): void => {
+  try {
+    fs.writeFileSync(CATEGORIES_FILE, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("Error writing categories:", error);
+    throw error;
+  }
+};
+
 // GET /api/expenses - Get all expenses
 export const getExpenses: RequestHandler = (req, res) => {
   try {
