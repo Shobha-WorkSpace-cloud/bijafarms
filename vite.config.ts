@@ -14,9 +14,10 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    outDir: "dist/spa",
+    outDir: "dist",
   },
   plugins: [react(), expressPlugin()],
+  base:"/builder-aura-haven/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
