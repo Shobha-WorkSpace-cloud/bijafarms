@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ExpenseRecord } from "@shared/expense-types";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 
 interface ImportExportProps {
   expenses: ExpenseRecord[];
