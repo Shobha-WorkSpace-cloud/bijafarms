@@ -263,32 +263,59 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                <h4 className="font-semibold text-green-800 mb-3">Farm Management:</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/60 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-green-700 mb-1">
-                      <Stethoscope className="h-4 w-4" />
-                      <span className="text-xs font-medium">Health Tasks</span>
-                    </div>
-                    <div className="text-lg font-bold text-green-800">
-                      Track & Monitor
-                    </div>
-                  </div>
-                  <div className="bg-white/60 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-green-700 mb-1">
-                      <Beef className="h-4 w-4" />
-                      <span className="text-xs font-medium">Livestock</span>
-                    </div>
-                    <div className="text-lg font-bold text-green-800">
-                      Care & Wellness
+              {tasksLoading ? (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-green-200 rounded mb-3 w-32"></div>
+                    <div className="space-y-2">
+                      <div className="h-8 bg-green-200 rounded"></div>
+                      <div className="h-8 bg-green-200 rounded"></div>
+                      <div className="h-8 bg-green-200 rounded"></div>
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-green-200 text-center">
-                  <span className="text-sm text-green-700">Manage daily farm operations and animal health</span>
+              ) : (
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                  <h4 className="font-semibold text-green-800 mb-3">Next 3 Work Items:</h4>
+                  {tasks.length === 0 ? (
+                    <div className="text-center py-4">
+                      <Clipboard className="h-8 w-8 text-green-400 mx-auto mb-2" />
+                      <p className="text-sm text-green-600">No upcoming tasks</p>
+                      <p className="text-xs text-green-500">All caught up!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {tasks.map((task, index) => (
+                        <div key={task.id} className="bg-white/60 p-3 rounded-lg border border-green-100">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                                  {task.priority}
+                                </span>
+                                <span className="text-xs text-green-600 font-medium">
+                                  {formatDueDate(task.dueDate)}
+                                </span>
+                              </div>
+                              <h5 className="text-sm font-medium text-green-800 truncate">
+                                {task.title}
+                              </h5>
+                              <p className="text-xs text-green-600 truncate">
+                                {task.category} • {task.taskType}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className="mt-3 pt-3 border-t border-green-200 text-center">
+                    <span className="text-xs text-green-600">
+                      {tasks.length > 0 ? "View all tasks in Work Tracker" : "Add new tasks in Work Tracker"}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="pt-4">
                 <Link to="/work-tracker">
