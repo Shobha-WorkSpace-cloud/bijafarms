@@ -206,25 +206,31 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2 text-slate-600">
-                  <Stethoscope className="h-4 w-4" />
-                  <span className="text-sm">Health monitoring</span>
-                </div>
-                <div className="flex items-center space-x-2 text-slate-600">
-                  <Beef className="h-4 w-4" />
-                  <span className="text-sm">Livestock care</span>
-                </div>
-              </div>
-
               <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                <h4 className="font-semibold text-green-800 mb-2">Features:</h4>
-                <ul className="text-sm text-green-700 space-y-1">
-                  <li>• Schedule health checkups</li>
-                  <li>• Track completed tasks</li>
-                  <li>• Monitor animal wellness</li>
-                  <li>• Set vaccination reminders</li>
-                </ul>
+                <h4 className="font-semibold text-green-800 mb-3">Farm Management:</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/60 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2 text-green-700 mb-1">
+                      <Stethoscope className="h-4 w-4" />
+                      <span className="text-xs font-medium">Health Tasks</span>
+                    </div>
+                    <div className="text-lg font-bold text-green-800">
+                      Track & Monitor
+                    </div>
+                  </div>
+                  <div className="bg-white/60 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2 text-green-700 mb-1">
+                      <Beef className="h-4 w-4" />
+                      <span className="text-xs font-medium">Livestock</span>
+                    </div>
+                    <div className="text-lg font-bold text-green-800">
+                      Care & Wellness
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-green-200 text-center">
+                  <span className="text-sm text-green-700">Manage daily farm operations and animal health</span>
+                </div>
               </div>
 
               <div className="pt-4">
