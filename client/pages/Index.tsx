@@ -58,6 +58,7 @@ import { DataTable } from "@/components/DataTable";
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpenseCharts } from "@/components/ExpenseCharts";
 import { ClearCacheButton } from "@/components/ClearCacheButton";
+import { CategoryManager } from "@/components/CategoryManager";
 
 import { useToast } from "@/hooks/use-toast";
 import * as api from "@/lib/api";
