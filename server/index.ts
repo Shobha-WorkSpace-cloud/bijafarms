@@ -10,6 +10,8 @@ import {
   importExpenses,
   bulkDeleteExpenses,
   backupExpenses,
+  getCategories,
+  saveCategories,
 } from "./routes/expenses";
 import {
   sendWhatsAppReminderEndpoint,
