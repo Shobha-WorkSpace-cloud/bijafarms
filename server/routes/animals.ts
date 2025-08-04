@@ -9,10 +9,7 @@ import {
   HealthRecord,
   AnimalSummary,
 } from "@shared/animal-types";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = process.cwd();
 const ANIMALS_FILE = path.join(__dirname, "../data/animals.json");
 const WEIGHT_RECORDS_FILE = path.join(__dirname, "../data/weight-records.json");
 const BREEDING_RECORDS_FILE = path.join(

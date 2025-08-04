@@ -2,10 +2,8 @@ import { RequestHandler } from "express";
 import fs from "fs";
 import path from "path";
 import { ExpenseRecord, CategoryManagementData } from "@shared/expense-types";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+
+const __dirname = process.cwd();
 
 const EXPENSES_FILE = path.join(__dirname, "../data/expenses.json");
 const CATEGORIES_FILE = path.join(__dirname, "../data/categories.json");

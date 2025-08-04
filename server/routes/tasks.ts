@@ -1,10 +1,7 @@
 import { RequestHandler } from "express";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+
 interface Task {
   id: string;
   title: string;
@@ -20,7 +17,7 @@ interface Task {
   completedAt?: string;
   reminderSent?: boolean;
 }
-
+const __dirname = process.cwd();
 const TASKS_FILE = path.join(__dirname, "../data/TaskTracker.json");
 
 // Ensure data directory exists
