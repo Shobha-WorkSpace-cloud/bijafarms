@@ -12,6 +12,7 @@ import {
   backupExpenses,
   getCategories,
   saveCategories,
+  populateCategories,
 } from "./routes/expenses";
 import {
   sendWhatsAppReminderEndpoint,
