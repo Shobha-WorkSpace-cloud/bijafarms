@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -15,10 +15,14 @@ import {
   Heart,
   Users,
   TrendingUp,
+  TrendingDown,
   ChevronRight,
   Beef,
   Stethoscope,
+  Receipt,
 } from "lucide-react";
+import { ExpenseRecord } from "@shared/expense-types";
+import * as api from "@/lib/api";
 
 export default function MainPage() {
   return (
