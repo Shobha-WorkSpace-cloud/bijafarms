@@ -25,6 +25,52 @@ import { ExpenseRecord } from "@shared/expense-types";
 import * as api from "@/lib/api";
 
 export default function MainPage() {
+  const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalIncome: 0,
+    totalExpenses: 0,
+    balance: 0,
+    transactionCount: 0,
+  });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await api.fetchExpenses();
+        setExpenses(data);
+
+        const totalIncome = data
+          .filter((expense) => expense.type === "Income")
+          .reduce((sum, expense) => sum + expense.amount, 0);
+
+        const totalExpenses = data
+          .filter((expense) => expense.type === "Expense")
+          .reduce((sum, expense) => sum + expense.amount, 0);
+
+        setStats({
+          totalIncome,
+          totalExpenses,
+          balance: totalIncome - totalExpenses,
+          transactionCount: data.length,
+        });
+      } catch (error) {
+        console.error("Error loading expense stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadStats();
+  }, []);
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(amount);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Header with Logo */}
