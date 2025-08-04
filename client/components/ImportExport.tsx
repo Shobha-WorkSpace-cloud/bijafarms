@@ -408,13 +408,39 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
       );
       const arrayBuffer = await response.arrayBuffer();
 
-      const workbook = XLSX.read(arrayBuffer, { type: "array" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
+      const worksheet = workbook.getWorksheet(1);
+      const jsonData: any[] = [];
+
+      if (worksheet) {
+        const headers: string[] = [];
+
+        // Get headers from the first row
+        const headerRow = worksheet.getRow(1);
+        headerRow.eachCell((cell, colNumber) => {
+          headers[colNumber] = cell.value?.toString() || "";
+        });
+
+        // Convert worksheet to JSON
+        worksheet.eachRow((row, rowNumber) => {
+          if (rowNumber > 1) { // Skip header row
+            const rowData: any = {};
+            row.eachCell((cell, colNumber) => {
+              const header = headers[colNumber];
+              if (header) {
+                rowData[header] = cell.value;
+              }
+            });
+            if (Object.keys(rowData).length > 0) {
+              jsonData.push(rowData);
+            }
+          }
+        });
+      }
 
       console.log("URL Import Debug:");
-      console.log("Sheet Names:", workbook.SheetNames);
+      console.log("Worksheet name:", worksheet?.name);
       console.log("First 3 rows:", jsonData.slice(0, 3));
       console.log("Available columns:", Object.keys(jsonData[0] || {}));
 
