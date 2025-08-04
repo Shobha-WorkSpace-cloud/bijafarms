@@ -4,6 +4,7 @@ import path from "path";
 import { ExpenseRecord, CategoryManagementData } from "@shared/expense-types";
 
 const EXPENSES_FILE = path.join(__dirname, "../data/expenses.json");
+const CATEGORIES_FILE = path.join(__dirname, "../data/categories.json");
 
 // Ensure data directory exists
 const dataDir = path.dirname(EXPENSES_FILE);
