@@ -351,6 +351,69 @@ export default function MainPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Animal Tracker Card */}
+          <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-green-200 hover:border-green-300 bg-white/90 backdrop-blur-sm">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
+                    <Beef className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl text-slate-800">
+                      Bija Animal Tracker
+                    </CardTitle>
+                    <CardDescription className="text-slate-600 mt-1">
+                      Comprehensive livestock management
+                    </CardDescription>
+                  </div>
+                </div>
+                <ChevronRight className="h-6 w-6 text-slate-400 group-hover:text-slate-600 transition-colors" />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-200">
+                <h4 className="font-semibold text-purple-800 mb-3">
+                  Livestock Overview:
+                </h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white/60 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2 text-purple-700 mb-1">
+                      <Users className="h-4 w-4" />
+                      <span className="text-xs font-medium">Total Animals</span>
+                    </div>
+                    <div className="text-lg font-bold text-purple-800">
+                      Track & Manage
+                    </div>
+                  </div>
+                  <div className="bg-white/60 p-3 rounded-lg">
+                    <div className="flex items-center space-x-2 text-purple-700 mb-1">
+                      <Heart className="h-4 w-4" />
+                      <span className="text-xs font-medium">Health Records</span>
+                    </div>
+                    <div className="text-lg font-bold text-purple-800">
+                      Monitor & Care
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-purple-200 text-center">
+                  <span className="text-xs text-purple-600">
+                    Complete animal identification and record management
+                  </span>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <Link to="/animal-tracker">
+                  <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3">
+                    Open Animal Tracker
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
 
