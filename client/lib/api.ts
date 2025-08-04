@@ -150,3 +150,18 @@ export const saveCategories = async (data: CategoryManagementData): Promise<void
     throw new Error("Failed to save categories");
   }
 };
+
+export const populateCategories = async (): Promise<{message: string, count: number, categories: CategoryManagementData}> => {
+  const response = await fetch(`${API_BASE}/populate-categories`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to populate categories");
+  }
+
+  return response.json();
+};
