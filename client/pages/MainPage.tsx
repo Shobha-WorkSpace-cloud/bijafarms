@@ -154,41 +154,7 @@ export default function MainPage() {
           </Card>
         </div>
 
-        {/* Quick Stats Section */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl border border-green-200 p-8">
-          <h2 className="text-2xl font-bold text-green-800 mb-6 text-center">
-            Farm Overview
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
-              <IndianRupee className="h-12 w-12 text-blue-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-blue-800 mb-1">
-                Financial Management
-              </h3>
-              <p className="text-blue-600 text-sm">
-                Track expenses and revenue
-              </p>
-            </div>
-            <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
-              <Heart className="h-12 w-12 text-green-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-green-800 mb-1">
-                Animal Health
-              </h3>
-              <p className="text-green-600 text-sm">
-                Monitor livestock wellness
-              </p>
-            </div>
-            <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
-              <Users className="h-12 w-12 text-purple-600 mx-auto mb-3" />
-              <h3 className="font-semibold text-purple-800 mb-1">
-                Farm Management
-              </h3>
-              <p className="text-purple-600 text-sm">
-                Organize daily operations
-              </p>
-            </div>
-          </div>
-        </div>
+
       </main>
 
       {/* Footer */}
