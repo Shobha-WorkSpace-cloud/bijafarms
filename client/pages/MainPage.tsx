@@ -196,20 +196,20 @@ export default function MainPage() {
       {/* Header with Logo */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-green-200">
         <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-center justify-center space-x-6">
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800"
               alt="Bija Farms Logo"
               className="h-20 w-auto"
             />
-          </div>
-          <div className="text-center mt-4">
-            <h1 className="text-4xl font-bold text-green-800 mb-2">
-              Bija Farms Management
-            </h1>
-            <p className="text-green-600 text-lg">
-              Integrated farming solutions for modern agriculture
-            </p>
+            <div className="text-left">
+              <h1 className="text-4xl font-bold text-green-800 mb-2">
+                Bija Farms Management
+              </h1>
+              <p className="text-green-600 text-lg">
+                Integrated farming solutions for modern agriculture
+              </p>
+            </div>
           </div>
         </div>
       </header>
