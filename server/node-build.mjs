@@ -1,17 +1,20 @@
-import path from "path";
+import path, { dirname } from "path";
 import "dotenv/config";
 import * as express from "express";
 import express__default from "express";
 import cors from "cors";
 import fs from "fs";
+import { fileURLToPath } from "url";
 const handleDemo = (req, res) => {
   const response = {
     message: "Hello from Express server"
   };
   res.status(200).json(response);
 };
-const EXPENSES_FILE = path.join(__dirname, "../data/expenses.json");
-const CATEGORIES_FILE = path.join(__dirname, "../data/categories.json");
+const __filename$3 = fileURLToPath(import.meta.url);
+const __dirname$4 = dirname(__filename$3);
+const EXPENSES_FILE = path.join(__dirname$4, "../data/expenses.json");
+const CATEGORIES_FILE = path.join(__dirname$4, "../data/categories.json");
 const dataDir$2 = path.dirname(EXPENSES_FILE);
 if (!fs.existsSync(dataDir$2)) {
   fs.mkdirSync(dataDir$2, { recursive: true });
@@ -474,7 +477,9 @@ const scheduleReminder = async (req, res) => {
     });
   }
 };
-const TASKS_FILE$1 = path.join(__dirname, "../data/TaskTracker.json");
+const __filename$2 = fileURLToPath(import.meta.url);
+const __dirname$3 = dirname(__filename$2);
+const TASKS_FILE$1 = path.join(__dirname$3, "../data/TaskTracker.json");
 const dataDir$1 = path.dirname(TASKS_FILE$1);
 if (!fs.existsSync(dataDir$1)) {
   fs.mkdirSync(dataDir$1, { recursive: true });
@@ -620,7 +625,9 @@ const importTasks = (req, res) => {
     res.status(500).json({ error: "Failed to import tasks" });
   }
 };
-const TASKS_FILE = path.join(__dirname, "../data/TaskTracker.json");
+const __filename$1 = fileURLToPath(import.meta.url);
+const __dirname$2 = dirname(__filename$1);
+const TASKS_FILE = path.join(__dirname$2, "../data/TaskTracker.json");
 const readTasks = () => {
   try {
     if (!fs.existsSync(TASKS_FILE)) {
@@ -756,17 +763,19 @@ const cleanupTestTasks = (req, res) => {
     });
   }
 };
-const ANIMALS_FILE = path.join(__dirname, "../data/animals.json");
-const WEIGHT_RECORDS_FILE = path.join(__dirname, "../data/weight-records.json");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname$1 = dirname(__filename);
+const ANIMALS_FILE = path.join(__dirname$1, "../data/animals.json");
+const WEIGHT_RECORDS_FILE = path.join(__dirname$1, "../data/weight-records.json");
 const BREEDING_RECORDS_FILE = path.join(
-  __dirname,
+  __dirname$1,
   "../data/breeding-records.json"
 );
 const VACCINATION_RECORDS_FILE = path.join(
-  __dirname,
+  __dirname$1,
   "../data/vaccination-records.json"
 );
-const HEALTH_RECORDS_FILE = path.join(__dirname, "../data/health-records.json");
+const HEALTH_RECORDS_FILE = path.join(__dirname$1, "../data/health-records.json");
 const dataDir = path.dirname(ANIMALS_FILE);
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
@@ -1167,8 +1176,8 @@ function createServer() {
 }
 const app = createServer();
 const port = process.env.PORT || 3e3;
-const __dirname$1 = import.meta.dirname;
-const distPath = path.join(__dirname$1, "../spa");
+const __dirname = import.meta.dirname;
+const distPath = path.join(__dirname, "../spa");
 app.use(express.static(distPath));
 app.get("*", (req, res) => {
   if (req.path.startsWith("/api/") || req.path.startsWith("/health")) {
