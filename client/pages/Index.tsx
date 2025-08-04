@@ -253,6 +253,12 @@ export default function Index() {
     }
   };
 
+  const handleCategoriesUpdate = () => {
+    // Trigger a reload of categories in forms by updating a state
+    // This will cause ExpenseForm to reload its categories
+    setEditingExpense(null);
+  };
+
   const handleRefreshData = async () => {
     try {
       setLoading(true);
