@@ -609,7 +609,9 @@ export default function Index() {
 
                   <ClearCacheButton />
 
-                  <CategoryManager onCategoriesUpdate={handleCategoriesUpdate} />
+                  <CategoryManager
+                    onCategoriesUpdate={handleCategoriesUpdate}
+                  />
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>

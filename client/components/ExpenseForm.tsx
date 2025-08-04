@@ -11,7 +11,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ExpenseRecord, ExpenseFormData, CategoryConfig } from "@shared/expense-types";
+import {
+  ExpenseRecord,
+  ExpenseFormData,
+  CategoryConfig,
+} from "@shared/expense-types";
 import * as api from "@/lib/api";
 
 interface ExpenseFormProps {
@@ -111,19 +115,19 @@ const subCategoryMap: Record<string, string[]> = {
   ],
   Business: [
     "General",
-"GoatB-Care",
-"GoatB-Misc",
-"GoatB-Shed",
-"GoatB-Vet",
-"GoatB-feed",
-"GoatB-goatpurchase",
-"GoatB-machinary",
-"Misc",
-"PoultryB-Product",
-"agri",
-"farming",
-"harvest pit",
-"watchmen",
+    "GoatB-Care",
+    "GoatB-Misc",
+    "GoatB-Shed",
+    "GoatB-Vet",
+    "GoatB-feed",
+    "GoatB-goatpurchase",
+    "GoatB-machinary",
+    "Misc",
+    "PoultryB-Product",
+    "agri",
+    "farming",
+    "harvest pit",
+    "watchmen",
   ],
   Rooms: [
     "General",
@@ -166,7 +170,9 @@ export function ExpenseForm({
   const [availableSubCategories, setAvailableSubCategories] = useState<
     string[]
   >([]);
-  const [dynamicCategories, setDynamicCategories] = useState<CategoryConfig[]>([]);
+  const [dynamicCategories, setDynamicCategories] = useState<CategoryConfig[]>(
+    [],
+  );
   const [newCategory, setNewCategory] = useState("");
   const [newPaidBy, setNewPaidBy] = useState("");
   const [newSource, setNewSource] = useState("");
@@ -194,7 +200,9 @@ export function ExpenseForm({
     let subCategories: string[] = [];
 
     // First check dynamic categories
-    const dynamicCategory = dynamicCategories.find(cat => cat.name === formData.category);
+    const dynamicCategory = dynamicCategories.find(
+      (cat) => cat.name === formData.category,
+    );
     if (dynamicCategory) {
       subCategories = dynamicCategory.subCategories;
     } else if (formData.category && subCategoryMap[formData.category]) {
@@ -205,7 +213,10 @@ export function ExpenseForm({
     setAvailableSubCategories(subCategories);
 
     // Clear sub-category if it doesn't exist in the new list
-    if (subCategories.length > 0 && !subCategories.includes(formData.subCategory)) {
+    if (
+      subCategories.length > 0 &&
+      !subCategories.includes(formData.subCategory)
+    ) {
       setFormData((prev) => ({ ...prev, subCategory: "" }));
     }
   }, [formData.category, dynamicCategories]);

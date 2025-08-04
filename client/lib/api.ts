@@ -20,11 +20,14 @@ export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
   );
 
   // Debug first few dates
-  console.log("First 3 dates from API:", data.slice(0, 3).map((item: any) => ({
-    id: item.id,
-    originalDate: item.date,
-    parsedDate: new Date(item.date).toLocaleDateString("en-US")
-  })));
+  console.log(
+    "First 3 dates from API:",
+    data.slice(0, 3).map((item: any) => ({
+      id: item.id,
+      originalDate: item.date,
+      parsedDate: new Date(item.date).toLocaleDateString("en-US"),
+    })),
+  );
 
   return data;
 };
@@ -137,7 +140,9 @@ export const fetchCategories = async (): Promise<CategoryManagementData> => {
   return response.json();
 };
 
-export const saveCategories = async (data: CategoryManagementData): Promise<void> => {
+export const saveCategories = async (
+  data: CategoryManagementData,
+): Promise<void> => {
   const response = await fetch(`${API_BASE}/categories`, {
     method: "POST",
     headers: {
@@ -151,7 +156,11 @@ export const saveCategories = async (data: CategoryManagementData): Promise<void
   }
 };
 
-export const populateCategories = async (): Promise<{message: string, count: number, categories: CategoryManagementData}> => {
+export const populateCategories = async (): Promise<{
+  message: string;
+  count: number;
+  categories: CategoryManagementData;
+}> => {
   const response = await fetch(`${API_BASE}/populate-categories`, {
     method: "POST",
     headers: {

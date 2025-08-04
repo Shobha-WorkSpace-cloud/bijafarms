@@ -42,13 +42,20 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingCategory, setEditingCategory] = useState<string | null>(null);
-  const [editingSubCategory, setEditingSubCategory] = useState<{categoryId: string, index: number} | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<{type: 'category' | 'subCategory', categoryId: string, subCategoryIndex?: number} | null>(null);
-  
+  const [editingSubCategory, setEditingSubCategory] = useState<{
+    categoryId: string;
+    index: number;
+  } | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: "category" | "subCategory";
+    categoryId: string;
+    subCategoryIndex?: number;
+  } | null>(null);
+
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newSubCategoryName, setNewSubCategoryName] = useState("");
   const [editValue, setEditValue] = useState("");
-  
+
   const { toast } = useToast();
 
   const loadCategories = async () => {
@@ -116,7 +123,7 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
       setCategories([...categories, newCategory]);
       setNewCategoryName("");
       onCategoriesUpdate();
-      
+
       toast({
         title: "Success",
         description: "Category added successfully",
@@ -135,11 +142,14 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
     if (!newSubCategoryName.trim()) return;
 
     try {
-      const updatedCategories = categories.map(category => {
+      const updatedCategories = categories.map((category) => {
         if (category.id === categoryId) {
           return {
             ...category,
-            subCategories: [...category.subCategories, newSubCategoryName.trim()]
+            subCategories: [
+              ...category.subCategories,
+              newSubCategoryName.trim(),
+            ],
           };
         }
         return category;
@@ -153,7 +163,7 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
       setCategories(updatedCategories);
       setNewSubCategoryName("");
       onCategoriesUpdate();
-      
+
       toast({
         title: "Success",
         description: "Sub-category added successfully",
@@ -172,7 +182,7 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
     if (!editValue.trim()) return;
 
     try {
-      const updatedCategories = categories.map(category => {
+      const updatedCategories = categories.map((category) => {
         if (category.id === categoryId) {
           return { ...category, name: editValue.trim() };
         }
@@ -188,7 +198,7 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
       setEditingCategory(null);
       setEditValue("");
       onCategoriesUpdate();
-      
+
       toast({
         title: "Success",
         description: "Category updated successfully",
@@ -203,11 +213,14 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
     }
   };
 
-  const handleEditSubCategory = async (categoryId: string, subCategoryIndex: number) => {
+  const handleEditSubCategory = async (
+    categoryId: string,
+    subCategoryIndex: number,
+  ) => {
     if (!editValue.trim()) return;
 
     try {
-      const updatedCategories = categories.map(category => {
+      const updatedCategories = categories.map((category) => {
         if (category.id === categoryId) {
           const newSubCategories = [...category.subCategories];
           newSubCategories[subCategoryIndex] = editValue.trim();
@@ -225,7 +238,7 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
       setEditingSubCategory(null);
       setEditValue("");
       onCategoriesUpdate();
-      
+
       toast({
         title: "Success",
         description: "Sub-category updated successfully",
@@ -242,7 +255,9 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
 
   const handleDeleteCategory = async (categoryId: string) => {
     try {
-      const updatedCategories = categories.filter(category => category.id !== categoryId);
+      const updatedCategories = categories.filter(
+        (category) => category.id !== categoryId,
+      );
 
       await api.saveCategories({
         categories: updatedCategories,
@@ -252,7 +267,7 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
       setCategories(updatedCategories);
       setDeleteTarget(null);
       onCategoriesUpdate();
-      
+
       toast({
         title: "Success",
         description: "Category deleted successfully",
@@ -267,11 +282,16 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
     }
   };
 
-  const handleDeleteSubCategory = async (categoryId: string, subCategoryIndex: number) => {
+  const handleDeleteSubCategory = async (
+    categoryId: string,
+    subCategoryIndex: number,
+  ) => {
     try {
-      const updatedCategories = categories.map(category => {
+      const updatedCategories = categories.map((category) => {
         if (category.id === categoryId) {
-          const newSubCategories = category.subCategories.filter((_, index) => index !== subCategoryIndex);
+          const newSubCategories = category.subCategories.filter(
+            (_, index) => index !== subCategoryIndex,
+          );
           return { ...category, subCategories: newSubCategories };
         }
         return category;
@@ -285,7 +305,7 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
       setCategories(updatedCategories);
       setDeleteTarget(null);
       onCategoriesUpdate();
-      
+
       toast({
         title: "Success",
         description: "Sub-category deleted successfully",
@@ -313,7 +333,8 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
           <DialogHeader>
             <DialogTitle>Manage Categories & Sub-Categories</DialogTitle>
             <DialogDescription>
-              Add, edit, or delete categories and their sub-categories used in your expense tracker.
+              Add, edit, or delete categories and their sub-categories used in
+              your expense tracker.
             </DialogDescription>
           </DialogHeader>
 
@@ -332,7 +353,8 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                 </Button>
               </div>
               <CardDescription>
-                Populate categories from existing expense data or add new ones manually
+                Populate categories from existing expense data or add new ones
+                manually
               </CardDescription>
             </CardHeader>
           </Card>
@@ -348,9 +370,12 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   placeholder="Enter category name"
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
+                  onKeyPress={(e) => e.key === "Enter" && handleAddCategory()}
                 />
-                <Button onClick={handleAddCategory} disabled={!newCategoryName.trim()}>
+                <Button
+                  onClick={handleAddCategory}
+                  disabled={!newCategoryName.trim()}
+                >
                   <Plus className="h-4 w-4 mr-2" />
                   Add
                 </Button>
@@ -368,7 +393,9 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
             ) : categories.length === 0 ? (
               <Card>
                 <CardContent className="text-center py-8">
-                  <p className="text-slate-500">No categories found. Add your first category above.</p>
+                  <p className="text-slate-500">
+                    No categories found. Add your first category above.
+                  </p>
                 </CardContent>
               </Card>
             ) : (
@@ -381,15 +408,21 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                           <Input
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleEditCategory(category.id)}
+                            onKeyPress={(e) =>
+                              e.key === "Enter" &&
+                              handleEditCategory(category.id)
+                            }
                             className="flex-1"
                           />
-                          <Button size="sm" onClick={() => handleEditCategory(category.id)}>
+                          <Button
+                            size="sm"
+                            onClick={() => handleEditCategory(category.id)}
+                          >
                             <Save className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => {
                               setEditingCategory(null);
                               setEditValue("");
@@ -400,7 +433,9 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                         </div>
                       ) : (
                         <>
-                          <CardTitle className="text-lg">{category.name}</CardTitle>
+                          <CardTitle className="text-lg">
+                            {category.name}
+                          </CardTitle>
                           <div className="flex gap-2">
                             <Button
                               size="sm"
@@ -415,7 +450,12 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => setDeleteTarget({type: 'category', categoryId: category.id})}
+                              onClick={() =>
+                                setDeleteTarget({
+                                  type: "category",
+                                  categoryId: category.id,
+                                })
+                              }
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -431,21 +471,30 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                       <div className="flex flex-wrap gap-2">
                         {category.subCategories.map((subCategory, index) => (
                           <div key={index} className="flex items-center gap-1">
-                            {editingSubCategory?.categoryId === category.id && editingSubCategory.index === index ? (
+                            {editingSubCategory?.categoryId === category.id &&
+                            editingSubCategory.index === index ? (
                               <div className="flex items-center gap-1">
                                 <Input
                                   value={editValue}
                                   onChange={(e) => setEditValue(e.target.value)}
-                                  onKeyPress={(e) => e.key === 'Enter' && handleEditSubCategory(category.id, index)}
+                                  onKeyPress={(e) =>
+                                    e.key === "Enter" &&
+                                    handleEditSubCategory(category.id, index)
+                                  }
                                   className="w-32"
                                   size="sm"
                                 />
-                                <Button size="sm" onClick={() => handleEditSubCategory(category.id, index)}>
+                                <Button
+                                  size="sm"
+                                  onClick={() =>
+                                    handleEditSubCategory(category.id, index)
+                                  }
+                                >
                                   <Save className="h-3 w-3" />
                                 </Button>
-                                <Button 
-                                  size="sm" 
-                                  variant="outline" 
+                                <Button
+                                  size="sm"
+                                  variant="outline"
                                   onClick={() => {
                                     setEditingSubCategory(null);
                                     setEditValue("");
@@ -455,14 +504,20 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                                 </Button>
                               </div>
                             ) : (
-                              <Badge variant="secondary" className="cursor-pointer group">
+                              <Badge
+                                variant="secondary"
+                                className="cursor-pointer group"
+                              >
                                 <span>{subCategory}</span>
                                 <Button
                                   size="sm"
                                   variant="ghost"
                                   className="h-4 w-4 p-0 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
                                   onClick={() => {
-                                    setEditingSubCategory({categoryId: category.id, index});
+                                    setEditingSubCategory({
+                                      categoryId: category.id,
+                                      index,
+                                    });
                                     setEditValue(subCategory);
                                   }}
                                 >
@@ -472,7 +527,13 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                                   size="sm"
                                   variant="ghost"
                                   className="h-4 w-4 p-0 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                                  onClick={() => setDeleteTarget({type: 'subCategory', categoryId: category.id, subCategoryIndex: index})}
+                                  onClick={() =>
+                                    setDeleteTarget({
+                                      type: "subCategory",
+                                      categoryId: category.id,
+                                      subCategoryIndex: index,
+                                    })
+                                  }
                                 >
                                   <Trash2 className="h-3 w-3" />
                                 </Button>
@@ -486,13 +547,18 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
                       <div className="flex gap-2">
                         <Input
                           value={newSubCategoryName}
-                          onChange={(e) => setNewSubCategoryName(e.target.value)}
+                          onChange={(e) =>
+                            setNewSubCategoryName(e.target.value)
+                          }
                           placeholder="Add sub-category"
-                          onKeyPress={(e) => e.key === 'Enter' && handleAddSubCategory(category.id)}
+                          onKeyPress={(e) =>
+                            e.key === "Enter" &&
+                            handleAddSubCategory(category.id)
+                          }
                           size="sm"
                         />
-                        <Button 
-                          size="sm" 
+                        <Button
+                          size="sm"
                           onClick={() => handleAddSubCategory(category.id)}
                           disabled={!newSubCategoryName.trim()}
                         >
@@ -509,23 +575,34 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={() => setDeleteTarget(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the {deleteTarget?.type}.
-              {deleteTarget?.type === 'category' && " All associated sub-categories will also be deleted."}
+              This action cannot be undone. This will permanently delete the{" "}
+              {deleteTarget?.type}.
+              {deleteTarget?.type === "category" &&
+                " All associated sub-categories will also be deleted."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
-                if (deleteTarget?.type === 'category') {
+                if (deleteTarget?.type === "category") {
                   handleDeleteCategory(deleteTarget.categoryId);
-                } else if (deleteTarget?.type === 'subCategory' && deleteTarget.subCategoryIndex !== undefined) {
-                  handleDeleteSubCategory(deleteTarget.categoryId, deleteTarget.subCategoryIndex);
+                } else if (
+                  deleteTarget?.type === "subCategory" &&
+                  deleteTarget.subCategoryIndex !== undefined
+                ) {
+                  handleDeleteSubCategory(
+                    deleteTarget.categoryId,
+                    deleteTarget.subCategoryIndex,
+                  );
                 }
               }}
               className="bg-red-600 hover:bg-red-700"

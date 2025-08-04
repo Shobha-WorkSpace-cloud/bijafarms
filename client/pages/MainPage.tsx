@@ -70,10 +70,11 @@ export default function MainPage() {
 
         // Filter and sort tasks to get next 3 upcoming items
         const upcomingTasks = taskData
-          .filter(task => task.status !== "completed")
+          .filter((task) => task.status !== "completed")
           .sort((a, b) => {
             // Sort by due date, then by priority
-            const dateComparison = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+            const dateComparison =
+              new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
             if (dateComparison !== 0) return dateComparison;
 
             // Priority sorting: high = 0, medium = 1, low = 2
@@ -115,16 +116,20 @@ export default function MainPage() {
 
     return date.toLocaleDateString("en-US", {
       month: "short",
-      day: "numeric"
+      day: "numeric",
     });
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case "high": return "text-red-600 bg-red-50";
-      case "medium": return "text-yellow-600 bg-yellow-50";
-      case "low": return "text-green-600 bg-green-50";
-      default: return "text-gray-600 bg-gray-50";
+      case "high":
+        return "text-red-600 bg-red-50";
+      case "medium":
+        return "text-yellow-600 bg-yellow-50";
+      case "low":
+        return "text-green-600 bg-green-50";
+      default:
+        return "text-gray-600 bg-gray-50";
     }
   };
 
@@ -187,7 +192,9 @@ export default function MainPage() {
                 </div>
               ) : (
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
-                  <h4 className="font-semibold text-blue-800 mb-3">Financial Overview:</h4>
+                  <h4 className="font-semibold text-blue-800 mb-3">
+                    Financial Overview:
+                  </h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-white/60 p-3 rounded-lg">
                       <div className="flex items-center space-x-2 text-green-700 mb-1">
@@ -212,16 +219,22 @@ export default function MainPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <IndianRupee className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm font-medium text-blue-800">Balance:</span>
+                        <span className="text-sm font-medium text-blue-800">
+                          Balance:
+                        </span>
                       </div>
-                      <div className={`text-sm font-bold ${stats.balance >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                      <div
+                        className={`text-sm font-bold ${stats.balance >= 0 ? "text-green-700" : "text-red-700"}`}
+                      >
                         {formatCurrency(stats.balance)}
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <div className="flex items-center space-x-2">
                         <Receipt className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm font-medium text-blue-800">Transactions:</span>
+                        <span className="text-sm font-medium text-blue-800">
+                          Transactions:
+                        </span>
                       </div>
                       <div className="text-sm font-bold text-blue-700">
                         {stats.transactionCount}
@@ -276,21 +289,30 @@ export default function MainPage() {
                 </div>
               ) : (
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-                  <h4 className="font-semibold text-green-800 mb-3">Next 3 Work Items:</h4>
+                  <h4 className="font-semibold text-green-800 mb-3">
+                    Next 3 Work Items:
+                  </h4>
                   {tasks.length === 0 ? (
                     <div className="text-center py-4">
                       <Clipboard className="h-8 w-8 text-green-400 mx-auto mb-2" />
-                      <p className="text-sm text-green-600">No upcoming tasks</p>
+                      <p className="text-sm text-green-600">
+                        No upcoming tasks
+                      </p>
                       <p className="text-xs text-green-500">All caught up!</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {tasks.map((task, index) => (
-                        <div key={task.id} className="bg-white/60 p-3 rounded-lg border border-green-100">
+                        <div
+                          key={task.id}
+                          className="bg-white/60 p-3 rounded-lg border border-green-100"
+                        >
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center space-x-2 mb-1">
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                                <span
+                                  className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}
+                                >
                                   {task.priority}
                                 </span>
                                 <span className="text-xs text-green-600 font-medium">
@@ -311,7 +333,9 @@ export default function MainPage() {
                   )}
                   <div className="mt-3 pt-3 border-t border-green-200 text-center">
                     <span className="text-xs text-green-600">
-                      {tasks.length > 0 ? "View all tasks in Work Tracker" : "Add new tasks in Work Tracker"}
+                      {tasks.length > 0
+                        ? "View all tasks in Work Tracker"
+                        : "Add new tasks in Work Tracker"}
                     </span>
                   </div>
                 </div>
@@ -328,8 +352,6 @@ export default function MainPage() {
             </CardContent>
           </Card>
         </div>
-
-
       </main>
 
       {/* Footer */}
