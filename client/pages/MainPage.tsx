@@ -20,6 +20,7 @@ import {
   Beef,
   Stethoscope,
   Receipt,
+  Baby,
 } from "lucide-react";
 import { ExpenseRecord } from "@shared/expense-types";
 import * as api from "@/lib/api";
