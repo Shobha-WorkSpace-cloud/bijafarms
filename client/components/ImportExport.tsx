@@ -178,7 +178,8 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
 
             // Convert worksheet to JSON
             worksheet.eachRow((row, rowNumber) => {
-              if (rowNumber > 1) { // Skip header row
+              if (rowNumber > 1) {
+                // Skip header row
                 const rowData: any = {};
                 row.eachCell((cell, colNumber) => {
                   const header = headers[colNumber];
@@ -424,7 +425,8 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
 
         // Convert worksheet to JSON
         worksheet.eachRow((row, rowNumber) => {
-          if (rowNumber > 1) { // Skip header row
+          if (rowNumber > 1) {
+            // Skip header row
             const rowData: any = {};
             row.eachCell((cell, colNumber) => {
               const header = headers[colNumber];
