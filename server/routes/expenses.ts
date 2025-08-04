@@ -260,3 +260,32 @@ export const backupExpenses: RequestHandler = (req, res) => {
     res.status(500).json({ error: "Failed to create backup" });
   }
 };
+
+// GET /api/expenses/categories - Get categories
+export const getCategories: RequestHandler = (req, res) => {
+  try {
+    const categories = readCategories();
+    res.json(categories);
+  } catch (error) {
+    console.error("Error getting categories:", error);
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+};
+
+// POST /api/expenses/categories - Save categories
+export const saveCategories: RequestHandler = (req, res) => {
+  try {
+    const categoryData: CategoryManagementData = req.body;
+
+    // Validate required fields
+    if (!categoryData.categories || !Array.isArray(categoryData.categories)) {
+      return res.status(400).json({ error: "Invalid categories data" });
+    }
+
+    writeCategories(categoryData);
+    res.json({ message: "Categories saved successfully" });
+  } catch (error) {
+    console.error("Error saving categories:", error);
+    res.status(500).json({ error: "Failed to save categories" });
+  }
+};
