@@ -102,8 +102,49 @@ export default function MainPage() {
       }
     };
 
+    const loadAnimals = async () => {
+      try {
+        const animalData = await fetchAnimals();
+        setAnimals(animalData);
+
+        // Calculate animal statistics
+        const activeAnimals = animalData.filter(animal => animal.status !== "sold" && animal.status !== "dead");
+        const goats = activeAnimals.filter(animal => animal.type === "goat");
+        const sheep = activeAnimals.filter(animal => animal.type === "sheep");
+
+        // Calculate kids (animals less than 1 year old)
+        const now = new Date();
+        const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+        const kids = activeAnimals.filter(animal => {
+          if (!animal.dateOfBirth) return false;
+          return new Date(animal.dateOfBirth) > oneYearAgo;
+        });
+
+        setAnimalStats({
+          totalAnimals: activeAnimals.length,
+          totalGoats: goats.length,
+          totalSheep: sheep.length,
+          totalKids: kids.length,
+          activeAnimals: activeAnimals.length,
+        });
+      } catch (error) {
+        console.error("Error loading animals:", error);
+        setAnimals([]);
+        setAnimalStats({
+          totalAnimals: 0,
+          totalGoats: 0,
+          totalSheep: 0,
+          totalKids: 0,
+          activeAnimals: 0,
+        });
+      } finally {
+        setAnimalsLoading(false);
+      }
+    };
+
     loadStats();
     loadTasks();
+    loadAnimals();
   }, []);
 
   const formatCurrency = (amount: number) => {
