@@ -317,6 +317,26 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
             </DialogDescription>
           </DialogHeader>
 
+          {/* Populate from existing data */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg">Category Management</CardTitle>
+                <Button
+                  onClick={handlePopulateCategories}
+                  disabled={loading}
+                  variant="outline"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Populate from Expenses
+                </Button>
+              </div>
+              <CardDescription>
+                Populate categories from existing expense data or add new ones manually
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
           {/* Add New Category */}
           <Card>
             <CardHeader>
