@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import MainPage from "./pages/MainPage";
 import WorkTracker from "./pages/WorkTracker";
+import AnimalTracker from "./pages/AnimalTracker";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
