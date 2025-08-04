@@ -703,23 +703,25 @@ export default function Index() {
           open={!!editingExpense}
           onOpenChange={() => setEditingExpense(null)}
         >
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md mx-4 max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Edit Transaction</DialogTitle>
               <DialogDescription>
                 Update the details for this transaction.
               </DialogDescription>
             </DialogHeader>
-            {editingExpense && (
-              <ExpenseForm
-                initialData={editingExpense}
-                onSubmit={handleEditExpense}
-                onCancel={() => setEditingExpense(null)}
-                categories={uniqueCategories}
-                paidByOptions={uniquePaidBy}
-                sourceOptions={uniqueSources}
-              />
-            )}
+            <div className="overflow-y-auto max-h-[60vh] pr-2">
+              {editingExpense && (
+                <ExpenseForm
+                  initialData={editingExpense}
+                  onSubmit={handleEditExpense}
+                  onCancel={() => setEditingExpense(null)}
+                  categories={uniqueCategories}
+                  paidByOptions={uniquePaidBy}
+                  sourceOptions={uniqueSources}
+                />
+              )}
+            </div>
           </DialogContent>
         </Dialog>
       </div>
