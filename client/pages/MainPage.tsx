@@ -102,6 +102,32 @@ export default function MainPage() {
     }).format(amount);
   };
 
+  const formatDueDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = date.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Tomorrow";
+    if (diffDays < 0) return `${Math.abs(diffDays)} days overdue`;
+    if (diffDays <= 7) return `${diffDays} days`;
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric"
+    });
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high": return "text-red-600 bg-red-50";
+      case "medium": return "text-yellow-600 bg-yellow-50";
+      case "low": return "text-green-600 bg-green-50";
+      default: return "text-gray-600 bg-gray-50";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Header with Logo */}
