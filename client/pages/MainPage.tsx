@@ -109,14 +109,20 @@ export default function MainPage() {
         setAnimals(animalData);
 
         // Calculate animal statistics
-        const activeAnimals = animalData.filter(animal => animal.status !== "sold" && animal.status !== "dead");
-        const goats = activeAnimals.filter(animal => animal.type === "goat");
-        const sheep = activeAnimals.filter(animal => animal.type === "sheep");
+        const activeAnimals = animalData.filter(
+          (animal) => animal.status !== "sold" && animal.status !== "dead",
+        );
+        const goats = activeAnimals.filter((animal) => animal.type === "goat");
+        const sheep = activeAnimals.filter((animal) => animal.type === "sheep");
 
         // Calculate kids (animals less than 1 year old)
         const now = new Date();
-        const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-        const kids = activeAnimals.filter(animal => {
+        const oneYearAgo = new Date(
+          now.getFullYear() - 1,
+          now.getMonth(),
+          now.getDate(),
+        );
+        const kids = activeAnimals.filter((animal) => {
           if (!animal.dateOfBirth) return false;
           return new Date(animal.dateOfBirth) > oneYearAgo;
         });
@@ -448,7 +454,9 @@ export default function MainPage() {
                     <div className="bg-white/60 p-3 rounded-lg">
                       <div className="flex items-center space-x-2 text-purple-700 mb-1">
                         <Users className="h-4 w-4" />
-                        <span className="text-xs font-medium">Total Animals</span>
+                        <span className="text-xs font-medium">
+                          Total Animals
+                        </span>
                       </div>
                       <div className="text-xl font-bold text-purple-800">
                         {animalStats.totalAnimals}
@@ -457,7 +465,9 @@ export default function MainPage() {
                     <div className="bg-white/60 p-3 rounded-lg">
                       <div className="flex items-center space-x-2 text-purple-700 mb-1">
                         <Baby className="h-4 w-4" />
-                        <span className="text-xs font-medium">Kids (&lt;1yr)</span>
+                        <span className="text-xs font-medium">
+                          Kids (&lt;1yr)
+                        </span>
                       </div>
                       <div className="text-xl font-bold text-purple-800">
                         {animalStats.totalKids}

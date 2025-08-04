@@ -134,7 +134,9 @@ export default function AnimalTracker() {
   // Get unique values for filter dropdowns
   const uniqueBreeds = [...new Set(animals.map((a) => a.breed))];
 
-  const handleAddAnimal = async (newAnimal: Omit<AnimalRecord, "id" | "createdAt" | "updatedAt">) => {
+  const handleAddAnimal = async (
+    newAnimal: Omit<AnimalRecord, "id" | "createdAt" | "updatedAt">,
+  ) => {
     try {
       const createdAnimal = await animalApi.createAnimal(newAnimal);
       setAnimals((prev) => [createdAnimal, ...prev]);
@@ -155,7 +157,10 @@ export default function AnimalTracker() {
 
   const handleEditAnimal = async (updatedAnimal: AnimalRecord) => {
     try {
-      const updated = await animalApi.updateAnimal(updatedAnimal.id, updatedAnimal);
+      const updated = await animalApi.updateAnimal(
+        updatedAnimal.id,
+        updatedAnimal,
+      );
       setAnimals((prev) =>
         prev.map((animal) => (animal.id === updated.id ? updated : animal)),
       );
@@ -334,23 +339,33 @@ export default function AnimalTracker() {
               </CardContent>
             </Card>
 
-            <Card className={`bg-gradient-to-br border ${
-              summary.profitLoss >= 0 
-                ? "from-emerald-50 to-emerald-100 border-emerald-200" 
-                : "from-red-50 to-red-100 border-red-200"
-            }`}>
+            <Card
+              className={`bg-gradient-to-br border ${
+                summary.profitLoss >= 0
+                  ? "from-emerald-50 to-emerald-100 border-emerald-200"
+                  : "from-red-50 to-red-100 border-red-200"
+              }`}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className={`text-sm font-medium flex items-center gap-2 ${
-                  summary.profitLoss >= 0 ? "text-emerald-800" : "text-red-800"
-                }`}>
+                <CardTitle
+                  className={`text-sm font-medium flex items-center gap-2 ${
+                    summary.profitLoss >= 0
+                      ? "text-emerald-800"
+                      : "text-red-800"
+                  }`}
+                >
                   <TrendingUp className="h-4 w-4" />
                   Profit/Loss
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className={`text-lg font-bold ${
-                  summary.profitLoss >= 0 ? "text-emerald-900" : "text-red-900"
-                }`}>
+                <div
+                  className={`text-lg font-bold ${
+                    summary.profitLoss >= 0
+                      ? "text-emerald-900"
+                      : "text-red-900"
+                  }`}
+                >
                   {formatCurrency(summary.profitLoss)}
                 </div>
               </CardContent>
@@ -433,7 +448,9 @@ export default function AnimalTracker() {
                     <SelectContent>
                       <SelectItem value="all">All Status</SelectItem>
                       <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="ready_to_sell">Ready to Sell</SelectItem>
+                      <SelectItem value="ready_to_sell">
+                        Ready to Sell
+                      </SelectItem>
                       <SelectItem value="sold">Sold</SelectItem>
                       <SelectItem value="dead">Dead</SelectItem>
                     </SelectContent>
@@ -443,7 +460,10 @@ export default function AnimalTracker() {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-2">
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                <Dialog
+                  open={isAddDialogOpen}
+                  onOpenChange={setIsAddDialogOpen}
+                >
                   <DialogTrigger asChild>
                     <Button className="bg-green-600 hover:bg-green-700">
                       <Plus className="h-4 w-4 mr-2" />
@@ -474,12 +494,17 @@ export default function AnimalTracker() {
               <CardContent className="text-center py-12">
                 <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500 text-lg">No animals found</p>
-                <p className="text-gray-400">Try adjusting your filters or add a new animal.</p>
+                <p className="text-gray-400">
+                  Try adjusting your filters or add a new animal.
+                </p>
               </CardContent>
             </Card>
           ) : (
             filteredAnimals.map((animal) => (
-              <Card key={animal.id} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={animal.id}
+                className="hover:shadow-lg transition-shadow"
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div>
@@ -497,12 +522,16 @@ export default function AnimalTracker() {
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
                       <span className="text-gray-500">Gender:</span>
-                      <div className="font-medium capitalize">{animal.gender}</div>
+                      <div className="font-medium capitalize">
+                        {animal.gender}
+                      </div>
                     </div>
                     <div>
                       <span className="text-gray-500">Weight:</span>
                       <div className="font-medium">
-                        {animal.currentWeight ? `${animal.currentWeight} kg` : "N/A"}
+                        {animal.currentWeight
+                          ? `${animal.currentWeight} kg`
+                          : "N/A"}
                       </div>
                     </div>
                     {animal.purchasePrice && (

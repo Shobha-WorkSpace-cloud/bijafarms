@@ -12,8 +12,14 @@ import {
 
 const ANIMALS_FILE = path.join(__dirname, "../data/animals.json");
 const WEIGHT_RECORDS_FILE = path.join(__dirname, "../data/weight-records.json");
-const BREEDING_RECORDS_FILE = path.join(__dirname, "../data/breeding-records.json");
-const VACCINATION_RECORDS_FILE = path.join(__dirname, "../data/vaccination-records.json");
+const BREEDING_RECORDS_FILE = path.join(
+  __dirname,
+  "../data/breeding-records.json",
+);
+const VACCINATION_RECORDS_FILE = path.join(
+  __dirname,
+  "../data/vaccination-records.json",
+);
 const HEALTH_RECORDS_FILE = path.join(__dirname, "../data/health-records.json");
 
 // Ensure data directory exists
@@ -96,7 +102,10 @@ const readVaccinationRecords = (): VaccinationRecord[] => {
 
 const writeVaccinationRecords = (records: VaccinationRecord[]): void => {
   try {
-    fs.writeFileSync(VACCINATION_RECORDS_FILE, JSON.stringify(records, null, 2));
+    fs.writeFileSync(
+      VACCINATION_RECORDS_FILE,
+      JSON.stringify(records, null, 2),
+    );
   } catch (error) {
     console.error("Error writing vaccination records:", error);
     throw error;
@@ -220,11 +229,11 @@ export const getWeightRecords: RequestHandler = (req, res) => {
   try {
     const { animalId } = req.query;
     let records = readWeightRecords();
-    
+
     if (animalId) {
-      records = records.filter(record => record.animalId === animalId);
+      records = records.filter((record) => record.animalId === animalId);
     }
-    
+
     res.json(records);
   } catch (error) {
     console.error("Error getting weight records:", error);
@@ -254,13 +263,14 @@ export const getBreedingRecords: RequestHandler = (req, res) => {
   try {
     const { animalId } = req.query;
     let records = readBreedingRecords();
-    
+
     if (animalId) {
-      records = records.filter(record => 
-        record.motherId === animalId || record.fatherId === animalId
+      records = records.filter(
+        (record) =>
+          record.motherId === animalId || record.fatherId === animalId,
       );
     }
-    
+
     res.json(records);
   } catch (error) {
     console.error("Error getting breeding records:", error);
@@ -292,11 +302,11 @@ export const getVaccinationRecords: RequestHandler = (req, res) => {
   try {
     const { animalId } = req.query;
     let records = readVaccinationRecords();
-    
+
     if (animalId) {
-      records = records.filter(record => record.animalId === animalId);
+      records = records.filter((record) => record.animalId === animalId);
     }
-    
+
     res.json(records);
   } catch (error) {
     console.error("Error getting vaccination records:", error);
@@ -326,11 +336,11 @@ export const getHealthRecords: RequestHandler = (req, res) => {
   try {
     const { animalId } = req.query;
     let records = readHealthRecords();
-    
+
     if (animalId) {
-      records = records.filter(record => record.animalId === animalId);
+      records = records.filter((record) => record.animalId === animalId);
     }
-    
+
     res.json(records);
   } catch (error) {
     console.error("Error getting health records:", error);
@@ -360,17 +370,17 @@ export const getAnimalSummary: RequestHandler = (req, res) => {
   try {
     const animals = readAnimals();
     const weightRecords = readWeightRecords();
-    
+
     const summary: AnimalSummary = {
       totalAnimals: animals.length,
-      totalGoats: animals.filter(a => a.type === "goat").length,
-      totalSheep: animals.filter(a => a.type === "sheep").length,
-      totalMales: animals.filter(a => a.gender === "male").length,
-      totalFemales: animals.filter(a => a.gender === "female").length,
-      activeAnimals: animals.filter(a => a.status === "active").length,
-      soldAnimals: animals.filter(a => a.status === "sold").length,
-      readyToSell: animals.filter(a => a.status === "ready_to_sell").length,
-      deadAnimals: animals.filter(a => a.status === "dead").length,
+      totalGoats: animals.filter((a) => a.type === "goat").length,
+      totalSheep: animals.filter((a) => a.type === "sheep").length,
+      totalMales: animals.filter((a) => a.gender === "male").length,
+      totalFemales: animals.filter((a) => a.gender === "female").length,
+      activeAnimals: animals.filter((a) => a.status === "active").length,
+      soldAnimals: animals.filter((a) => a.status === "sold").length,
+      readyToSell: animals.filter((a) => a.status === "ready_to_sell").length,
+      deadAnimals: animals.filter((a) => a.status === "dead").length,
       averageWeight: 0,
       totalInvestment: 0,
       totalRevenue: 0,
@@ -378,24 +388,33 @@ export const getAnimalSummary: RequestHandler = (req, res) => {
     };
 
     // Calculate average weight from most recent weight records
-    const animalWeights = animals.map(animal => {
-      const animalWeightRecords = weightRecords
-        .filter(w => w.animalId === animal.id)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-      
-      return animalWeightRecords.length > 0 
-        ? animalWeightRecords[0].weight 
-        : animal.currentWeight || 0;
-    }).filter(weight => weight > 0);
+    const animalWeights = animals
+      .map((animal) => {
+        const animalWeightRecords = weightRecords
+          .filter((w) => w.animalId === animal.id)
+          .sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          );
+
+        return animalWeightRecords.length > 0
+          ? animalWeightRecords[0].weight
+          : animal.currentWeight || 0;
+      })
+      .filter((weight) => weight > 0);
 
     if (animalWeights.length > 0) {
-      summary.averageWeight = animalWeights.reduce((sum, weight) => sum + weight, 0) / animalWeights.length;
+      summary.averageWeight =
+        animalWeights.reduce((sum, weight) => sum + weight, 0) /
+        animalWeights.length;
     }
 
     // Calculate financial summary
-    summary.totalInvestment = animals.reduce((sum, animal) => sum + (animal.purchasePrice || 0), 0);
+    summary.totalInvestment = animals.reduce(
+      (sum, animal) => sum + (animal.purchasePrice || 0),
+      0,
+    );
     summary.totalRevenue = animals
-      .filter(a => a.status === "sold")
+      .filter((a) => a.status === "sold")
       .reduce((sum, animal) => sum + (animal.salePrice || 0), 0);
     summary.profitLoss = summary.totalRevenue - summary.totalInvestment;
 
@@ -428,7 +447,10 @@ export const backupAnimals: RequestHandler = (req, res) => {
     const backupFileName = `animals-backup-${timestamp}.json`;
 
     res.setHeader("Content-Type", "application/json");
-    res.setHeader("Content-Disposition", `attachment; filename="${backupFileName}"`);
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${backupFileName}"`,
+    );
     res.json(backup);
   } catch (error) {
     console.error("Error creating backup:", error);

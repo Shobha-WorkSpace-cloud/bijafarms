@@ -13,30 +13,30 @@ export interface AnimalRecord {
   status: AnimalStatus;
   currentWeight?: number;
   markings?: string; // Special markings for identification
-  
+
   // Purchase details
   purchaseDate?: string;
   purchasePrice?: number;
   purchaseLocation?: string;
   previousOwner?: string;
-  
+
   // Sale details (when sold)
   saleDate?: string;
   salePrice?: number;
   buyerName?: string;
   saleNotes?: string;
-  
+
   // Death details (when applicable)
   deathDate?: string;
   deathCause?: string;
-  
+
   // Insurance
   insured: boolean;
   insuranceProvider?: string;
   insurancePolicyNumber?: string;
   insuranceAmount?: number;
   insuranceExpiryDate?: string;
-  
+
   // Metadata
   createdAt: string;
   updatedAt: string;
@@ -60,7 +60,7 @@ export interface BreedingRecord {
   breedingDate: string;
   expectedDeliveryDate?: string;
   actualDeliveryDate?: string;
-  
+
   // Birth details
   totalKids?: number;
   maleKids?: number;
@@ -72,13 +72,13 @@ export interface BreedingRecord {
     status: "alive" | "stillborn" | "died_after_birth";
     animalId?: string; // If the kid is added as a separate animal record
   }[];
-  
+
   // Breeding notes
   breedingMethod?: "natural" | "artificial_insemination";
   veterinarianName?: string;
   complications?: string;
   notes?: string;
-  
+
   createdAt: string;
   updatedAt: string;
 }

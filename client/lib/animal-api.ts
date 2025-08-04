@@ -66,11 +66,13 @@ export const deleteAnimal = async (id: string): Promise<void> => {
 };
 
 // Weight records
-export const fetchWeightRecords = async (animalId?: string): Promise<WeightRecord[]> => {
-  const url = animalId 
+export const fetchWeightRecords = async (
+  animalId?: string,
+): Promise<WeightRecord[]> => {
+  const url = animalId
     ? `${API_BASE}/weight-records?animalId=${animalId}&t=${Date.now()}`
     : `${API_BASE}/weight-records?t=${Date.now()}`;
-  
+
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch weight records");
@@ -97,11 +99,13 @@ export const createWeightRecord = async (
 };
 
 // Breeding records
-export const fetchBreedingRecords = async (animalId?: string): Promise<BreedingRecord[]> => {
-  const url = animalId 
+export const fetchBreedingRecords = async (
+  animalId?: string,
+): Promise<BreedingRecord[]> => {
+  const url = animalId
     ? `${API_BASE}/breeding-records?animalId=${animalId}&t=${Date.now()}`
     : `${API_BASE}/breeding-records?t=${Date.now()}`;
-  
+
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch breeding records");
@@ -128,11 +132,13 @@ export const createBreedingRecord = async (
 };
 
 // Vaccination records
-export const fetchVaccinationRecords = async (animalId?: string): Promise<VaccinationRecord[]> => {
-  const url = animalId 
+export const fetchVaccinationRecords = async (
+  animalId?: string,
+): Promise<VaccinationRecord[]> => {
+  const url = animalId
     ? `${API_BASE}/vaccination-records?animalId=${animalId}&t=${Date.now()}`
     : `${API_BASE}/vaccination-records?t=${Date.now()}`;
-  
+
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch vaccination records");
@@ -159,11 +165,13 @@ export const createVaccinationRecord = async (
 };
 
 // Health records
-export const fetchHealthRecords = async (animalId?: string): Promise<HealthRecord[]> => {
-  const url = animalId 
+export const fetchHealthRecords = async (
+  animalId?: string,
+): Promise<HealthRecord[]> => {
+  const url = animalId
     ? `${API_BASE}/health-records?animalId=${animalId}&t=${Date.now()}`
     : `${API_BASE}/health-records?t=${Date.now()}`;
-  
+
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error("Failed to fetch health records");
