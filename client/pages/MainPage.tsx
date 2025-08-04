@@ -118,26 +118,61 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center space-x-2 text-slate-600">
-                  <Calculator className="h-4 w-4" />
-                  <span className="text-sm">Financial calculations</span>
+              {loading ? (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-blue-200 rounded mb-2 w-24"></div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-8 bg-blue-200 rounded"></div>
+                      <div className="h-8 bg-blue-200 rounded"></div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2 text-slate-600">
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="text-sm">Expense analytics</span>
+              ) : (
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800 mb-3">Financial Overview:</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-white/60 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-green-700 mb-1">
+                        <TrendingUp className="h-4 w-4" />
+                        <span className="text-xs font-medium">Income</span>
+                      </div>
+                      <div className="text-lg font-bold text-green-800">
+                        {formatCurrency(stats.totalIncome)}
+                      </div>
+                    </div>
+                    <div className="bg-white/60 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-red-700 mb-1">
+                        <TrendingDown className="h-4 w-4" />
+                        <span className="text-xs font-medium">Expenses</span>
+                      </div>
+                      <div className="text-lg font-bold text-red-800">
+                        {formatCurrency(stats.totalExpenses)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-blue-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <IndianRupee className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">Balance:</span>
+                      </div>
+                      <div className={`text-sm font-bold ${stats.balance >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                        {formatCurrency(stats.balance)}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center space-x-2">
+                        <Receipt className="h-4 w-4 text-blue-600" />
+                        <span className="text-sm font-medium text-blue-800">Transactions:</span>
+                      </div>
+                      <div className="text-sm font-bold text-blue-700">
+                        {stats.transactionCount}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-800 mb-2">Features:</h4>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Track income and expenses</li>
-                  <li>• Categorize farm-related costs</li>
-                  <li>• Generate financial reports</li>
-                  <li>• Export data to Excel/CSV</li>
-                </ul>
-              </div>
+              )}
 
               <div className="pt-4">
                 <Link to="/expense-tracker">
