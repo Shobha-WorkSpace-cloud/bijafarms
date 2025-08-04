@@ -1,4 +1,4 @@
-import { ExpenseRecord } from "@shared/expense-types";
+import { ExpenseRecord, CategoryManagementData } from "@shared/expense-types";
 
 const API_BASE = "/api/expenses";
 
