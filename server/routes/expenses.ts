@@ -289,3 +289,71 @@ export const saveCategories: RequestHandler = (req, res) => {
     res.status(500).json({ error: "Failed to save categories" });
   }
 };
+
+// POST /api/expenses/populate-categories - Populate categories from existing expense data
+export const populateCategories: RequestHandler = (req, res) => {
+  try {
+    const expenses = readExpenses();
+    const categoryMap: { [key: string]: Set<string> } = {};
+
+    // Extract categories and sub-categories from existing expenses
+    expenses.forEach(expense => {
+      if (expense.category && expense.category.trim() !== "") {
+        const category = expense.category.trim();
+        const subCategory = expense.subCategory ? expense.subCategory.trim() : "General";
+
+        if (!categoryMap[category]) {
+          categoryMap[category] = new Set();
+        }
+
+        if (subCategory && subCategory !== "") {
+          categoryMap[category].add(subCategory);
+        }
+      }
+    });
+
+    // Convert to CategoryConfig format
+    const categories: CategoryConfig[] = Object.entries(categoryMap).map(([categoryName, subCategoriesSet], index) => {
+      // Clean up and deduplicate sub-categories
+      const subCategories = Array.from(subCategoriesSet)
+        .filter(sub => sub && sub.trim() !== "")
+        .map(sub => {
+          // Standardize common variations
+          if (sub.toLowerCase() === "misc") return "Misc";
+          if (sub.toLowerCase() === "plubming") return "Plumbing";
+          if (sub.toLowerCase() === "solar") return "Solar";
+          if (sub.toLowerCase() === "doors") return "Doors";
+          if (sub.toLowerCase() === "electric") return "Electric";
+          return sub;
+        })
+        .filter((sub, idx, arr) => arr.findIndex(s => s.toLowerCase() === sub.toLowerCase()) === idx) // Remove duplicates
+        .sort(); // Sort alphabetically
+
+      return {
+        id: (Date.now() + index).toString(),
+        name: categoryName,
+        subCategories: subCategories.length > 0 ? subCategories : ["General"],
+        createdAt: new Date().toISOString(),
+      };
+    });
+
+    // Sort categories alphabetically
+    categories.sort((a, b) => a.name.localeCompare(b.name));
+
+    const categoryData: CategoryManagementData = {
+      categories,
+      lastUpdated: new Date().toISOString(),
+    };
+
+    writeCategories(categoryData);
+
+    res.json({
+      message: "Categories populated successfully",
+      count: categories.length,
+      categories: categoryData,
+    });
+  } catch (error) {
+    console.error("Error populating categories:", error);
+    res.status(500).json({ error: "Failed to populate categories" });
+  }
+};
