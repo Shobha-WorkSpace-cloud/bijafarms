@@ -64,7 +64,35 @@ export default function MainPage() {
       }
     };
 
+    const loadTasks = async () => {
+      try {
+        const taskData = await fetchTasks();
+
+        // Filter and sort tasks to get next 3 upcoming items
+        const upcomingTasks = taskData
+          .filter(task => task.status !== "completed")
+          .sort((a, b) => {
+            // Sort by due date, then by priority
+            const dateComparison = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+            if (dateComparison !== 0) return dateComparison;
+
+            // Priority sorting: high = 0, medium = 1, low = 2
+            const priorityOrder = { high: 0, medium: 1, low: 2 };
+            return priorityOrder[a.priority] - priorityOrder[b.priority];
+          })
+          .slice(0, 3);
+
+        setTasks(upcomingTasks);
+      } catch (error) {
+        console.error("Error loading tasks:", error);
+        setTasks([]); // Set empty array on error
+      } finally {
+        setTasksLoading(false);
+      }
+    };
+
     loadStats();
+    loadTasks();
   }, []);
 
   const formatCurrency = (amount: number) => {
