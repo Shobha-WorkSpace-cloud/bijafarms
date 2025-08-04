@@ -650,7 +650,7 @@ export default function Index() {
                       Add Transaction
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-md mx-4">
+                  <DialogContent className="max-w-md mx-4 max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>Add New Transaction</DialogTitle>
                       <DialogDescription>
@@ -658,13 +658,15 @@ export default function Index() {
                         transaction.
                       </DialogDescription>
                     </DialogHeader>
-                    <ExpenseForm
-                      onSubmit={handleAddExpense}
-                      onCancel={() => setIsAddDialogOpen(false)}
-                      categories={uniqueCategories}
-                      paidByOptions={uniquePaidBy}
-                      sourceOptions={uniqueSources}
-                    />
+                    <div className="overflow-y-auto max-h-[60vh] pr-2">
+                      <ExpenseForm
+                        onSubmit={handleAddExpense}
+                        onCancel={() => setIsAddDialogOpen(false)}
+                        categories={uniqueCategories}
+                        paidByOptions={uniquePaidBy}
+                        sourceOptions={uniqueSources}
+                      />
+                    </div>
                   </DialogContent>
                 </Dialog>
               </div>
