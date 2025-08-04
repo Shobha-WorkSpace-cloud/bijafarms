@@ -115,16 +115,16 @@ export default function MainPage() {
         const goats = activeAnimals.filter((animal) => animal.type === "goat");
         const sheep = activeAnimals.filter((animal) => animal.type === "sheep");
 
-        // Calculate kids (animals less than 1 year old)
+        // Calculate kids (animals less than 3 months old)
         const now = new Date();
-        const oneYearAgo = new Date(
-          now.getFullYear() - 1,
-          now.getMonth(),
+        const threeMonthsAgo = new Date(
+          now.getFullYear(),
+          now.getMonth() - 3,
           now.getDate(),
         );
         const kids = activeAnimals.filter((animal) => {
           if (!animal.dateOfBirth) return false;
-          return new Date(animal.dateOfBirth) > oneYearAgo;
+          return new Date(animal.dateOfBirth) > threeMonthsAgo;
         });
 
         setAnimalStats({
@@ -466,7 +466,7 @@ export default function MainPage() {
                       <div className="flex items-center space-x-2 text-purple-700 mb-1">
                         <Baby className="h-4 w-4" />
                         <span className="text-xs font-medium">
-                          Kids (&lt;1yr)
+                          Kids (&lt;3 months)
                         </span>
                       </div>
                       <div className="text-xl font-bold text-purple-800">
