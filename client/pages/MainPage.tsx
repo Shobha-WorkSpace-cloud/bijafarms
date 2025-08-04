@@ -424,36 +424,72 @@ export default function MainPage() {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-200">
-                <h4 className="font-semibold text-purple-800 mb-3">
-                  Livestock Overview:
-                </h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/60 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-purple-700 mb-1">
-                      <Users className="h-4 w-4" />
-                      <span className="text-xs font-medium">Total Animals</span>
+              {animalsLoading ? (
+                <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-200">
+                  <div className="animate-pulse">
+                    <div className="h-4 bg-purple-200 rounded mb-3 w-32"></div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="h-16 bg-purple-200 rounded"></div>
+                      <div className="h-16 bg-purple-200 rounded"></div>
                     </div>
-                    <div className="text-lg font-bold text-purple-800">
-                      Track & Manage
-                    </div>
-                  </div>
-                  <div className="bg-white/60 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-purple-700 mb-1">
-                      <Heart className="h-4 w-4" />
-                      <span className="text-xs font-medium">Health Records</span>
-                    </div>
-                    <div className="text-lg font-bold text-purple-800">
-                      Monitor & Care
+                    <div className="grid grid-cols-2 gap-4 mt-3">
+                      <div className="h-16 bg-purple-200 rounded"></div>
+                      <div className="h-16 bg-purple-200 rounded"></div>
                     </div>
                   </div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-purple-200 text-center">
-                  <span className="text-xs text-purple-600">
-                    Complete animal identification and record management
-                  </span>
+              ) : (
+                <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-200">
+                  <h4 className="font-semibold text-purple-800 mb-3">
+                    Livestock Overview (Active Animals):
+                  </h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white/60 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-purple-700 mb-1">
+                        <Users className="h-4 w-4" />
+                        <span className="text-xs font-medium">Total Animals</span>
+                      </div>
+                      <div className="text-xl font-bold text-purple-800">
+                        {animalStats.totalAnimals}
+                      </div>
+                    </div>
+                    <div className="bg-white/60 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-purple-700 mb-1">
+                        <Baby className="h-4 w-4" />
+                        <span className="text-xs font-medium">Kids (&lt;1yr)</span>
+                      </div>
+                      <div className="text-xl font-bold text-purple-800">
+                        {animalStats.totalKids}
+                      </div>
+                    </div>
+                    <div className="bg-white/60 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-purple-700 mb-1">
+                        <Beef className="h-4 w-4" />
+                        <span className="text-xs font-medium">Goats</span>
+                      </div>
+                      <div className="text-xl font-bold text-purple-800">
+                        {animalStats.totalGoats}
+                      </div>
+                    </div>
+                    <div className="bg-white/60 p-3 rounded-lg">
+                      <div className="flex items-center space-x-2 text-purple-700 mb-1">
+                        <Users className="h-4 w-4" />
+                        <span className="text-xs font-medium">Sheep</span>
+                      </div>
+                      <div className="text-xl font-bold text-purple-800">
+                        {animalStats.totalSheep}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-purple-200 text-center">
+                    <span className="text-xs text-purple-600">
+                      {animalStats.totalAnimals > 0
+                        ? `${animalStats.totalAnimals} active animals (excluding sold/dead)`
+                        : "No animals found - add your first livestock!"}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="pt-4">
                 <Link to="/animal-tracker">
