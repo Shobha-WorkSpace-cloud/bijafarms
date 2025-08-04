@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import fs from "fs";
 import path from "path";
-import { ExpenseRecord } from "@shared/expense-types";
+import { ExpenseRecord, CategoryManagementData } from "@shared/expense-types";
 
 const EXPENSES_FILE = path.join(__dirname, "../data/expenses.json");
 
