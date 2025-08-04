@@ -51,3 +51,15 @@ export interface MonthlyChartData {
   income: number;
   expenses: number;
 }
+
+export interface CategoryConfig {
+  id: string;
+  name: string;
+  subCategories: string[];
+  createdAt: string;
+}
+
+export interface CategoryManagementData {
+  categories: CategoryConfig[];
+  lastUpdated: string;
+}
