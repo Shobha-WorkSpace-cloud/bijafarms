@@ -166,6 +166,7 @@ export function ExpenseForm({
   const [availableSubCategories, setAvailableSubCategories] = useState<
     string[]
   >([]);
+  const [dynamicCategories, setDynamicCategories] = useState<CategoryConfig[]>([]);
   const [newCategory, setNewCategory] = useState("");
   const [newPaidBy, setNewPaidBy] = useState("");
   const [newSource, setNewSource] = useState("");
@@ -173,17 +174,41 @@ export function ExpenseForm({
   const [showNewPaidByInput, setShowNewPaidByInput] = useState(false);
   const [showNewSourceInput, setShowNewSourceInput] = useState(false);
 
+  // Load dynamic categories from API
+  useEffect(() => {
+    const loadDynamicCategories = async () => {
+      try {
+        const categoryData = await api.fetchCategories();
+        setDynamicCategories(categoryData.categories || []);
+      } catch (error) {
+        console.error("Error loading categories:", error);
+        // Fallback to existing categories from props
+        setDynamicCategories([]);
+      }
+    };
+    loadDynamicCategories();
+  }, []);
+
   // Update sub-categories when category changes
   useEffect(() => {
-    if (formData.category && subCategoryMap[formData.category]) {
-      setAvailableSubCategories(subCategoryMap[formData.category]);
-      if (!subCategoryMap[formData.category].includes(formData.subCategory)) {
-        setFormData((prev) => ({ ...prev, subCategory: "" }));
-      }
-    } else {
-      setAvailableSubCategories([]);
+    let subCategories: string[] = [];
+
+    // First check dynamic categories
+    const dynamicCategory = dynamicCategories.find(cat => cat.name === formData.category);
+    if (dynamicCategory) {
+      subCategories = dynamicCategory.subCategories;
+    } else if (formData.category && subCategoryMap[formData.category]) {
+      // Fallback to static categories
+      subCategories = subCategoryMap[formData.category];
     }
-  }, [formData.category]);
+
+    setAvailableSubCategories(subCategories);
+
+    // Clear sub-category if it doesn't exist in the new list
+    if (subCategories.length > 0 && !subCategories.includes(formData.subCategory)) {
+      setFormData((prev) => ({ ...prev, subCategory: "" }));
+    }
+  }, [formData.category, dynamicCategories]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
