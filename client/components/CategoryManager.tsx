@@ -68,6 +68,29 @@ export function CategoryManager({ onCategoriesUpdate }: CategoryManagerProps) {
     }
   };
 
+  const handlePopulateCategories = async () => {
+    try {
+      setLoading(true);
+      const result = await api.populateCategories();
+      setCategories(result.categories.categories || []);
+      onCategoriesUpdate();
+
+      toast({
+        title: "Success",
+        description: `Successfully populated ${result.count} categories from existing expense data`,
+      });
+    } catch (error) {
+      console.error("Error populating categories:", error);
+      toast({
+        title: "Error",
+        description: "Failed to populate categories from expense data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       loadCategories();
