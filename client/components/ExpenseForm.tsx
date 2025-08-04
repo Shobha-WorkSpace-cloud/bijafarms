@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ExpenseRecord, ExpenseFormData } from "@shared/expense-types";
+import { ExpenseRecord, ExpenseFormData, CategoryConfig } from "@shared/expense-types";
+import * as api from "@/lib/api";
 
 interface ExpenseFormProps {
   initialData?: ExpenseRecord;
