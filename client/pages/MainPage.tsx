@@ -29,13 +29,22 @@ import { AnimalRecord, fetchAnimals } from "@/lib/animal-api";
 export default function MainPage() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [animals, setAnimals] = useState<AnimalRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [tasksLoading, setTasksLoading] = useState(true);
+  const [animalsLoading, setAnimalsLoading] = useState(true);
   const [stats, setStats] = useState({
     totalIncome: 0,
     totalExpenses: 0,
     balance: 0,
     transactionCount: 0,
+  });
+  const [animalStats, setAnimalStats] = useState({
+    totalAnimals: 0,
+    totalGoats: 0,
+    totalSheep: 0,
+    totalKids: 0,
+    activeAnimals: 0,
   });
 
   useEffect(() => {
