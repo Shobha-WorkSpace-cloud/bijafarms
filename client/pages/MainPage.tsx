@@ -27,7 +27,9 @@ import { Task, fetchTasks } from "@/lib/task-api";
 
 export default function MainPage() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tasksLoading, setTasksLoading] = useState(true);
   const [stats, setStats] = useState({
     totalIncome: 0,
     totalExpenses: 0,
