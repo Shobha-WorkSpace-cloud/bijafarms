@@ -127,3 +127,26 @@ export const createBackup = async (): Promise<Blob> => {
 
   return response.blob();
 };
+
+// Category Management
+export const fetchCategories = async (): Promise<CategoryManagementData> => {
+  const response = await fetch(`${API_BASE}/categories?t=${Date.now()}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch categories");
+  }
+  return response.json();
+};
+
+export const saveCategories = async (data: CategoryManagementData): Promise<void> => {
+  const response = await fetch(`${API_BASE}/categories`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to save categories");
+  }
+};
