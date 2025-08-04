@@ -21,48 +21,63 @@ export function ImportExport({ expenses, onImport }: ImportExportProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     try {
-      // Prepare data for Excel export
-      const excelData = expenses.map((expense) => ({
-        Date: expense.date,
-        Type: expense.type,
-        Description: expense.description,
-        Amount: expense.amount,
-        "Paid By": expense.paidBy,
-        Category: expense.category,
-        "Sub-Category": expense.subCategory,
-        Source: expense.source,
-        Notes: expense.notes,
-      }));
-
       // Create workbook and worksheet
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(excelData);
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet("Expenses");
 
-      // Set column widths for better formatting
-      const colWidths = [
-        { wch: 12 }, // Date
-        { wch: 10 }, // Type
-        { wch: 30 }, // Description
-        { wch: 12 }, // Amount
-        { wch: 15 }, // Paid By
-        { wch: 18 }, // Category
-        { wch: 18 }, // Sub-Category
-        { wch: 15 }, // Source
-        { wch: 30 }, // Notes
+      // Define columns with headers and widths
+      worksheet.columns = [
+        { header: "Date", key: "date", width: 12 },
+        { header: "Type", key: "type", width: 10 },
+        { header: "Description", key: "description", width: 30 },
+        { header: "Amount", key: "amount", width: 12 },
+        { header: "Paid By", key: "paidBy", width: 15 },
+        { header: "Category", key: "category", width: 18 },
+        { header: "Sub-Category", key: "subCategory", width: 18 },
+        { header: "Source", key: "source", width: 15 },
+        { header: "Notes", key: "notes", width: 30 },
       ];
-      ws["!cols"] = colWidths;
 
-      // Add worksheet to workbook
-      XLSX.utils.book_append_sheet(wb, ws, "Expenses");
+      // Add data rows
+      expenses.forEach((expense) => {
+        worksheet.addRow({
+          date: expense.date,
+          type: expense.type,
+          description: expense.description,
+          amount: expense.amount,
+          paidBy: expense.paidBy,
+          category: expense.category,
+          subCategory: expense.subCategory,
+          source: expense.source,
+          notes: expense.notes,
+        });
+      });
+
+      // Style the header row
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFE6F3FF" },
+      };
 
       // Generate filename with current date
       const today = new Date().toISOString().split("T")[0];
       const filename = `expenses_${today}.xlsx`;
 
       // Save the file
-      XLSX.writeFile(wb, filename);
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
 
       toast({
         title: "Export Successful",
