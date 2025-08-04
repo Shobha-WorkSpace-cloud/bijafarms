@@ -522,7 +522,7 @@ export default function MainPage() {
             <img
               src="https://cdn.builder.io/api/v1/image/assets%2F483f6e241d954aec88a0b40782122459%2F5254047a2582477b8e206724ecfff5b8?format=webp&width=800"
               alt="Bija Farms Logo"
-              className="h-12 w-auto filter brightness-0 invert"
+              className="h-12 w-auto"
             />
           </div>
           <p className="text-green-200">
