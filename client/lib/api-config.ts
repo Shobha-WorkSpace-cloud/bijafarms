@@ -97,13 +97,6 @@ export const apiCall = async (
       throw error;
     }
 
-    // If network error in production, try to fallback to mock mode
-    if (typeof window !== 'undefined' && window.location.hostname.includes('.')) {
-      console.warn('Network error detected, falling back to demo mode');
-      apiConfig.baseUrl = '__MOCK_MODE__';
-      return getMockResponse(endpoint, options);
-    }
-
     throw new ApiError('Network error', 0, error instanceof Error ? error.message : 'Unknown error');
   }
 };
