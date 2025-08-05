@@ -35,7 +35,7 @@ export default defineConfig({
       ],
       output: {
         format: "es",
-        entryFileNames: "node-build.mjs",
+        entryFileNames: "netlify-entry.mjs",
       },
     },
     minify: false, // Keep readable for debugging
