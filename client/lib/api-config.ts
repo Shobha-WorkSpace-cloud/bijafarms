@@ -41,6 +41,16 @@ export const apiConfig: ApiConfig = {
   },
 };
 
+// Debug logging
+if (typeof window !== 'undefined') {
+  console.log('🔧 API Configuration:', {
+    baseUrl: apiConfig.baseUrl,
+    mockMode: apiConfig.baseUrl === '__MOCK_MODE__',
+    hostname: window.location.hostname,
+    environment: import.meta.env.NODE_ENV || 'development'
+  });
+}
+
 // Mock mode detection
 const isMockMode = () => apiConfig.baseUrl === '__MOCK_MODE__';
 
