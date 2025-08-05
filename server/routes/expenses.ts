@@ -8,10 +8,21 @@ const __dirname = process.cwd();
 const EXPENSES_FILE = path.join(process.cwd(), "server/data/expenses.json");
 const CATEGORIES_FILE = path.join(process.cwd(), "server/data/categories.json");
 
-// Ensure data directory exists
-const dataDir = path.dirname(EXPENSES_FILE);
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+// In serverless environment, we can't create directories
+// Data will be stored externally or in environment variables
+let serverlessMode = false;
+try {
+  const dataDir = path.dirname(EXPENSES_FILE);
+  if (!fs.existsSync(dataDir)) {
+    // Check if we're in a serverless environment
+    if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      serverlessMode = true;
+    } else {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+  }
+} catch (error) {
+  serverlessMode = true;
 }
 
 // Helper function to read expenses from JSON file
