@@ -35,22 +35,27 @@ afterAll(() => {
 });
 
 // Mock DOM methods for client-side tests
-Object.defineProperty(window, 'location', {
-  value: {
-    href: 'http://localhost:3000',
-    origin: 'http://localhost:3000',
-  },
-  writable: true,
-});
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'location', {
+    value: {
+      href: 'http://localhost:3000',
+      origin: 'http://localhost:3000',
+    },
+    writable: true,
+  });
+}
 
 // Mock URL methods
-global.URL.createObjectURL = vi.fn(() => 'mocked-url');
-global.URL.revokeObjectURL = vi.fn();
+if (typeof global !== 'undefined') {
+  global.URL = global.URL || {};
+  global.URL.createObjectURL = vi.fn(() => 'mocked-url');
+  global.URL.revokeObjectURL = vi.fn();
 
-// Mock Blob for file download tests
-global.Blob = vi.fn().mockImplementation((content, options) => ({
-  content,
-  options,
-  size: content?.[0]?.length || 0,
-  type: options?.type || '',
-}));
+  // Mock Blob for file download tests
+  global.Blob = vi.fn().mockImplementation((content, options) => ({
+    content,
+    options,
+    size: content?.[0]?.length || 0,
+    type: options?.type || '',
+  }));
+}
