@@ -17,8 +17,7 @@ interface Task {
   completedAt?: string;
   reminderSent?: boolean;
 }
-const __dirname = process.cwd();
-const TASKS_FILE = path.join(__dirname, "../data/TaskTracker.json");
+const TASKS_FILE = path.join(process.cwd(), "server/data/TaskTracker.json");
 
 // Ensure data directory exists
 const dataDir = path.dirname(TASKS_FILE);
