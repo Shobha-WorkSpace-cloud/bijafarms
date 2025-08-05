@@ -195,8 +195,23 @@ export default function MainPage() {
     }
   };
 
+  const apiConfig = getApiConfig();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
+      {/* Demo Mode Banner */}
+      {apiConfig.mockMode && (
+        <div className="bg-orange-100 border-b border-orange-200 px-4 py-2">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-center justify-center gap-2 text-orange-800">
+              <span className="text-sm font-medium">
+                🎭 Demo Mode: Using sample data (Backend not connected)
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header with Logo */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-green-200">
         <div className="max-w-6xl mx-auto px-4 py-6">
