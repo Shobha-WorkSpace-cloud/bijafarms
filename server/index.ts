@@ -97,19 +97,19 @@ export function createServer() {
   registerRoute('post', '/expenses/populate-categories', populateCategories);
 
   // WhatsApp reminder routes
-  app.post("/api/send-whatsapp-reminder", sendWhatsAppReminderEndpoint);
-  app.post("/api/schedule-reminder", scheduleReminder);
-  app.post("/api/test-whatsapp", sendTestWhatsApp);
-  app.post("/api/test-whatsapp-simple", sendTestWhatsAppSimple);
+  registerRoute('post', '/send-whatsapp-reminder', sendWhatsAppReminderEndpoint);
+  registerRoute('post', '/schedule-reminder', scheduleReminder);
+  registerRoute('post', '/test-whatsapp', sendTestWhatsApp);
+  registerRoute('post', '/test-whatsapp-simple', sendTestWhatsAppSimple);
 
   // Task management routes
-  app.get("/api/tasks", getTasks);
-  app.post("/api/tasks", addTask);
-  app.put("/api/tasks/:id", updateTask);
-  app.delete("/api/tasks/:id", deleteTask);
-  app.post("/api/tasks/bulk-delete", bulkDeleteTasks);
-  app.get("/api/tasks/backup", backupTasks);
-  app.post("/api/tasks/import", importTasks);
+  registerRoute('get', '/tasks', getTasks);
+  registerRoute('post', '/tasks', addTask);
+  registerRoute('put', '/tasks/:id', updateTask);
+  registerRoute('delete', '/tasks/:id', deleteTask);
+  registerRoute('post', '/tasks/bulk-delete', bulkDeleteTasks);
+  registerRoute('get', '/tasks/backup', backupTasks);
+  registerRoute('post', '/tasks/import', importTasks);
 
   // Test reminder validation routes
   app.post("/api/test-reminder-validation", createTestReminderTask);
