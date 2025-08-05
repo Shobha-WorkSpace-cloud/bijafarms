@@ -31,19 +31,7 @@ export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
 export const createExpense = async (
   expense: Omit<ExpenseRecord, "id">,
 ): Promise<ExpenseRecord> => {
-  const response = await fetch(API_BASE, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(expense),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create expense");
-  }
-
-  return response.json();
+  return apiPost("/expenses", expense);
 };
 
 // Update existing expense
@@ -51,30 +39,12 @@ export const updateExpense = async (
   id: string,
   expense: ExpenseRecord,
 ): Promise<ExpenseRecord> => {
-  const response = await fetch(`${API_BASE}/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(expense),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to update expense");
-  }
-
-  return response.json();
+  return apiPut(`/expenses/${id}`, expense);
 };
 
 // Delete expense
 export const deleteExpense = async (id: string): Promise<void> => {
-  const response = await fetch(`${API_BASE}/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to delete expense");
-  }
+  return apiDelete(`/expenses/${id}`);
 };
 
 // Import multiple expenses
