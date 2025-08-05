@@ -21,6 +21,9 @@ import {
   Stethoscope,
   Receipt,
   Baby,
+  PawPrint,
+  Rabbit,
+  Bird,
 } from "lucide-react";
 import { ExpenseRecord } from "@shared/expense-types";
 import * as api from "@/lib/api";
