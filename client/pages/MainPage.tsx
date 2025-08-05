@@ -478,7 +478,7 @@ export default function MainPage() {
                     </div>
                     <div className="bg-white/60 p-3 rounded-lg">
                       <div className="flex items-center space-x-2 text-purple-700 mb-1">
-                        <Rabbit className="h-4 w-4" />
+                        <PawPrint className="h-4 w-4" />
                         <span className="text-xs font-medium">Goats</span>
                       </div>
                       <div className="text-xl font-bold text-purple-800">
@@ -487,7 +487,7 @@ export default function MainPage() {
                     </div>
                     <div className="bg-white/60 p-3 rounded-lg">
                       <div className="flex items-center space-x-2 text-purple-700 mb-1">
-                        <Bird className="h-4 w-4" />
+                        <PawPrint className="h-4 w-4" />
                         <span className="text-xs font-medium">Sheep</span>
                       </div>
                       <div className="text-xl font-bold text-purple-800">
