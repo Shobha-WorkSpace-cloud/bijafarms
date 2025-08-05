@@ -14,13 +14,11 @@ interface Task {
   reminderSent?: boolean;
 }
 
+import { apiGet, apiPost, apiPut, apiDelete } from "./api-config";
+
 // Fetch all tasks
 export const fetchTasks = async (): Promise<Task[]> => {
-  const response = await fetch("/api/tasks");
-  if (!response.ok) {
-    throw new Error(`Failed to fetch tasks: ${response.statusText}`);
-  }
-  return response.json();
+  return apiGet("/tasks");
 };
 
 // Create a new task
