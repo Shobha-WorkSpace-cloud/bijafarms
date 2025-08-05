@@ -17,7 +17,8 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
   },
   plugins: [react(), expressPlugin()],
-  base:"/builder-aura-haven/",
+  // Only use base path for production builds (GitHub Pages), not for development
+  base: mode === "production" ? "/builder-aura-haven/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
