@@ -584,3 +584,5 @@ export default function AnimalTracker() {
     </div>
   );
 }
+
+export { AnimalTracker as default };
