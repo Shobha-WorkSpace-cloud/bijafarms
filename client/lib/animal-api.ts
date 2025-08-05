@@ -6,16 +6,11 @@ import {
   HealthRecord,
   AnimalSummary,
 } from "@shared/animal-types";
-
-const API_BASE = "/api";
+import { apiGet, apiPost, apiPut, apiDelete } from "./api-config";
 
 // Animal CRUD operations
 export const fetchAnimals = async (): Promise<AnimalRecord[]> => {
-  const response = await fetch(`${API_BASE}/animals?t=${Date.now()}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch animals");
-  }
-  return response.json();
+  return apiGet("/animals");
 };
 
 export const createAnimal = async (
