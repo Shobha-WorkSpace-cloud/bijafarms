@@ -3,11 +3,7 @@ import { apiGet, apiPost, apiPut, apiDelete } from "./api-config";
 
 // Get all expenses
 export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
-  const response = await fetch(`${API_BASE}?t=${Date.now()}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch expenses");
-  }
-  const data = await response.json();
+  const data = await apiGet("/expenses");
   console.log("API Response - Total records:", data.length);
   console.log(
     "API Response - Max ID:",
