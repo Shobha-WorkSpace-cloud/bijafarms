@@ -189,6 +189,17 @@ export const removeApiHeader = (key: string): void => {
   delete apiConfig.headers[key];
 };
 
+// Demo mode helpers
+export const enableDemoMode = (): void => {
+  apiConfig.baseUrl = '__MOCK_MODE__';
+  console.log('🎭 Demo mode enabled - using mock data');
+};
+
+export const disableDemoMode = (): void => {
+  apiConfig.baseUrl = getApiBaseUrl();
+  console.log('🔧 Demo mode disabled - using real API');
+};
+
 // Environment-specific configurations
 export const configureForEnvironment = (env: 'development' | 'staging' | 'production') => {
   switch (env) {
