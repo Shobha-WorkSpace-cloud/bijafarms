@@ -1,7 +1,7 @@
 [build]
-  command = "npm run build:server"
+  command = "npm run build"
   functions = "netlify/functions"
-  publish = "dist/server"
+  publish = "dist/spa"
 
 
 [functions]
