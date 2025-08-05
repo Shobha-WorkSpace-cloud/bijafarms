@@ -583,6 +583,42 @@ export default function AnimalTracker() {
             ))
           )}
         </div>
+
+        {/* Edit Animal Dialog */}
+        {editingAnimal && (
+          <Dialog open={true} onOpenChange={() => setEditingAnimal(null)}>
+            <DialogContent className="max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Edit Animal</DialogTitle>
+                <DialogDescription>
+                  Update the details for {editingAnimal.name}.
+                </DialogDescription>
+              </DialogHeader>
+              <AnimalForm
+                animal={editingAnimal}
+                onSubmit={handleEditAnimal}
+                onCancel={() => setEditingAnimal(null)}
+                isEditing={true}
+              />
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* View Animal Dialog */}
+        {viewingAnimal && (
+          <Dialog open={true} onOpenChange={() => setViewingAnimal(null)}>
+            <DialogContent className="max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+              <AnimalView
+                animal={viewingAnimal}
+                onEdit={() => {
+                  setEditingAnimal(viewingAnimal);
+                  setViewingAnimal(null);
+                }}
+                onClose={() => setViewingAnimal(null)}
+              />
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
