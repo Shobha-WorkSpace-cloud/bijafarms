@@ -65,6 +65,17 @@ export function createServer() {
 
   console.log(`🚀 Server starting with API base path: ${apiBasePath}`);
 
+  // Helper function to register routes with both paths (with and without base path)
+  const registerRoute = (method: 'get' | 'post' | 'put' | 'delete', path: string, handler: any) => {
+    // Register original path (for local development)
+    app[method](`/api${path}`, handler);
+
+    // Register with base path if it exists (for deployment)
+    if (basePath && basePath !== '/') {
+      app[method](`${basePath}api${path}`, handler);
+    }
+  };
+
   // Example API routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
