@@ -42,6 +42,8 @@ if (typeof window !== 'undefined') {
   console.log('🔧 API Configuration:', {
     baseUrl: apiConfig.baseUrl,
     mockMode: apiConfig.baseUrl === '__MOCK_MODE__',
+    viteBaseUrl: import.meta.env.BASE_URL,
+    currentPath: window.location.pathname,
     hostname: window.location.hostname,
     environment: import.meta.env.NODE_ENV || 'development'
   });
