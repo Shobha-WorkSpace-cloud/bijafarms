@@ -16,48 +16,18 @@ export const fetchAnimals = async (): Promise<AnimalRecord[]> => {
 export const createAnimal = async (
   animal: Omit<AnimalRecord, "id" | "createdAt" | "updatedAt">,
 ): Promise<AnimalRecord> => {
-  const response = await fetch(`${API_BASE}/animals`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(animal),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create animal");
-  }
-
-  return response.json();
+  return apiPost("/animals", animal);
 };
 
 export const updateAnimal = async (
   id: string,
   animal: AnimalRecord,
 ): Promise<AnimalRecord> => {
-  const response = await fetch(`${API_BASE}/animals/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(animal),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to update animal");
-  }
-
-  return response.json();
+  return apiPut(`/animals/${id}`, animal);
 };
 
 export const deleteAnimal = async (id: string): Promise<void> => {
-  const response = await fetch(`${API_BASE}/animals/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to delete animal");
-  }
+  return apiDelete(`/animals/${id}`);
 };
 
 // Weight records
