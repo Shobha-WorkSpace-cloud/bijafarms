@@ -76,6 +76,7 @@ export const apiCall = async (
   };
 
   try {
+    console.log(`🌐 API Call: ${options.method || 'GET'} ${finalUrl}`);
     const response = await fetch(finalUrl, config);
 
     // Handle common HTTP errors
