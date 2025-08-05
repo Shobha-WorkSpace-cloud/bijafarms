@@ -199,9 +199,188 @@ export const configureForEnvironment = (env: 'development' | 'staging' | 'produc
   }
 };
 
+// Mock data for demo environments
+const getMockResponse = async (endpoint: string, options: RequestInit): Promise<Response> => {
+  console.log(`🎭 Mock mode: ${options.method || 'GET'} ${endpoint}`);
+
+  const mockData = getMockData(endpoint, options.method || 'GET');
+
+  return new Response(JSON.stringify(mockData), {
+    status: 200,
+    statusText: 'OK',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
+const getMockData = (endpoint: string, method: string) => {
+  // Expenses mock data
+  if (endpoint.includes('/expenses') && method === 'GET') {
+    return [
+      {
+        id: "1",
+        date: "2024-01-15",
+        type: "Income",
+        description: "Goat Sale - Premium Boer",
+        amount: 15000,
+        paidBy: "Farm Owner",
+        category: "Livestock Sales",
+        subCategory: "Goats"
+      },
+      {
+        id: "2",
+        date: "2024-01-10",
+        type: "Expense",
+        description: "Veterinary Checkup",
+        amount: 2500,
+        paidBy: "Farm Owner",
+        category: "Healthcare",
+        subCategory: "Veterinary"
+      },
+      {
+        id: "3",
+        date: "2024-01-08",
+        type: "Income",
+        description: "Sheep Wool Sale",
+        amount: 8000,
+        paidBy: "Farm Owner",
+        category: "Livestock Products",
+        subCategory: "Wool"
+      }
+    ];
+  }
+
+  // Animals mock data
+  if (endpoint.includes('/animals') && method === 'GET') {
+    if (endpoint.includes('/summary')) {
+      return {
+        totalAnimals: 12,
+        totalGoats: 8,
+        totalSheep: 4,
+        totalMales: 5,
+        totalFemales: 7,
+        activeAnimals: 12,
+        soldAnimals: 2,
+        readyToSell: 3,
+        deadAnimals: 0,
+        averageWeight: 42.5,
+        totalInvestment: 45000,
+        totalRevenue: 23000,
+        profitLoss: -22000
+      };
+    }
+    return [
+      {
+        id: "1",
+        name: "Radha",
+        type: "goat",
+        breed: "Boer",
+        gender: "female",
+        dateOfBirth: "2023-03-15",
+        photos: [],
+        status: "active",
+        currentWeight: 45,
+        markings: "White with brown patches",
+        createdAt: "2023-03-15T10:30:00.000Z",
+        updatedAt: "2024-01-15T14:20:00.000Z"
+      },
+      {
+        id: "2",
+        name: "Krishna",
+        type: "goat",
+        breed: "Boer",
+        gender: "male",
+        dateOfBirth: "2022-08-20",
+        photos: [],
+        status: "active",
+        currentWeight: 55,
+        markings: "Pure white with black spots",
+        createdAt: "2022-08-20T09:15:00.000Z",
+        updatedAt: "2024-01-10T11:45:00.000Z"
+      }
+    ];
+  }
+
+  // Tasks mock data
+  if (endpoint.includes('/tasks') && method === 'GET') {
+    return [
+      {
+        id: "1",
+        title: "Vaccination Schedule - Radha",
+        description: "Annual vaccination for breeding goat",
+        category: "Healthcare",
+        taskType: "Vaccination",
+        priority: "high",
+        status: "pending",
+        dueDate: "2024-02-15",
+        assignedTo: "Farm Manager",
+        notes: "Use FMD vaccine",
+        createdAt: "2024-01-20T10:00:00.000Z"
+      },
+      {
+        id: "2",
+        title: "Weight Check - All Kids",
+        description: "Monthly weight monitoring",
+        category: "Monitoring",
+        taskType: "Health Check",
+        priority: "medium",
+        status: "pending",
+        dueDate: "2024-02-01",
+        assignedTo: "Farm Owner",
+        notes: "Record growth patterns",
+        createdAt: "2024-01-18T14:30:00.000Z"
+      }
+    ];
+  }
+
+  // Weight records mock data
+  if (endpoint.includes('/weight-records') && method === 'GET') {
+    return [
+      {
+        id: "1",
+        animalId: "1",
+        weight: 45,
+        date: "2024-01-15",
+        notes: "Good growth progress",
+        recordedBy: "Farm Manager",
+        createdAt: "2024-01-15T14:20:00.000Z"
+      }
+    ];
+  }
+
+  // Health records mock data
+  if (endpoint.includes('/health-records') && method === 'GET') {
+    return [
+      {
+        id: "1",
+        animalId: "1",
+        recordType: "checkup",
+        date: "2024-01-15",
+        description: "Routine health checkup",
+        veterinarianName: "Dr. Raghava",
+        diagnosis: "Excellent health condition",
+        treatment: "No treatment required",
+        medications: "None",
+        cost: 500,
+        notes: "Animal in excellent condition",
+        createdAt: "2024-01-15T14:20:00.000Z"
+      }
+    ];
+  }
+
+  // Default response for POST/PUT/DELETE
+  if (method !== 'GET') {
+    return { success: true, message: 'Demo mode - action simulated' };
+  }
+
+  return [];
+};
+
 // Debug information
 export const getApiConfig = () => ({
   ...apiConfig,
   currentUrl: apiConfig.baseUrl,
   environment: import.meta.env.NODE_ENV || 'development',
+  mockMode: isMockMode(),
 });
