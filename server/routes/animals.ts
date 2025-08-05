@@ -25,16 +25,9 @@ if (!fs.existsSync(dataDir)) {
 // Helper functions for file operations
 const readAnimals = (): AnimalRecord[] => {
   try {
-    console.log("ANIMALS_FILE path:", ANIMALS_FILE);
-    console.log("File exists:", fs.existsSync(ANIMALS_FILE));
-    if (!fs.existsSync(ANIMALS_FILE)) {
-      console.log("Animals file not found, returning empty array");
-      return [];
-    }
+    if (!fs.existsSync(ANIMALS_FILE)) return [];
     const data = fs.readFileSync(ANIMALS_FILE, "utf8");
-    const parsed = JSON.parse(data);
-    console.log("Animals data loaded:", parsed.length, "records");
-    return parsed;
+    return JSON.parse(data);
   } catch (error) {
     console.error("Error reading animals:", error);
     return [];
