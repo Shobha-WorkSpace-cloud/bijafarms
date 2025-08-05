@@ -5,6 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    setupFiles: ['./vitest.setup.ts'],
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: ['node_modules', 'dist'],
     testTimeout: 10000,
@@ -22,7 +23,17 @@ export default defineConfig({
         '**/*.spec.ts',
         'server/tests',
         'client/**/*.stories.tsx',
+        'vitest.setup.ts',
+        'vitest.config.ts',
       ],
+      thresholds: {
+        global: {
+          branches: 50,
+          functions: 50,
+          lines: 50,
+          statements: 50,
+        },
+      },
     },
   },
   resolve: {
