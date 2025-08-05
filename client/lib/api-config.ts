@@ -87,6 +87,7 @@ export const apiCall = async (
     // Handle common HTTP errors
     if (!response.ok) {
       const errorMessage = await getErrorMessage(response);
+      console.error(`❌ API Error: ${response.status} ${response.statusText} for ${finalUrl}`);
       throw new ApiError(
         `API call failed: ${response.status} ${response.statusText}`,
         response.status,
