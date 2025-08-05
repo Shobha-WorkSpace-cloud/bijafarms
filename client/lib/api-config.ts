@@ -104,6 +104,7 @@ export const apiCall = async (
       throw error;
     }
 
+    console.error(`❌ Network Error for ${finalUrl}:`, error);
     throw new ApiError('Network error', 0, error instanceof Error ? error.message : 'Unknown error');
   }
 };
