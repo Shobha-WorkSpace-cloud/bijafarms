@@ -50,116 +50,58 @@ export const createWeightRecord = async (
 export const fetchBreedingRecords = async (
   animalId?: string,
 ): Promise<BreedingRecord[]> => {
-  const url = animalId
-    ? `${API_BASE}/breeding-records?animalId=${animalId}&t=${Date.now()}`
-    : `${API_BASE}/breeding-records?t=${Date.now()}`;
-
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch breeding records");
-  }
-  return response.json();
+  const endpoint = animalId
+    ? `/breeding-records?animalId=${animalId}`
+    : `/breeding-records`;
+  return apiGet(endpoint);
 };
 
 export const createBreedingRecord = async (
   record: Omit<BreedingRecord, "id" | "createdAt" | "updatedAt">,
 ): Promise<BreedingRecord> => {
-  const response = await fetch(`${API_BASE}/breeding-records`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(record),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create breeding record");
-  }
-
-  return response.json();
+  return apiPost("/breeding-records", record);
 };
 
 // Vaccination records
 export const fetchVaccinationRecords = async (
   animalId?: string,
 ): Promise<VaccinationRecord[]> => {
-  const url = animalId
-    ? `${API_BASE}/vaccination-records?animalId=${animalId}&t=${Date.now()}`
-    : `${API_BASE}/vaccination-records?t=${Date.now()}`;
-
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch vaccination records");
-  }
-  return response.json();
+  const endpoint = animalId
+    ? `/vaccination-records?animalId=${animalId}`
+    : `/vaccination-records`;
+  return apiGet(endpoint);
 };
 
 export const createVaccinationRecord = async (
   record: Omit<VaccinationRecord, "id" | "createdAt">,
 ): Promise<VaccinationRecord> => {
-  const response = await fetch(`${API_BASE}/vaccination-records`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(record),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create vaccination record");
-  }
-
-  return response.json();
+  return apiPost("/vaccination-records", record);
 };
 
 // Health records
 export const fetchHealthRecords = async (
   animalId?: string,
 ): Promise<HealthRecord[]> => {
-  const url = animalId
-    ? `${API_BASE}/health-records?animalId=${animalId}&t=${Date.now()}`
-    : `${API_BASE}/health-records?t=${Date.now()}`;
-
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch health records");
-  }
-  return response.json();
+  const endpoint = animalId
+    ? `/health-records?animalId=${animalId}`
+    : `/health-records`;
+  return apiGet(endpoint);
 };
 
 export const createHealthRecord = async (
   record: Omit<HealthRecord, "id" | "createdAt">,
 ): Promise<HealthRecord> => {
-  const response = await fetch(`${API_BASE}/health-records`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(record),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create health record");
-  }
-
-  return response.json();
+  return apiPost("/health-records", record);
 };
 
 // Dashboard summary
 export const fetchAnimalSummary = async (): Promise<AnimalSummary> => {
-  const response = await fetch(`${API_BASE}/animals/summary?t=${Date.now()}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch animal summary");
-  }
-  return response.json();
+  return apiGet("/animals/summary");
 };
 
 // Backup
 export const createAnimalBackup = async (): Promise<Blob> => {
-  const response = await fetch(`${API_BASE}/animals/backup`);
-  if (!response.ok) {
-    throw new Error("Failed to create backup");
-  }
+  const response = await apiCall("/animals/backup");
   return response.blob();
 };
 
