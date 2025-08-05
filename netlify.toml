@@ -10,7 +10,13 @@
   force = true
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  from = "/api/ping"
+  to = "/.netlify/functions/ping"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/demo"
+  to = "/.netlify/functions/demo"
   status = 200
   force = true
