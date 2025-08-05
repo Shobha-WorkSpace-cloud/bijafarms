@@ -63,9 +63,11 @@ export function createServer() {
   // Check various environment variables and detect from deployment URL
   let basePath = process.env.VITE_BASE_URL || process.env.BASE_URL || "";
 
-  // If no base path is set, check if we're using builder-aura-haven base path
-  if (!basePath) {
-    // For this specific project, always use the base path
+  // For Netlify deployment, don't use base path for serverless functions
+  if (process.env.NETLIFY) {
+    basePath = "";
+  } else if (!basePath) {
+    // For GitHub Pages deployment, use the base path
     basePath = "/builder-aura-haven/";
   }
 
