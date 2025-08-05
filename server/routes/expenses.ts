@@ -98,6 +98,11 @@ const readExpenses = (): ExpenseRecord[] => {
 // Helper function to write expenses to JSON file
 const writeExpenses = (expenses: ExpenseRecord[]): void => {
   try {
+    if (serverlessMode) {
+      // In serverless mode, we can't write to files
+      console.log("Serverless mode: Would save expenses:", expenses.length, "items");
+      return;
+    }
     fs.writeFileSync(EXPENSES_FILE, JSON.stringify(expenses, null, 2));
   } catch (error) {
     console.error("Error writing expenses:", error);
