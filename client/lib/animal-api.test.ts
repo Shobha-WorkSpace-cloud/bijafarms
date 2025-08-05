@@ -50,7 +50,7 @@ describe("Animal API Functions", () => {
       const result = await fetchAnimals();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/animals?t=")
+        expect.stringContaining("/api/animals?t="),
       );
       expect(result).toEqual(mockAnimals);
     });
@@ -164,7 +164,7 @@ describe("Animal API Functions", () => {
       const result = await fetchAnimalSummary();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/animals/summary?t=")
+        expect.stringContaining("/api/animals/summary?t="),
       );
       expect(result).toEqual(mockSummary);
     });
@@ -192,7 +192,7 @@ describe("Animal API Functions", () => {
       const result = await fetchWeightRecords();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/weight-records?t=")
+        expect.stringContaining("/api/weight-records?t="),
       );
       expect(result).toEqual(mockWeightRecords);
     });
@@ -218,7 +218,7 @@ describe("Animal API Functions", () => {
       const result = await fetchWeightRecords("123");
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/weight-records?animalId=123&t=")
+        expect.stringContaining("/api/weight-records?animalId=123&t="),
       );
       expect(result).toEqual(mockWeightRecords);
     });
@@ -280,7 +280,7 @@ describe("Animal API Functions", () => {
       const result = await fetchBreedingRecords();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/breeding-records?t=")
+        expect.stringContaining("/api/breeding-records?t="),
       );
       expect(result).toEqual(mockBreedingRecords);
     });
@@ -346,7 +346,7 @@ describe("Animal API Functions", () => {
       const result = await fetchVaccinationRecords();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/vaccination-records?t=")
+        expect.stringContaining("/api/vaccination-records?t="),
       );
       expect(result).toEqual(mockVaccinationRecords);
     });
@@ -414,7 +414,7 @@ describe("Animal API Functions", () => {
       const result = await fetchHealthRecords();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/health-records?t=")
+        expect.stringContaining("/api/health-records?t="),
       );
       expect(result).toEqual(mockHealthRecords);
     });
@@ -479,7 +479,7 @@ describe("Animal API Functions", () => {
       });
 
       await expect(fetchAnimalSummary()).rejects.toThrow(
-        "Failed to fetch animal summary"
+        "Failed to fetch animal summary",
       );
     });
   });

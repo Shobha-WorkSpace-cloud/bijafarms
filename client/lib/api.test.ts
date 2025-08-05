@@ -45,7 +45,7 @@ describe("Client API Functions", () => {
       const result = await fetchExpenses();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/expenses?t=")
+        expect.stringContaining("/api/expenses?t="),
       );
       expect(result).toEqual(mockExpenses);
     });
@@ -157,7 +157,7 @@ describe("Client API Functions", () => {
       const result = await fetchCategories();
 
       expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining("/api/expenses/categories?t=")
+        expect.stringContaining("/api/expenses/categories?t="),
       );
       expect(result).toEqual(mockCategories);
     });

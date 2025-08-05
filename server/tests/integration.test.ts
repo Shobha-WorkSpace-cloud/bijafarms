@@ -11,13 +11,13 @@ const TEST_DATA_DIR = path.join(process.cwd(), "server/test-data");
 const ORIGINAL_DATA_DIR = path.join(process.cwd(), "server/data");
 const backupFiles = [
   "expenses.json",
-  "animals.json", 
+  "animals.json",
   "TaskTracker.json",
   "categories.json",
   "weight-records.json",
   "breeding-records.json",
   "vaccination-records.json",
-  "health-records.json"
+  "health-records.json",
 ];
 
 describe("Integration Tests - File Operations", () => {
@@ -30,7 +30,7 @@ describe("Integration Tests - File Operations", () => {
     }
 
     // Create empty test data files
-    backupFiles.forEach(file => {
+    backupFiles.forEach((file) => {
       const testFile = path.join(TEST_DATA_DIR, file);
       fs.writeFileSync(testFile, "[]");
     });
@@ -38,7 +38,7 @@ describe("Integration Tests - File Operations", () => {
     // Override process.cwd() to use test directory
     const originalCwd = process.cwd;
     process.cwd = () => TEST_DATA_DIR.replace("/server/test-data", "");
-    
+
     app = createServer();
   });
 
@@ -67,16 +67,18 @@ describe("Integration Tests - File Operations", () => {
       const createResponse = await request(app)
         .post("/api/expenses")
         .send(expense);
-      
+
       expect(createResponse.status).toBe(201);
       const createdExpense = createResponse.body;
 
       // Verify it's persisted by fetching all expenses
       const getResponse = await request(app).get("/api/expenses");
       expect(getResponse.status).toBe(200);
-      
+
       const expenses = getResponse.body;
-      const foundExpense = expenses.find((e: any) => e.id === createdExpense.id);
+      const foundExpense = expenses.find(
+        (e: any) => e.id === createdExpense.id,
+      );
       expect(foundExpense).toBeDefined();
       expect(foundExpense.description).toBe(expense.description);
     });
@@ -96,7 +98,7 @@ describe("Integration Tests - File Operations", () => {
           notes: "Notes 1",
         },
         {
-          date: "2024-01-16", 
+          date: "2024-01-16",
           type: "Expense",
           description: "Bulk test 2",
           amount: 200,
@@ -105,16 +107,14 @@ describe("Integration Tests - File Operations", () => {
           subCategory: "Sub 2",
           source: "Source 2",
           notes: "Notes 2",
-        }
+        },
       ];
 
       const createdIds: string[] = [];
 
       // Create expenses
       for (const expense of expenses) {
-        const response = await request(app)
-          .post("/api/expenses")
-          .send(expense);
+        const response = await request(app).post("/api/expenses").send(expense);
         expect(response.status).toBe(201);
         createdIds.push(response.body.id);
       }
@@ -127,7 +127,7 @@ describe("Integration Tests - File Operations", () => {
       const deleteResponse = await request(app)
         .post("/api/expenses/bulk-delete")
         .send({ ids: createdIds });
-      
+
       expect(deleteResponse.status).toBe(200);
 
       // Verify all deleted
@@ -156,14 +156,14 @@ describe("Integration Tests - File Operations", () => {
       const createResponse = await request(app)
         .post("/api/animals")
         .send(animal);
-      
+
       expect(createResponse.status).toBe(201);
       const createdAnimal = createResponse.body;
 
       // Verify persistence
       const getResponse = await request(app).get("/api/animals");
       expect(getResponse.status).toBe(200);
-      
+
       const animals = getResponse.body;
       const foundAnimal = animals.find((a: any) => a.id === createdAnimal.id);
       expect(foundAnimal).toBeDefined();
@@ -184,7 +184,7 @@ describe("Integration Tests - File Operations", () => {
       const animalResponse = await request(app)
         .post("/api/animals")
         .send(animal);
-      
+
       const createdAnimal = animalResponse.body;
 
       // Create weight record
@@ -199,13 +199,14 @@ describe("Integration Tests - File Operations", () => {
       const weightResponse = await request(app)
         .post("/api/weight-records")
         .send(weightRecord);
-      
+
       expect(weightResponse.status).toBe(201);
 
       // Verify weight record persistence
-      const getWeightResponse = await request(app)
-        .get(`/api/weight-records?animalId=${createdAnimal.id}`);
-      
+      const getWeightResponse = await request(app).get(
+        `/api/weight-records?animalId=${createdAnimal.id}`,
+      );
+
       expect(getWeightResponse.status).toBe(200);
       expect(getWeightResponse.body.length).toBe(1);
       expect(getWeightResponse.body[0].weight).toBe(30);
@@ -227,17 +228,15 @@ describe("Integration Tests - File Operations", () => {
       };
 
       // Create task
-      const createResponse = await request(app)
-        .post("/api/tasks")
-        .send(task);
-      
+      const createResponse = await request(app).post("/api/tasks").send(task);
+
       expect(createResponse.status).toBe(201);
       const createdTask = createResponse.body;
 
       // Verify persistence
       const getResponse = await request(app).get("/api/tasks");
       expect(getResponse.status).toBe(200);
-      
+
       const tasks = getResponse.body;
       const foundTask = tasks.find((t: any) => t.id === createdTask.id);
       expect(foundTask).toBeDefined();
@@ -260,7 +259,7 @@ describe("Integration Tests - File Operations", () => {
       const animalResponse = await request(app)
         .post("/api/animals")
         .send(animal);
-      
+
       const createdAnimal = animalResponse.body;
 
       // Create multiple related records

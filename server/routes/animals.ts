@@ -11,10 +11,22 @@ import {
 } from "@shared/animal-types";
 const __dirname = process.cwd();
 const ANIMALS_FILE = path.join(process.cwd(), "server/data/animals.json");
-const WEIGHT_RECORDS_FILE = path.join(process.cwd(), "server/data/weight-records.json");
-const BREEDING_RECORDS_FILE = path.join(process.cwd(), "server/data/breeding-records.json");
-const VACCINATION_RECORDS_FILE = path.join(process.cwd(), "server/data/vaccination-records.json");
-const HEALTH_RECORDS_FILE = path.join(process.cwd(), "server/data/health-records.json");
+const WEIGHT_RECORDS_FILE = path.join(
+  process.cwd(),
+  "server/data/weight-records.json",
+);
+const BREEDING_RECORDS_FILE = path.join(
+  process.cwd(),
+  "server/data/breeding-records.json",
+);
+const VACCINATION_RECORDS_FILE = path.join(
+  process.cwd(),
+  "server/data/vaccination-records.json",
+);
+const HEALTH_RECORDS_FILE = path.join(
+  process.cwd(),
+  "server/data/health-records.json",
+);
 
 // Ensure data directory exists
 const dataDir = path.dirname(ANIMALS_FILE);

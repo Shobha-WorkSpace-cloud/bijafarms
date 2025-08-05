@@ -55,7 +55,7 @@ describe("Data Validation and Edge Cases", () => {
         "2024-02-29", // leap year
       ];
 
-      dates.forEach(date => {
+      dates.forEach((date) => {
         expect(date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
         expect(new Date(date).getFullYear()).toBeGreaterThan(2020);
       });
@@ -67,11 +67,11 @@ describe("Data Validation and Edge Cases", () => {
       const validTypes = ["goat", "sheep"];
       const invalidTypes = ["cow", "pig", "chicken", ""];
 
-      validTypes.forEach(type => {
+      validTypes.forEach((type) => {
         expect(["goat", "sheep"]).toContain(type);
       });
 
-      invalidTypes.forEach(type => {
+      invalidTypes.forEach((type) => {
         expect(["goat", "sheep"]).not.toContain(type);
       });
     });
@@ -80,12 +80,14 @@ describe("Data Validation and Edge Cases", () => {
       const validStatuses = ["active", "sold", "dead", "ready_to_sell"];
       const invalidStatuses = ["sick", "missing", "unknown", ""];
 
-      validStatuses.forEach(status => {
+      validStatuses.forEach((status) => {
         expect(["active", "sold", "dead", "ready_to_sell"]).toContain(status);
       });
 
-      invalidStatuses.forEach(status => {
-        expect(["active", "sold", "dead", "ready_to_sell"]).not.toContain(status);
+      invalidStatuses.forEach((status) => {
+        expect(["active", "sold", "dead", "ready_to_sell"]).not.toContain(
+          status,
+        );
       });
     });
 
@@ -112,7 +114,9 @@ describe("Data Validation and Edge Cases", () => {
       const birthDate = "2023-01-15";
       const now = new Date();
       const birth = new Date(birthDate);
-      const ageInDays = Math.floor((now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24));
+      const ageInDays = Math.floor(
+        (now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24),
+      );
 
       expect(ageInDays).toBeGreaterThan(0);
       expect(ageInDays).toBeLessThan(365 * 10); // less than 10 years
@@ -124,11 +128,11 @@ describe("Data Validation and Edge Cases", () => {
       const validPriorities = ["low", "medium", "high"];
       const invalidPriorities = ["urgent", "critical", "normal", ""];
 
-      validPriorities.forEach(priority => {
+      validPriorities.forEach((priority) => {
         expect(["low", "medium", "high"]).toContain(priority);
       });
 
-      invalidPriorities.forEach(priority => {
+      invalidPriorities.forEach((priority) => {
         expect(["low", "medium", "high"]).not.toContain(priority);
       });
     });
@@ -137,11 +141,11 @@ describe("Data Validation and Edge Cases", () => {
       const validStatuses = ["pending", "in-progress", "completed"];
       const invalidStatuses = ["cancelled", "paused", "draft", ""];
 
-      validStatuses.forEach(status => {
+      validStatuses.forEach((status) => {
         expect(["pending", "in-progress", "completed"]).toContain(status);
       });
 
-      invalidStatuses.forEach(status => {
+      invalidStatuses.forEach((status) => {
         expect(["pending", "in-progress", "completed"]).not.toContain(status);
       });
     });
@@ -153,8 +157,8 @@ describe("Data Validation and Edge Cases", () => {
       const yesterday = new Date(today);
       yesterday.setDate(today.getDate() - 1);
 
-      const futureDue = tomorrow.toISOString().split('T')[0];
-      const pastDue = yesterday.toISOString().split('T')[0];
+      const futureDue = tomorrow.toISOString().split("T")[0];
+      const pastDue = yesterday.toISOString().split("T")[0];
 
       expect(new Date(futureDue)).toBeInstanceOf(Date);
       expect(new Date(pastDue)).toBeInstanceOf(Date);
@@ -174,10 +178,10 @@ describe("Data Validation and Edge Cases", () => {
     it("should validate breeding record relationships", () => {
       const mother = { id: "123", gender: "female" };
       const father = { id: "124", gender: "male" };
-      const breedingRecord = { 
-        motherId: "123", 
+      const breedingRecord = {
+        motherId: "123",
         fatherId: "124",
-        breedingDate: "2024-01-01"
+        breedingDate: "2024-01-01",
       };
 
       expect(breedingRecord.motherId).toBe(mother.id);
@@ -187,10 +191,10 @@ describe("Data Validation and Edge Cases", () => {
 
     it("should validate vaccination-animal relationships", () => {
       const animal = { id: "123", type: "goat" };
-      const vaccination = { 
-        animalId: "123", 
+      const vaccination = {
+        animalId: "123",
         vaccineName: "PPR Vaccine",
-        administrationDate: "2024-01-15"
+        administrationDate: "2024-01-15",
       };
 
       expect(vaccination.animalId).toBe(animal.id);
@@ -203,16 +207,16 @@ describe("Data Validation and Edge Cases", () => {
     it("should handle CSV format validation", () => {
       const csvHeaders = "Date,Type,Description,Amount,Category";
       const csvRow = "2024-01-15,Expense,Test,100,Food";
-      
-      expect(csvHeaders.split(',').length).toBe(5);
-      expect(csvRow.split(',').length).toBe(5);
+
+      expect(csvHeaders.split(",").length).toBe(5);
+      expect(csvRow.split(",").length).toBe(5);
     });
 
     it("should handle JSON format validation", () => {
       const jsonData = {
         id: "123",
         date: "2024-01-15",
-        amount: 100
+        amount: 100,
       };
 
       expect(() => JSON.stringify(jsonData)).not.toThrow();
@@ -223,7 +227,7 @@ describe("Data Validation and Edge Cases", () => {
       const largeDataSet = Array.from({ length: 1000 }, (_, i) => ({
         id: (i + 1).toString(),
         name: `Item ${i + 1}`,
-        value: Math.random() * 1000
+        value: Math.random() * 1000,
       }));
 
       expect(largeDataSet.length).toBe(1000);
@@ -235,13 +239,13 @@ describe("Data Validation and Edge Cases", () => {
   describe("Currency and Number Formatting", () => {
     it("should handle different currency amounts", () => {
       const amounts = [0, 0.01, 1, 100, 1000, 10000, 100000, 999999.99];
-      
-      amounts.forEach(amount => {
+
+      amounts.forEach((amount) => {
         const formatted = new Intl.NumberFormat("en-IN", {
           style: "currency",
           currency: "INR",
         }).format(amount);
-        
+
         expect(formatted).toContain("₹");
         expect(formatted).toContain(amount.toFixed(2));
       });
@@ -249,8 +253,8 @@ describe("Data Validation and Edge Cases", () => {
 
     it("should handle number precision", () => {
       const prices = [
-        { input: 100, expected: 100.00 },
-        { input: 100.5, expected: 100.50 },
+        { input: 100, expected: 100.0 },
+        { input: 100.5, expected: 100.5 },
         { input: 100.567, expected: 100.57 }, // rounded
       ];
 
@@ -264,7 +268,7 @@ describe("Data Validation and Edge Cases", () => {
     it("should handle different time zones", () => {
       const isoString = "2024-01-15T10:30:00.000Z";
       const date = new Date(isoString);
-      
+
       expect(date.toISOString()).toBe(isoString);
       expect(date.getUTCFullYear()).toBe(2024);
       expect(date.getUTCMonth()).toBe(0); // January = 0
@@ -274,8 +278,10 @@ describe("Data Validation and Edge Cases", () => {
     it("should handle date arithmetic", () => {
       const startDate = new Date("2024-01-01");
       const endDate = new Date("2024-01-31");
-      const daysDiff = Math.floor((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-      
+      const daysDiff = Math.floor(
+        (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
+
       expect(daysDiff).toBe(30); // January has 31 days, but diff is 30
     });
   });

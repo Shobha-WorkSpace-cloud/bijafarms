@@ -180,7 +180,7 @@ let app: express.Application;
 
 beforeAll(() => {
   app = createTestApp();
-  
+
   // Mock file operations to use test directory
   vi.mock("fs", async () => {
     const actual = await vi.importActual("fs");
@@ -210,7 +210,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/expenses")
         .send(sampleExpense);
-      
+
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         ...sampleExpense,
@@ -227,25 +227,29 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/expenses")
         .send(invalidExpense);
-      
+
       expect(response.status).toBe(400);
       expect(response.body.error).toBe("Missing required fields");
     });
 
     it("PUT /api/expenses/:id should update expense", async () => {
-      const updatedExpense = { ...sampleExpense, id: "1", description: "Updated expense" };
-      
+      const updatedExpense = {
+        ...sampleExpense,
+        id: "1",
+        description: "Updated expense",
+      };
+
       const response = await request(app)
         .put("/api/expenses/1")
         .send(updatedExpense);
-      
+
       expect(response.status).toBe(200);
       expect(response.body.description).toBe("Updated expense");
     });
 
     it("DELETE /api/expenses/:id should delete expense", async () => {
       const response = await request(app).delete("/api/expenses/1");
-      
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Expense deleted successfully");
     });
@@ -258,14 +262,21 @@ describe("API Endpoints Tests", () => {
 
     it("POST /api/expenses/categories should save categories", async () => {
       const categoryData = {
-        categories: [{ id: "1", name: "Test Category", subCategories: ["Sub1"], createdAt: new Date().toISOString() }],
+        categories: [
+          {
+            id: "1",
+            name: "Test Category",
+            subCategories: ["Sub1"],
+            createdAt: new Date().toISOString(),
+          },
+        ],
         lastUpdated: new Date().toISOString(),
       };
 
       const response = await request(app)
         .post("/api/expenses/categories")
         .send(categoryData);
-      
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Categories saved successfully");
     });
@@ -274,7 +285,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/expenses/bulk-delete")
         .send({ ids: ["1", "2", "3"] });
-      
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Expenses deleted successfully");
     });
@@ -297,7 +308,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/animals")
         .send(sampleAnimal);
-      
+
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         ...sampleAnimal,
@@ -308,19 +319,23 @@ describe("API Endpoints Tests", () => {
     });
 
     it("PUT /api/animals/:id should update animal", async () => {
-      const updatedAnimal = { ...sampleAnimal, id: "1", name: "Updated Animal" };
-      
+      const updatedAnimal = {
+        ...sampleAnimal,
+        id: "1",
+        name: "Updated Animal",
+      };
+
       const response = await request(app)
         .put("/api/animals/1")
         .send(updatedAnimal);
-      
+
       expect(response.status).toBe(200);
       expect(response.body.name).toBe("Updated Animal");
     });
 
     it("DELETE /api/animals/:id should delete animal", async () => {
       const response = await request(app).delete("/api/animals/1");
-      
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Animal deleted successfully");
     });
@@ -343,7 +358,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/weight-records")
         .send(sampleWeightRecord);
-      
+
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         ...sampleWeightRecord,
@@ -362,7 +377,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/breeding-records")
         .send(sampleBreedingRecord);
-      
+
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         ...sampleBreedingRecord,
@@ -382,7 +397,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/vaccination-records")
         .send(sampleVaccinationRecord);
-      
+
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         ...sampleVaccinationRecord,
@@ -401,7 +416,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/health-records")
         .send(sampleHealthRecord);
-      
+
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         ...sampleHealthRecord,
@@ -425,10 +440,8 @@ describe("API Endpoints Tests", () => {
     });
 
     it("POST /api/tasks should create new task", async () => {
-      const response = await request(app)
-        .post("/api/tasks")
-        .send(sampleTask);
-      
+      const response = await request(app).post("/api/tasks").send(sampleTask);
+
       expect(response.status).toBe(201);
       expect(response.body).toMatchObject({
         ...sampleTask,
@@ -439,18 +452,16 @@ describe("API Endpoints Tests", () => {
 
     it("PUT /api/tasks/:id should update task", async () => {
       const updatedTask = { ...sampleTask, id: "1", title: "Updated Task" };
-      
-      const response = await request(app)
-        .put("/api/tasks/1")
-        .send(updatedTask);
-      
+
+      const response = await request(app).put("/api/tasks/1").send(updatedTask);
+
       expect(response.status).toBe(200);
       expect(response.body.title).toBe("Updated Task");
     });
 
     it("DELETE /api/tasks/:id should delete task", async () => {
       const response = await request(app).delete("/api/tasks/1");
-      
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Task deleted successfully");
     });
@@ -459,7 +470,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/tasks/bulk-delete")
         .send({ ids: ["1", "2", "3"] });
-      
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Tasks deleted successfully");
     });
@@ -471,12 +482,15 @@ describe("API Endpoints Tests", () => {
     });
 
     it("POST /api/tasks/import should import tasks", async () => {
-      const tasksToImport = [sampleTask, { ...sampleTask, title: "Another Task" }];
-      
+      const tasksToImport = [
+        sampleTask,
+        { ...sampleTask, title: "Another Task" },
+      ];
+
       const response = await request(app)
         .post("/api/tasks/import")
         .send(tasksToImport);
-      
+
       expect(response.status).toBe(200);
       expect(response.body.message).toBe("Tasks imported successfully");
     });
@@ -503,7 +517,7 @@ describe("API Endpoints Tests", () => {
         .post("/api/expenses")
         .set("Content-Type", "application/json")
         .send("invalid json");
-      
+
       expect(response.status).toBe(400);
     });
 
@@ -511,7 +525,7 @@ describe("API Endpoints Tests", () => {
       const response = await request(app)
         .post("/api/expenses")
         .send({ date: "2024-01-15" }); // Missing required fields
-      
+
       expect(response.status).toBe(400);
       expect(response.body.error).toBe("Missing required fields");
     });
@@ -519,33 +533,33 @@ describe("API Endpoints Tests", () => {
 
   describe("Data Filtering", () => {
     it("should filter weight records by animal ID", async () => {
-      const response = await request(app)
-        .get("/api/weight-records?animalId=1");
-      
+      const response = await request(app).get("/api/weight-records?animalId=1");
+
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
     it("should filter breeding records by animal ID", async () => {
-      const response = await request(app)
-        .get("/api/breeding-records?animalId=1");
-      
+      const response = await request(app).get(
+        "/api/breeding-records?animalId=1",
+      );
+
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
     it("should filter vaccination records by animal ID", async () => {
-      const response = await request(app)
-        .get("/api/vaccination-records?animalId=1");
-      
+      const response = await request(app).get(
+        "/api/vaccination-records?animalId=1",
+      );
+
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
     });
 
     it("should filter health records by animal ID", async () => {
-      const response = await request(app)
-        .get("/api/health-records?animalId=1");
-      
+      const response = await request(app).get("/api/health-records?animalId=1");
+
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
     });
