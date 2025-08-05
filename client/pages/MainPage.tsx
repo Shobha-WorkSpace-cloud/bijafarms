@@ -419,7 +419,7 @@ export default function MainPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
-                    <Beef className="h-8 w-8 text-white" />
+                    <PawPrint className="h-8 w-8 text-white" />
                   </div>
                   <div>
                     <CardTitle className="text-2xl text-slate-800">
@@ -478,7 +478,7 @@ export default function MainPage() {
                     </div>
                     <div className="bg-white/60 p-3 rounded-lg">
                       <div className="flex items-center space-x-2 text-purple-700 mb-1">
-                        <Beef className="h-4 w-4" />
+                        <Rabbit className="h-4 w-4" />
                         <span className="text-xs font-medium">Goats</span>
                       </div>
                       <div className="text-xl font-bold text-purple-800">
@@ -487,7 +487,7 @@ export default function MainPage() {
                     </div>
                     <div className="bg-white/60 p-3 rounded-lg">
                       <div className="flex items-center space-x-2 text-purple-700 mb-1">
-                        <Users className="h-4 w-4" />
+                        <Bird className="h-4 w-4" />
                         <span className="text-xs font-medium">Sheep</span>
                       </div>
                       <div className="text-xl font-bold text-purple-800">
