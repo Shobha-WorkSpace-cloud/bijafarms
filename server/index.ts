@@ -63,9 +63,9 @@ export function createServer() {
   // Check various environment variables and detect from deployment URL
   let basePath = process.env.VITE_BASE_URL || process.env.BASE_URL || '';
 
-  // If no base path is set but we detect we're in a deployment environment,
-  // use the common base path for this project
-  if (!basePath && (process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL || process.env.NETLIFY)) {
+  // If no base path is set, check if we're using builder-aura-haven base path
+  if (!basePath) {
+    // For this specific project, always use the base path
     basePath = '/builder-aura-haven/';
   }
 
