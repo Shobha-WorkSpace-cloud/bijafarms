@@ -19,6 +19,10 @@ const getApiBaseUrl = (): string => {
   }
 
   // Default to local API for all environments (including cloud)
+  // Check if we're in a Vite environment with a base path
+  if (typeof window !== 'undefined' && window.location.pathname.includes('/builder-aura-haven/')) {
+    return '/builder-aura-haven/api';
+  }
   return '/api';
 };
 
