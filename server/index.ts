@@ -59,6 +59,12 @@ export function createServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  // Get base path from environment or default
+  const basePath = process.env.VITE_BASE_URL || process.env.BASE_URL || '';
+  const apiBasePath = basePath ? `${basePath}api` : '/api';
+
+  console.log(`🚀 Server starting with API base path: ${apiBasePath}`);
+
   // Example API routes
   app.get("/api/ping", (_req, res) => {
     const ping = process.env.PING_MESSAGE ?? "ping";
