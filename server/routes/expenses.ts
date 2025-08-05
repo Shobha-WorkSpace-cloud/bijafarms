@@ -28,6 +28,20 @@ try {
 // Helper function to read expenses from JSON file
 const readExpenses = (): ExpenseRecord[] => {
   try {
+    if (serverlessMode) {
+      // In serverless mode, return mock data
+      return [
+        {
+          id: "1",
+          amount: 50.00,
+          description: "Sample expense (serverless mode)",
+          category: "Food",
+          date: new Date().toISOString().split('T')[0],
+          paymentMethod: "cash"
+        }
+      ];
+    }
+
     if (!fs.existsSync(EXPENSES_FILE)) {
       return [];
     }
