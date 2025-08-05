@@ -76,11 +76,15 @@ export function createServer() {
   // Helper function to register routes with both paths (with and without base path)
   const registerRoute = (method: 'get' | 'post' | 'put' | 'delete', path: string, handler: any) => {
     // Register original path (for local development)
-    app[method](`/api${path}`, handler);
+    const originalPath = `/api${path}`;
+    app[method](originalPath, handler);
+    console.log(`📝 Registered: ${method.toUpperCase()} ${originalPath}`);
 
     // Register with base path if it exists (for deployment)
     if (basePath && basePath !== '/') {
-      app[method](`${basePath}api${path}`, handler);
+      const deploymentPath = `${basePath}api${path}`;
+      app[method](deploymentPath, handler);
+      console.log(`📝 Registered: ${method.toUpperCase()} ${deploymentPath}`);
     }
   };
 
