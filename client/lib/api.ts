@@ -51,58 +51,25 @@ export const deleteExpense = async (id: string): Promise<void> => {
 export const importExpenses = async (
   expenses: ExpenseRecord[],
 ): Promise<{ message: string; count: number }> => {
-  const response = await fetch(`${API_BASE}/import`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(expenses),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to import expenses");
-  }
-
-  return response.json();
+  return apiPost("/expenses/import", expenses);
 };
 
 // Bulk delete expenses
 export const bulkDeleteExpenses = async (
   ids: string[],
 ): Promise<{ message: string; deletedCount: number }> => {
-  const response = await fetch(`${API_BASE}/bulk-delete`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ids }),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to bulk delete expenses");
-  }
-
-  return response.json();
+  return apiPost("/expenses/bulk-delete", { ids });
 };
 
 // Create backup
 export const createBackup = async (): Promise<Blob> => {
-  const response = await fetch(`${API_BASE}/backup`);
-
-  if (!response.ok) {
-    throw new Error("Failed to create backup");
-  }
-
+  const response = await apiCall("/expenses/backup");
   return response.blob();
 };
 
 // Category Management
 export const fetchCategories = async (): Promise<CategoryManagementData> => {
-  const response = await fetch(`${API_BASE}/categories?t=${Date.now()}`);
-  if (!response.ok) {
-    throw new Error("Failed to fetch categories");
-  }
-  return response.json();
+  return apiGet("/expenses/categories");
 };
 
 export const saveCategories = async (
