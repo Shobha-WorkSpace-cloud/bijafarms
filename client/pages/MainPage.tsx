@@ -29,6 +29,7 @@ import { ExpenseRecord } from "@shared/expense-types";
 import * as api from "@/lib/api";
 import { Task, fetchTasks } from "@/lib/task-api";
 import { AnimalRecord, fetchAnimals } from "@/lib/animal-api";
+import { getApiConfig } from "@/lib/api-config";
 
 export default function MainPage() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
