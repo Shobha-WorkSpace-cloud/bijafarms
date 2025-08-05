@@ -14,17 +14,17 @@ const getApiBaseUrl = (): string => {
   }
 
   // Check for runtime environment variable (for production builds)
-  if (typeof window !== 'undefined' && (window as any).__API_BASE_URL__) {
+  if (typeof window !== "undefined" && (window as any).__API_BASE_URL__) {
     return (window as any).__API_BASE_URL__;
   }
 
   // Default to local API for all environments (including cloud)
   // Use Vite's base URL if available
-  const baseUrl = import.meta.env.BASE_URL || '/';
-  if (baseUrl !== '/') {
-    return `${baseUrl}api`.replace('//', '/');
+  const baseUrl = import.meta.env.BASE_URL || "/";
+  if (baseUrl !== "/") {
+    return `${baseUrl}api`.replace("//", "/");
   }
-  return '/api';
+  return "/api";
 };
 
 // API Configuration
@@ -32,30 +32,30 @@ export const apiConfig: ApiConfig = {
   baseUrl: getApiBaseUrl(),
   timeout: 30000, // 30 seconds
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 };
 
 // Debug logging
-if (typeof window !== 'undefined') {
-  console.log('🔧 API Configuration:', {
+if (typeof window !== "undefined") {
+  console.log("🔧 API Configuration:", {
     baseUrl: apiConfig.baseUrl,
-    mockMode: apiConfig.baseUrl === '__MOCK_MODE__',
+    mockMode: apiConfig.baseUrl === "__MOCK_MODE__",
     viteBaseUrl: import.meta.env.BASE_URL,
     currentPath: window.location.pathname,
     hostname: window.location.hostname,
-    environment: import.meta.env.NODE_ENV || 'development'
+    environment: import.meta.env.NODE_ENV || "development",
   });
 }
 
 // Mock mode detection
-const isMockMode = () => apiConfig.baseUrl === '__MOCK_MODE__';
+const isMockMode = () => apiConfig.baseUrl === "__MOCK_MODE__";
 
 // Enhanced fetch wrapper with better error handling and configuration
 export const apiCall = async (
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> => {
   // If in mock mode, return mock data
   if (isMockMode()) {
@@ -71,9 +71,10 @@ export const apiCall = async (
   };
 
   // Add timestamp to GET requests to prevent caching
-  const finalUrl = options.method === 'GET' || !options.method
-    ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`
-    : url;
+  const finalUrl =
+    options.method === "GET" || !options.method
+      ? `${url}${url.includes("?") ? "&" : "?"}t=${Date.now()}`
+      : url;
 
   const config: RequestInit = {
     ...options,
@@ -83,31 +84,41 @@ export const apiCall = async (
   };
 
   try {
-    console.log(`🌐 API Call: ${options.method || 'GET'} ${finalUrl}`);
+    console.log(`🌐 API Call: ${options.method || "GET"} ${finalUrl}`);
     const response = await fetch(finalUrl, config);
 
     // Handle common HTTP errors
     if (!response.ok) {
       const errorMessage = await getErrorMessage(response);
-      console.error(`❌ API Error: ${response.status} ${response.statusText} for ${finalUrl}`);
+      console.error(
+        `❌ API Error: ${response.status} ${response.statusText} for ${finalUrl}`,
+      );
       throw new ApiError(
         `API call failed: ${response.status} ${response.statusText}`,
         response.status,
-        errorMessage
+        errorMessage,
       );
     }
 
     return response;
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'TimeoutError') {
-      throw new ApiError('Request timeout', 408, 'The request took too long to complete');
+    if (error instanceof DOMException && error.name === "TimeoutError") {
+      throw new ApiError(
+        "Request timeout",
+        408,
+        "The request took too long to complete",
+      );
     }
     if (error instanceof ApiError) {
       throw error;
     }
 
     console.error(`❌ Network Error for ${finalUrl}:`, error);
-    throw new ApiError('Network error', 0, error instanceof Error ? error.message : 'Unknown error');
+    throw new ApiError(
+      "Network error",
+      0,
+      error instanceof Error ? error.message : "Unknown error",
+    );
   }
 };
 
@@ -116,25 +127,25 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public details?: string
+    public details?: string,
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
 // Helper function to extract error message from response
 const getErrorMessage = async (response: Response): Promise<string> => {
   try {
-    const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
-      return data.message || data.error || 'Unknown error';
+      return data.message || data.error || "Unknown error";
     } else {
       return await response.text();
     }
   } catch {
-    return 'Unable to parse error response';
+    return "Unable to parse error response";
   }
 };
 
@@ -146,7 +157,7 @@ export const apiGet = async (endpoint: string): Promise<any> => {
 
 export const apiPost = async (endpoint: string, data: any): Promise<any> => {
   const response = await apiCall(endpoint, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(data),
   });
   return response.json();
@@ -154,7 +165,7 @@ export const apiPost = async (endpoint: string, data: any): Promise<any> => {
 
 export const apiPut = async (endpoint: string, data: any): Promise<any> => {
   const response = await apiCall(endpoint, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(data),
   });
   return response.json();
@@ -162,7 +173,7 @@ export const apiPut = async (endpoint: string, data: any): Promise<any> => {
 
 export const apiDelete = async (endpoint: string): Promise<void> => {
   await apiCall(endpoint, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 };
 
@@ -185,53 +196,58 @@ export const removeApiHeader = (key: string): void => {
 
 // Demo mode helpers
 export const enableDemoMode = (): void => {
-  apiConfig.baseUrl = '__MOCK_MODE__';
-  console.log('🎭 Demo mode enabled - using mock data');
+  apiConfig.baseUrl = "__MOCK_MODE__";
+  console.log("🎭 Demo mode enabled - using mock data");
 };
 
 export const disableDemoMode = (): void => {
   apiConfig.baseUrl = getApiBaseUrl();
-  console.log('🔧 Demo mode disabled - using real API');
+  console.log("🔧 Demo mode disabled - using real API");
 };
 
 // Environment-specific configurations
-export const configureForEnvironment = (env: 'development' | 'staging' | 'production') => {
+export const configureForEnvironment = (
+  env: "development" | "staging" | "production",
+) => {
   switch (env) {
-    case 'development':
-      setApiBaseUrl('/api');
+    case "development":
+      setApiBaseUrl("/api");
       setApiTimeout(30000);
       break;
-    case 'staging':
-      setApiBaseUrl('https://staging-api.bijafarms.com/api');
+    case "staging":
+      setApiBaseUrl("https://staging-api.bijafarms.com/api");
       setApiTimeout(20000);
-      addApiHeader('X-Environment', 'staging');
+      addApiHeader("X-Environment", "staging");
       break;
-    case 'production':
-      setApiBaseUrl('https://api.bijafarms.com/api');
+    case "production":
+      setApiBaseUrl("https://api.bijafarms.com/api");
       setApiTimeout(15000);
-      addApiHeader('X-Environment', 'production');
+      addApiHeader("X-Environment", "production");
       break;
   }
 };
 
 // Mock data for demo environments
-const getMockResponse = async (endpoint: string, options: RequestInit): Promise<Response> => {
-  console.log(`🎭 Mock mode: ${options.method || 'GET'} ${endpoint}`);
+const getMockResponse = async (
+  endpoint: string,
+  options: RequestInit,
+): Promise<Response> => {
+  console.log(`🎭 Mock mode: ${options.method || "GET"} ${endpoint}`);
 
-  const mockData = getMockData(endpoint, options.method || 'GET');
+  const mockData = getMockData(endpoint, options.method || "GET");
 
   return new Response(JSON.stringify(mockData), {
     status: 200,
-    statusText: 'OK',
+    statusText: "OK",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
 };
 
 const getMockData = (endpoint: string, method: string) => {
   // Expenses mock data
-  if (endpoint.includes('/expenses') && method === 'GET') {
+  if (endpoint.includes("/expenses") && method === "GET") {
     return [
       {
         id: "1",
@@ -241,7 +257,7 @@ const getMockData = (endpoint: string, method: string) => {
         amount: 15000,
         paidBy: "Farm Owner",
         category: "Livestock Sales",
-        subCategory: "Goats"
+        subCategory: "Goats",
       },
       {
         id: "2",
@@ -251,7 +267,7 @@ const getMockData = (endpoint: string, method: string) => {
         amount: 2500,
         paidBy: "Farm Owner",
         category: "Healthcare",
-        subCategory: "Veterinary"
+        subCategory: "Veterinary",
       },
       {
         id: "3",
@@ -261,14 +277,14 @@ const getMockData = (endpoint: string, method: string) => {
         amount: 8000,
         paidBy: "Farm Owner",
         category: "Livestock Products",
-        subCategory: "Wool"
-      }
+        subCategory: "Wool",
+      },
     ];
   }
 
   // Animals mock data
-  if (endpoint.includes('/animals') && method === 'GET') {
-    if (endpoint.includes('/summary')) {
+  if (endpoint.includes("/animals") && method === "GET") {
+    if (endpoint.includes("/summary")) {
       return {
         totalAnimals: 12,
         totalGoats: 8,
@@ -282,7 +298,7 @@ const getMockData = (endpoint: string, method: string) => {
         averageWeight: 42.5,
         totalInvestment: 45000,
         totalRevenue: 23000,
-        profitLoss: -22000
+        profitLoss: -22000,
       };
     }
     return [
@@ -298,7 +314,7 @@ const getMockData = (endpoint: string, method: string) => {
         currentWeight: 45,
         markings: "White with brown patches",
         createdAt: "2023-03-15T10:30:00.000Z",
-        updatedAt: "2024-01-15T14:20:00.000Z"
+        updatedAt: "2024-01-15T14:20:00.000Z",
       },
       {
         id: "2",
@@ -312,13 +328,13 @@ const getMockData = (endpoint: string, method: string) => {
         currentWeight: 55,
         markings: "Pure white with black spots",
         createdAt: "2022-08-20T09:15:00.000Z",
-        updatedAt: "2024-01-10T11:45:00.000Z"
-      }
+        updatedAt: "2024-01-10T11:45:00.000Z",
+      },
     ];
   }
 
   // Tasks mock data
-  if (endpoint.includes('/tasks') && method === 'GET') {
+  if (endpoint.includes("/tasks") && method === "GET") {
     return [
       {
         id: "1",
@@ -331,7 +347,7 @@ const getMockData = (endpoint: string, method: string) => {
         dueDate: "2024-02-15",
         assignedTo: "Farm Manager",
         notes: "Use FMD vaccine",
-        createdAt: "2024-01-20T10:00:00.000Z"
+        createdAt: "2024-01-20T10:00:00.000Z",
       },
       {
         id: "2",
@@ -344,13 +360,13 @@ const getMockData = (endpoint: string, method: string) => {
         dueDate: "2024-02-01",
         assignedTo: "Farm Owner",
         notes: "Record growth patterns",
-        createdAt: "2024-01-18T14:30:00.000Z"
-      }
+        createdAt: "2024-01-18T14:30:00.000Z",
+      },
     ];
   }
 
   // Weight records mock data
-  if (endpoint.includes('/weight-records') && method === 'GET') {
+  if (endpoint.includes("/weight-records") && method === "GET") {
     return [
       {
         id: "1",
@@ -359,13 +375,13 @@ const getMockData = (endpoint: string, method: string) => {
         date: "2024-01-15",
         notes: "Good growth progress",
         recordedBy: "Farm Manager",
-        createdAt: "2024-01-15T14:20:00.000Z"
-      }
+        createdAt: "2024-01-15T14:20:00.000Z",
+      },
     ];
   }
 
   // Health records mock data
-  if (endpoint.includes('/health-records') && method === 'GET') {
+  if (endpoint.includes("/health-records") && method === "GET") {
     return [
       {
         id: "1",
@@ -379,14 +395,14 @@ const getMockData = (endpoint: string, method: string) => {
         medications: "None",
         cost: 500,
         notes: "Animal in excellent condition",
-        createdAt: "2024-01-15T14:20:00.000Z"
-      }
+        createdAt: "2024-01-15T14:20:00.000Z",
+      },
     ];
   }
 
   // Default response for POST/PUT/DELETE
-  if (method !== 'GET') {
-    return { success: true, message: 'Demo mode - action simulated' };
+  if (method !== "GET") {
+    return { success: true, message: "Demo mode - action simulated" };
   }
 
   return [];
@@ -396,6 +412,6 @@ const getMockData = (endpoint: string, method: string) => {
 export const getApiConfig = () => ({
   ...apiConfig,
   currentUrl: apiConfig.baseUrl,
-  environment: import.meta.env.NODE_ENV || 'development',
+  environment: import.meta.env.NODE_ENV || "development",
   mockMode: isMockMode(),
 });
