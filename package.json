@@ -21,9 +21,11 @@
     "deploy": "gh-pages -d dist",
     "test": "vitest",
     "test:run": "vitest --run",
-    "test:ci": "vitest --run --reporter=verbose",
-    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest --run --reporter=verbose --no-coverage client/",
+    "test:coverage": "vitest --coverage client/",
     "test:watch": "vitest --watch",
+    "test:server": "vitest --run server/",
+    "test:all": "vitest --run --reporter=verbose",
     "format.fix": "prettier --write .",
     "typecheck": "tsc"
   },
