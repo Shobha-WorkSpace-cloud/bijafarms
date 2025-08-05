@@ -25,18 +25,7 @@ export const fetchTasks = async (): Promise<Task[]> => {
 export const createTask = async (
   task: Omit<Task, "id" | "createdAt">,
 ): Promise<Task> => {
-  const response = await fetch("/api/tasks", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(task),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to create task: ${response.statusText}`);
-  }
-  return response.json();
+  return apiPost("/tasks", task);
 };
 
 // Update an existing task
