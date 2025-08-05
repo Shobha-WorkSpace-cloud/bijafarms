@@ -17,15 +17,11 @@ if (!fs.existsSync(dataDir)) {
 // Helper function to read expenses from JSON file
 const readExpenses = (): ExpenseRecord[] => {
   try {
-    console.log("EXPENSES_FILE path:", EXPENSES_FILE);
-    console.log("File exists:", fs.existsSync(EXPENSES_FILE));
     if (!fs.existsSync(EXPENSES_FILE)) {
-      console.log("Expenses file not found, returning empty array");
       return [];
     }
     const data = fs.readFileSync(EXPENSES_FILE, "utf8");
     const rawData = JSON.parse(data);
-    console.log("Raw expenses data loaded:", rawData.length, "records");
 
     // Transform the data to match the expected format and ensure unique IDs
     return rawData.map((item: any, index: number) => {
