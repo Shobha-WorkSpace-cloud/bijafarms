@@ -41,13 +41,21 @@ export const apiConfig: ApiConfig = {
   },
 };
 
+// Mock mode detection
+const isMockMode = () => apiConfig.baseUrl === '__MOCK_MODE__';
+
 // Enhanced fetch wrapper with better error handling and configuration
 export const apiCall = async (
   endpoint: string,
   options: RequestInit = {}
 ): Promise<Response> => {
+  // If in mock mode, return mock data
+  if (isMockMode()) {
+    return getMockResponse(endpoint, options);
+  }
+
   const url = `${apiConfig.baseUrl}${endpoint}`;
-  
+
   // Merge default headers with provided headers
   const headers = {
     ...apiConfig.headers,
@@ -55,7 +63,7 @@ export const apiCall = async (
   };
 
   // Add timestamp to GET requests to prevent caching
-  const finalUrl = options.method === 'GET' || !options.method 
+  const finalUrl = options.method === 'GET' || !options.method
     ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`
     : url;
 
@@ -68,7 +76,7 @@ export const apiCall = async (
 
   try {
     const response = await fetch(finalUrl, config);
-    
+
     // Handle common HTTP errors
     if (!response.ok) {
       const errorMessage = await getErrorMessage(response);
@@ -78,7 +86,7 @@ export const apiCall = async (
         errorMessage
       );
     }
-    
+
     return response;
   } catch (error) {
     if (error instanceof DOMException && error.name === 'TimeoutError') {
@@ -87,6 +95,14 @@ export const apiCall = async (
     if (error instanceof ApiError) {
       throw error;
     }
+
+    // If network error in production, try to fallback to mock mode
+    if (typeof window !== 'undefined' && window.location.hostname.includes('.')) {
+      console.warn('Network error detected, falling back to demo mode');
+      apiConfig.baseUrl = '__MOCK_MODE__';
+      return getMockResponse(endpoint, options);
+    }
+
     throw new ApiError('Network error', 0, error instanceof Error ? error.message : 'Unknown error');
   }
 };
