@@ -6,7 +6,7 @@ import {
   HealthRecord,
   AnimalSummary,
 } from "@shared/animal-types";
-import { apiGet, apiPost, apiPut, apiDelete } from "./api-config";
+import { apiGet, apiPost, apiPut, apiDelete, apiCall } from "./api-config";
 
 // Animal CRUD operations
 export const fetchAnimals = async (): Promise<AnimalRecord[]> => {
