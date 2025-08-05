@@ -8,18 +8,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimalRecord, AnimalStatus } from "@shared/animal-types";
-import { 
-  CalendarDays, 
-  MapPin, 
-  User, 
-  Weight, 
-  Shield, 
+import {
+  CalendarDays,
+  MapPin,
+  User,
+  Weight,
+  Shield,
   IndianRupee,
   Edit,
   FileText,
   Eye,
+  Activity,
+  Stethoscope,
 } from "lucide-react";
+import WeightTracker from "@/components/WeightTracker";
+import HealthRecordsManager from "@/components/HealthRecordsManager";
 
 interface AnimalViewProps {
   animal: AnimalRecord;
