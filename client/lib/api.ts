@@ -1,5 +1,5 @@
 import { ExpenseRecord, CategoryManagementData } from "@shared/expense-types";
-import { apiGet, apiPost, apiPut, apiDelete } from "./api-config";
+import { apiGet, apiPost, apiPut, apiDelete, apiCall } from "./api-config";
 
 // Get all expenses
 export const fetchExpenses = async (): Promise<ExpenseRecord[]> => {
