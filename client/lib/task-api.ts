@@ -33,18 +33,7 @@ export const updateTask = async (
   id: string,
   task: Partial<Task>,
 ): Promise<Task> => {
-  const response = await fetch(`/api/tasks/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(task),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to update task: ${response.statusText}`);
-  }
-  return response.json();
+  return apiPut(`/tasks/${id}`, task);
 };
 
 // Delete a task
