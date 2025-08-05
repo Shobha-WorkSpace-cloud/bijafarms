@@ -54,6 +54,8 @@ import {
   AnimalStatus,
 } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
+import AnimalForm from "@/components/AnimalForm";
+import AnimalView from "@/components/AnimalView";
 
 export default function AnimalTracker() {
   const [animals, setAnimals] = useState<AnimalRecord[]>([]);
