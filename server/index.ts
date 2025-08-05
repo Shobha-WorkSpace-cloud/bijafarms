@@ -60,7 +60,15 @@ export function createServer() {
   app.use(express.urlencoded({ extended: true }));
 
   // Get base path from environment or default
-  const basePath = process.env.VITE_BASE_URL || process.env.BASE_URL || '';
+  // Check various environment variables and detect from deployment URL
+  let basePath = process.env.VITE_BASE_URL || process.env.BASE_URL || '';
+
+  // If no base path is set but we detect we're in a deployment environment,
+  // use the common base path for this project
+  if (!basePath && (process.env.NODE_ENV === 'production' || process.env.RENDER || process.env.VERCEL || process.env.NETLIFY)) {
+    basePath = '/builder-aura-haven/';
+  }
+
   const apiBasePath = basePath ? `${basePath}api` : '/api';
 
   console.log(`🚀 Server starting with API base path: ${apiBasePath}`);
