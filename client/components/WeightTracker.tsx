@@ -47,13 +47,17 @@ interface WeightFormData {
   recordedBy: string;
 }
 
-export default function WeightTracker({ animalId, animalName, currentWeight }: WeightTrackerProps) {
+export default function WeightTracker({
+  animalId,
+  animalName,
+  currentWeight,
+}: WeightTrackerProps) {
   const [weightRecords, setWeightRecords] = useState<WeightRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [formData, setFormData] = useState<WeightFormData>({
     weight: "",
-    date: new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split("T")[0],
     notes: "",
     recordedBy: "Farm Manager",
   });
@@ -68,7 +72,11 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
       setLoading(true);
       const records = await animalApi.fetchWeightRecords(animalId);
       // Sort by date desc (newest first)
-      setWeightRecords(records.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
+      setWeightRecords(
+        records.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        ),
+      );
     } catch (error) {
       console.error("Error loading weight records:", error);
       toast({
@@ -83,7 +91,7 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
 
   const handleAddWeight = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.weight || !formData.date) {
       toast({
         title: "Error",
@@ -102,11 +110,11 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
         recordedBy: formData.recordedBy || undefined,
       });
 
-      setWeightRecords(prev => [newRecord, ...prev]);
+      setWeightRecords((prev) => [newRecord, ...prev]);
       setIsAddDialogOpen(false);
       setFormData({
         weight: "",
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString().split("T")[0],
         notes: "",
         recordedBy: "Farm Manager",
       });
@@ -135,12 +143,12 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
 
   const getWeightTrend = () => {
     if (weightRecords.length < 2) return null;
-    
+
     const latest = weightRecords[0];
     const previous = weightRecords[1];
     const change = latest.weight - previous.weight;
-    const percentChange = ((change / previous.weight) * 100);
-    
+    const percentChange = (change / previous.weight) * 100;
+
     return {
       change,
       percentChange,
@@ -151,7 +159,7 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
   const getWeightStats = () => {
     if (weightRecords.length === 0) return null;
 
-    const weights = weightRecords.map(r => r.weight);
+    const weights = weightRecords.map((r) => r.weight);
     const minWeight = Math.min(...weights);
     const maxWeight = Math.max(...weights);
     const avgWeight = weights.reduce((sum, w) => sum + w, 0) / weights.length;
@@ -166,7 +174,7 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
 
   const generateChartData = () => {
     if (weightRecords.length === 0) return [];
-    
+
     // Get last 12 records or all if less than 12
     const chartRecords = weightRecords.slice(0, 12).reverse();
     return chartRecords.map((record, index) => ({
@@ -205,7 +213,7 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
             Monitor weight progress and growth patterns
           </p>
         </div>
-        
+
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
             <Button className="bg-blue-600 hover:bg-blue-700">
@@ -229,7 +237,12 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
                     type="number"
                     step="0.1"
                     value={formData.weight}
-                    onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        weight: e.target.value,
+                      }))
+                    }
                     placeholder="Enter weight"
                     required
                   />
@@ -240,38 +253,51 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
                     id="date"
                     type="date"
                     value={formData.date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, date: e.target.value }))
+                    }
                     required
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="recordedBy">Recorded By</Label>
                 <Input
                   id="recordedBy"
                   value={formData.recordedBy}
-                  onChange={(e) => setFormData(prev => ({ ...prev, recordedBy: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      recordedBy: e.target.value,
+                    }))
+                  }
                   placeholder="Who recorded this weight?"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="notes">Notes</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, notes: e.target.value }))
+                  }
                   placeholder="Optional notes about this measurement"
                   rows={2}
                 />
               </div>
-              
+
               <div className="flex gap-2 pt-4">
                 <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                   Add Record
                 </Button>
-                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsAddDialogOpen(false)}
+                >
                   Cancel
                 </Button>
               </div>
@@ -348,11 +374,17 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-4">
-              <div className={`text-2xl font-bold ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                {trend.isPositive ? '+' : ''}{trend.change.toFixed(1)} kg
+              <div
+                className={`text-2xl font-bold ${trend.isPositive ? "text-green-600" : "text-red-600"}`}
+              >
+                {trend.isPositive ? "+" : ""}
+                {trend.change.toFixed(1)} kg
               </div>
-              <div className={`text-lg ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                ({trend.isPositive ? '+' : ''}{trend.percentChange.toFixed(1)}%)
+              <div
+                className={`text-lg ${trend.isPositive ? "text-green-600" : "text-red-600"}`}
+              >
+                ({trend.isPositive ? "+" : ""}
+                {trend.percentChange.toFixed(1)}%)
               </div>
               <Badge variant={trend.isPositive ? "default" : "destructive"}>
                 {trend.isPositive ? "Growing" : "Losing Weight"}
@@ -378,13 +410,16 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
             <div className="h-64 relative">
               <div className="absolute inset-0 flex items-end justify-between px-4 pb-8">
                 {chartData.map((point, index) => {
-                  const maxWeight = Math.max(...chartData.map(d => d.weight));
-                  const minWeight = Math.min(...chartData.map(d => d.weight));
+                  const maxWeight = Math.max(...chartData.map((d) => d.weight));
+                  const minWeight = Math.min(...chartData.map((d) => d.weight));
                   const range = maxWeight - minWeight || 1;
                   const height = ((point.weight - minWeight) / range) * 80 + 10; // 10% minimum height
-                  
+
                   return (
-                    <div key={index} className="flex flex-col items-center group">
+                    <div
+                      key={index}
+                      className="flex flex-col items-center group"
+                    >
                       <div className="relative">
                         <div
                           className="bg-blue-500 hover:bg-blue-600 transition-colors rounded-t-sm w-8 group-hover:w-10 transition-all duration-200"
@@ -396,7 +431,7 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
                         </div>
                       </div>
                       <div className="text-xs text-gray-500 mt-2 transform -rotate-45 w-12 text-center">
-                        {point.formattedDate.split(' ').slice(0, 2).join(' ')}
+                        {point.formattedDate.split(" ").slice(0, 2).join(" ")}
                       </div>
                     </div>
                   );
@@ -412,7 +447,8 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
         <CardHeader>
           <CardTitle className="text-lg">Weight Records History</CardTitle>
           <CardDescription>
-            Complete list of weight measurements ({weightRecords.length} records)
+            Complete list of weight measurements ({weightRecords.length}{" "}
+            records)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -420,12 +456,17 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
             <div className="text-center py-8">
               <Weight className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No weight records found</p>
-              <p className="text-sm text-gray-400">Add the first weight measurement to start tracking.</p>
+              <p className="text-sm text-gray-400">
+                Add the first weight measurement to start tracking.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
               {weightRecords.map((record) => (
-                <div key={record.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                <div
+                  key={record.id}
+                  className="border rounded-lg p-4 hover:bg-gray-50"
+                >
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
                       <div className="flex items-center gap-3">
@@ -437,14 +478,14 @@ export default function WeightTracker({ animalId, animalName, currentWeight }: W
                           {formatDate(record.date)}
                         </div>
                       </div>
-                      
+
                       {record.recordedBy && (
                         <div className="flex items-center gap-1 text-sm text-gray-600">
                           <User className="h-3 w-3" />
                           Recorded by {record.recordedBy}
                         </div>
                       )}
-                      
+
                       {record.notes && (
                         <div className="flex items-start gap-1 text-sm text-gray-700 mt-2">
                           <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />

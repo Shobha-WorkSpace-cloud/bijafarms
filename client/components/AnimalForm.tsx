@@ -11,16 +11,28 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AnimalRecord, AnimalType, AnimalGender, AnimalStatus } from "@shared/animal-types";
+import {
+  AnimalRecord,
+  AnimalType,
+  AnimalGender,
+  AnimalStatus,
+} from "@shared/animal-types";
 
 interface AnimalFormProps {
   animal?: AnimalRecord | null;
-  onSubmit: (animal: Omit<AnimalRecord, "id" | "createdAt" | "updatedAt"> | AnimalRecord) => void;
+  onSubmit: (
+    animal: Omit<AnimalRecord, "id" | "createdAt" | "updatedAt"> | AnimalRecord,
+  ) => void;
   onCancel: () => void;
   isEditing?: boolean;
 }
 
-export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = false }: AnimalFormProps) {
+export default function AnimalForm({
+  animal,
+  onSubmit,
+  onCancel,
+  isEditing = false,
+}: AnimalFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     type: "goat" as AnimalType,
@@ -77,7 +89,7 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const animalData = {
       name: formData.name,
       type: formData.type,
@@ -86,20 +98,28 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
       dateOfBirth: formData.dateOfBirth || undefined,
       photos: animal?.photos || [],
       status: formData.status,
-      currentWeight: formData.currentWeight ? parseFloat(formData.currentWeight) : undefined,
+      currentWeight: formData.currentWeight
+        ? parseFloat(formData.currentWeight)
+        : undefined,
       markings: formData.markings || undefined,
       purchaseDate: formData.purchaseDate || undefined,
-      purchasePrice: formData.purchasePrice ? parseFloat(formData.purchasePrice) : undefined,
+      purchasePrice: formData.purchasePrice
+        ? parseFloat(formData.purchasePrice)
+        : undefined,
       purchaseLocation: formData.purchaseLocation || undefined,
       previousOwner: formData.previousOwner || undefined,
       saleDate: formData.saleDate || undefined,
-      salePrice: formData.salePrice ? parseFloat(formData.salePrice) : undefined,
+      salePrice: formData.salePrice
+        ? parseFloat(formData.salePrice)
+        : undefined,
       buyerName: formData.buyerName || undefined,
       saleNotes: formData.saleNotes || undefined,
       insured: formData.insured,
       insuranceProvider: formData.insuranceProvider || undefined,
       insurancePolicyNumber: formData.insurancePolicyNumber || undefined,
-      insuranceAmount: formData.insuranceAmount ? parseFloat(formData.insuranceAmount) : undefined,
+      insuranceAmount: formData.insuranceAmount
+        ? parseFloat(formData.insuranceAmount)
+        : undefined,
       insuranceExpiryDate: formData.insuranceExpiryDate || undefined,
       notes: formData.notes || undefined,
     };
@@ -117,14 +137,19 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 max-h-[70vh] overflow-y-auto"
+    >
       {/* Basic Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Basic Information
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name *</Label>
@@ -136,10 +161,13 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
               placeholder="Enter animal name"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="type">Type *</Label>
-            <Select value={formData.type} onValueChange={(value) => handleInputChange("type", value)}>
+            <Select
+              value={formData.type}
+              onValueChange={(value) => handleInputChange("type", value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
@@ -163,7 +191,10 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
 
           <div className="space-y-2">
             <Label htmlFor="gender">Gender *</Label>
-            <Select value={formData.gender} onValueChange={(value) => handleInputChange("gender", value)}>
+            <Select
+              value={formData.gender}
+              onValueChange={(value) => handleInputChange("gender", value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select gender" />
               </SelectTrigger>
@@ -186,7 +217,10 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
 
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
-            <Select value={formData.status} onValueChange={(value) => handleInputChange("status", value)}>
+            <Select
+              value={formData.status}
+              onValueChange={(value) => handleInputChange("status", value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
@@ -214,7 +248,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
 
       {/* Physical Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Physical Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Physical Information
+        </h3>
         <div className="space-y-2">
           <Label htmlFor="currentWeight">Current Weight (kg)</Label>
           <Input
@@ -230,7 +266,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
 
       {/* Purchase Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Purchase Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Purchase Information
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="purchaseDate">Purchase Date</Label>
@@ -238,7 +276,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
               id="purchaseDate"
               type="date"
               value={formData.purchaseDate}
-              onChange={(e) => handleInputChange("purchaseDate", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("purchaseDate", e.target.value)
+              }
             />
           </div>
 
@@ -249,7 +289,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
               type="number"
               step="0.01"
               value={formData.purchasePrice}
-              onChange={(e) => handleInputChange("purchasePrice", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("purchasePrice", e.target.value)
+              }
               placeholder="Enter purchase price"
             />
           </div>
@@ -259,7 +301,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
             <Input
               id="purchaseLocation"
               value={formData.purchaseLocation}
-              onChange={(e) => handleInputChange("purchaseLocation", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("purchaseLocation", e.target.value)
+              }
               placeholder="Where was it purchased"
             />
           </div>
@@ -269,7 +313,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
             <Input
               id="previousOwner"
               value={formData.previousOwner}
-              onChange={(e) => handleInputChange("previousOwner", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("previousOwner", e.target.value)
+              }
               placeholder="Previous owner name"
             />
           </div>
@@ -279,7 +325,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
       {/* Sale Information (only if status is sold) */}
       {formData.status === "sold" && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Sale Information</h3>
+          <h3 className="text-lg font-semibold text-gray-900">
+            Sale Information
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="saleDate">Sale Date</Label>
@@ -329,12 +377,16 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
 
       {/* Insurance Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Insurance Information</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Insurance Information
+        </h3>
         <div className="flex items-center space-x-2">
           <Checkbox
             id="insured"
             checked={formData.insured}
-            onCheckedChange={(checked) => handleInputChange("insured", checked as boolean)}
+            onCheckedChange={(checked) =>
+              handleInputChange("insured", checked as boolean)
+            }
           />
           <Label htmlFor="insured">This animal is insured</Label>
         </div>
@@ -346,7 +398,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
               <Input
                 id="insuranceProvider"
                 value={formData.insuranceProvider}
-                onChange={(e) => handleInputChange("insuranceProvider", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("insuranceProvider", e.target.value)
+                }
                 placeholder="Insurance company name"
               />
             </div>
@@ -356,7 +410,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
               <Input
                 id="insurancePolicyNumber"
                 value={formData.insurancePolicyNumber}
-                onChange={(e) => handleInputChange("insurancePolicyNumber", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("insurancePolicyNumber", e.target.value)
+                }
                 placeholder="Policy number"
               />
             </div>
@@ -368,7 +424,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
                 type="number"
                 step="0.01"
                 value={formData.insuranceAmount}
-                onChange={(e) => handleInputChange("insuranceAmount", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("insuranceAmount", e.target.value)
+                }
                 placeholder="Insurance coverage amount"
               />
             </div>
@@ -379,7 +437,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
                 id="insuranceExpiryDate"
                 type="date"
                 value={formData.insuranceExpiryDate}
-                onChange={(e) => handleInputChange("insuranceExpiryDate", e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("insuranceExpiryDate", e.target.value)
+                }
               />
             </div>
           </div>
@@ -388,7 +448,9 @@ export default function AnimalForm({ animal, onSubmit, onCancel, isEditing = fal
 
       {/* Notes */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Additional Notes</h3>
+        <h3 className="text-lg font-semibold text-gray-900">
+          Additional Notes
+        </h3>
         <div className="space-y-2">
           <Label htmlFor="notes">Notes</Label>
           <Textarea

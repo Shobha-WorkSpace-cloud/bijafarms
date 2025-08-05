@@ -32,7 +32,11 @@ interface AnimalViewProps {
   onClose: () => void;
 }
 
-export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps) {
+export default function AnimalView({
+  animal,
+  onEdit,
+  onClose,
+}: AnimalViewProps) {
   const getStatusColor = (status: AnimalStatus) => {
     switch (status) {
       case "active":
@@ -83,16 +87,16 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
     const now = new Date();
     const ageInMilliseconds = now.getTime() - birth.getTime();
     const ageInDays = Math.floor(ageInMilliseconds / (1000 * 60 * 60 * 24));
-    
+
     if (ageInDays < 30) {
       return `${ageInDays} days`;
     } else if (ageInDays < 365) {
       const months = Math.floor(ageInDays / 30);
-      return `${months} month${months > 1 ? 's' : ''}`;
+      return `${months} month${months > 1 ? "s" : ""}`;
     } else {
       const years = Math.floor(ageInDays / 365);
       const remainingMonths = Math.floor((ageInDays % 365) / 30);
-      return `${years} year${years > 1 ? 's' : ''}${remainingMonths > 0 ? ` ${remainingMonths} month${remainingMonths > 1 ? 's' : ''}` : ''}`;
+      return `${years} year${years > 1 ? "s" : ""}${remainingMonths > 0 ? ` ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}` : ""}`;
     }
   };
 
@@ -154,9 +158,12 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-4 w-4 text-gray-500" />
                     <div>
-                      <p className="text-sm text-gray-500">Date of Birth & Age</p>
+                      <p className="text-sm text-gray-500">
+                        Date of Birth & Age
+                      </p>
                       <p className="font-medium">
-                        {formatDate(animal.dateOfBirth)} ({calculateAge(animal.dateOfBirth)})
+                        {formatDate(animal.dateOfBirth)} (
+                        {calculateAge(animal.dateOfBirth)})
                       </p>
                     </div>
                   </div>
@@ -183,7 +190,10 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
           </Card>
 
           {/* Purchase Information */}
-          {(animal.purchaseDate || animal.purchasePrice || animal.purchaseLocation || animal.previousOwner) && (
+          {(animal.purchaseDate ||
+            animal.purchasePrice ||
+            animal.purchaseLocation ||
+            animal.previousOwner) && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Purchase Information</CardTitle>
@@ -195,7 +205,9 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
                       <CalendarDays className="h-4 w-4 text-gray-500" />
                       <div>
                         <p className="text-sm text-gray-500">Purchase Date</p>
-                        <p className="font-medium">{formatDate(animal.purchaseDate)}</p>
+                        <p className="font-medium">
+                          {formatDate(animal.purchaseDate)}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -205,7 +217,9 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
                       <IndianRupee className="h-4 w-4 text-gray-500" />
                       <div>
                         <p className="text-sm text-gray-500">Purchase Price</p>
-                        <p className="font-medium">{formatCurrency(animal.purchasePrice)}</p>
+                        <p className="font-medium">
+                          {formatCurrency(animal.purchasePrice)}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -214,7 +228,9 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-gray-500" />
                       <div>
-                        <p className="text-sm text-gray-500">Purchase Location</p>
+                        <p className="text-sm text-gray-500">
+                          Purchase Location
+                        </p>
                         <p className="font-medium">{animal.purchaseLocation}</p>
                       </div>
                     </div>
@@ -235,69 +251,80 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
           )}
 
           {/* Sale Information */}
-          {animal.status === "sold" && (animal.saleDate || animal.salePrice || animal.buyerName) && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Sale Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {animal.saleDate && (
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-gray-500" />
-                      <div>
-                        <p className="text-sm text-gray-500">Sale Date</p>
-                        <p className="font-medium">{formatDate(animal.saleDate)}</p>
+          {animal.status === "sold" &&
+            (animal.saleDate || animal.salePrice || animal.buyerName) && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Sale Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {animal.saleDate && (
+                      <div className="flex items-center gap-2">
+                        <CalendarDays className="h-4 w-4 text-gray-500" />
+                        <div>
+                          <p className="text-sm text-gray-500">Sale Date</p>
+                          <p className="font-medium">
+                            {formatDate(animal.saleDate)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {animal.salePrice && (
-                    <div className="flex items-center gap-2">
-                      <IndianRupee className="h-4 w-4 text-gray-500" />
-                      <div>
-                        <p className="text-sm text-gray-500">Sale Price</p>
-                        <p className="font-medium">{formatCurrency(animal.salePrice)}</p>
+                    {animal.salePrice && (
+                      <div className="flex items-center gap-2">
+                        <IndianRupee className="h-4 w-4 text-gray-500" />
+                        <div>
+                          <p className="text-sm text-gray-500">Sale Price</p>
+                          <p className="font-medium">
+                            {formatCurrency(animal.salePrice)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {animal.buyerName && (
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-gray-500" />
-                      <div>
-                        <p className="text-sm text-gray-500">Buyer</p>
-                        <p className="font-medium">{animal.buyerName}</p>
+                    {animal.buyerName && (
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-gray-500" />
+                        <div>
+                          <p className="text-sm text-gray-500">Buyer</p>
+                          <p className="font-medium">{animal.buyerName}</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-
-                {animal.saleNotes && (
-                  <div>
-                    <p className="text-sm text-gray-500">Sale Notes</p>
-                    <p className="font-medium">{animal.saleNotes}</p>
+                    )}
                   </div>
-                )}
 
-                {/* Profit/Loss Calculation */}
-                {animal.purchasePrice && animal.salePrice && (
-                  <div className="pt-2 border-t">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">Profit/Loss:</span>
-                      <span className={`font-bold ${
-                        animal.salePrice - animal.purchasePrice >= 0
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}>
-                        {formatCurrency(animal.salePrice - animal.purchasePrice)}
-                      </span>
+                  {animal.saleNotes && (
+                    <div>
+                      <p className="text-sm text-gray-500">Sale Notes</p>
+                      <p className="font-medium">{animal.saleNotes}</p>
                     </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                  )}
+
+                  {/* Profit/Loss Calculation */}
+                  {animal.purchasePrice && animal.salePrice && (
+                    <div className="pt-2 border-t">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-500">
+                          Profit/Loss:
+                        </span>
+                        <span
+                          className={`font-bold ${
+                            animal.salePrice - animal.purchasePrice >= 0
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }`}
+                        >
+                          {formatCurrency(
+                            animal.salePrice - animal.purchasePrice,
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
           {/* Insurance Information */}
           {animal.insured && (
@@ -312,7 +339,9 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {animal.insuranceProvider && (
                     <div>
-                      <p className="text-sm text-gray-500">Insurance Provider</p>
+                      <p className="text-sm text-gray-500">
+                        Insurance Provider
+                      </p>
                       <p className="font-medium">{animal.insuranceProvider}</p>
                     </div>
                   )}
@@ -320,21 +349,27 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
                   {animal.insurancePolicyNumber && (
                     <div>
                       <p className="text-sm text-gray-500">Policy Number</p>
-                      <p className="font-medium">{animal.insurancePolicyNumber}</p>
+                      <p className="font-medium">
+                        {animal.insurancePolicyNumber}
+                      </p>
                     </div>
                   )}
 
                   {animal.insuranceAmount && (
                     <div>
                       <p className="text-sm text-gray-500">Coverage Amount</p>
-                      <p className="font-medium">{formatCurrency(animal.insuranceAmount)}</p>
+                      <p className="font-medium">
+                        {formatCurrency(animal.insuranceAmount)}
+                      </p>
                     </div>
                   )}
 
                   {animal.insuranceExpiryDate && (
                     <div>
                       <p className="text-sm text-gray-500">Expiry Date</p>
-                      <p className="font-medium">{formatDate(animal.insuranceExpiryDate)}</p>
+                      <p className="font-medium">
+                        {formatDate(animal.insuranceExpiryDate)}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -352,7 +387,9 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-700 whitespace-pre-wrap">{animal.notes}</p>
+                <p className="text-gray-700 whitespace-pre-wrap">
+                  {animal.notes}
+                </p>
               </CardContent>
             </Card>
           )}
@@ -388,10 +425,7 @@ export default function AnimalView({ animal, onEdit, onClose }: AnimalViewProps)
 
         {/* Health Records Tab */}
         <TabsContent value="health" className="mt-6">
-          <HealthRecordsManager
-            animalId={animal.id}
-            animalName={animal.name}
-          />
+          <HealthRecordsManager animalId={animal.id} animalName={animal.name} />
         </TabsContent>
       </Tabs>
     </div>
