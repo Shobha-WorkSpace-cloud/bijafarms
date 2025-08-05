@@ -38,13 +38,7 @@ export const updateTask = async (
 
 // Delete a task
 export const deleteTask = async (id: string): Promise<void> => {
-  const response = await fetch(`/api/tasks/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to delete task: ${response.statusText}`);
-  }
+  return apiDelete(`/tasks/${id}`);
 };
 
 // Bulk delete tasks
