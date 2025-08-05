@@ -479,9 +479,10 @@ export default function AnimalTracker() {
                         Enter the details for the new animal in your livestock.
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="text-sm text-gray-600 p-4">
-                      Animal form will be implemented here
-                    </div>
+                    <AnimalForm
+                      onSubmit={handleAddAnimal}
+                      onCancel={() => setIsAddDialogOpen(false)}
+                    />
                   </DialogContent>
                 </Dialog>
               </div>
