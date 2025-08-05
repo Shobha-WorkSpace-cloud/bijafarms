@@ -112,27 +112,27 @@ export function createServer() {
   registerRoute('post', '/tasks/import', importTasks);
 
   // Test reminder validation routes
-  app.post("/api/test-reminder-validation", createTestReminderTask);
-  app.get("/api/test-reminder-validation", checkReminderValidation);
-  app.delete("/api/test-reminder-validation", cleanupTestTasks);
+  registerRoute('post', '/test-reminder-validation', createTestReminderTask);
+  registerRoute('get', '/test-reminder-validation', checkReminderValidation);
+  registerRoute('delete', '/test-reminder-validation', cleanupTestTasks);
 
   // Animal management routes
-  app.get("/api/animals", getAnimals);
-  app.post("/api/animals", addAnimal);
-  app.put("/api/animals/:id", updateAnimal);
-  app.delete("/api/animals/:id", deleteAnimal);
-  app.get("/api/animals/summary", getAnimalSummary);
-  app.get("/api/animals/backup", backupAnimals);
+  registerRoute('get', '/animals', getAnimals);
+  registerRoute('post', '/animals', addAnimal);
+  registerRoute('put', '/animals/:id', updateAnimal);
+  registerRoute('delete', '/animals/:id', deleteAnimal);
+  registerRoute('get', '/animals/summary', getAnimalSummary);
+  registerRoute('get', '/animals/backup', backupAnimals);
 
   // Animal record routes
-  app.get("/api/weight-records", getWeightRecords);
-  app.post("/api/weight-records", addWeightRecord);
-  app.get("/api/breeding-records", getBreedingRecords);
-  app.post("/api/breeding-records", addBreedingRecord);
-  app.get("/api/vaccination-records", getVaccinationRecords);
-  app.post("/api/vaccination-records", addVaccinationRecord);
-  app.get("/api/health-records", getHealthRecords);
-  app.post("/api/health-records", addHealthRecord);
+  registerRoute('get', '/weight-records', getWeightRecords);
+  registerRoute('post', '/weight-records', addWeightRecord);
+  registerRoute('get', '/breeding-records', getBreedingRecords);
+  registerRoute('post', '/breeding-records', addBreedingRecord);
+  registerRoute('get', '/vaccination-records', getVaccinationRecords);
+  registerRoute('post', '/vaccination-records', addVaccinationRecord);
+  registerRoute('get', '/health-records', getHealthRecords);
+  registerRoute('post', '/health-records', addHealthRecord);
 
   return app;
 }
