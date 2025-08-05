@@ -1,10 +1,37 @@
 import type { Context } from "@netlify/functions";
-import serverless from "serverless-http";
-import { createServer } from "../../server/index.js";
 
-const app = createServer();
-const handler = serverless(app);
-
-export default async (request: Request, context: Context) => {
-  return await handler(request, context);
+export default async (req: Request, context: Context) => {
+  const url = new URL(req.url);
+  const path = url.pathname.replace('/.netlify/functions/api', '');
+  
+  // Simple routing
+  if (path === '/ping') {
+    return new Response(JSON.stringify({ 
+      message: "pong", 
+      timestamp: new Date().toISOString() 
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  
+  if (path === '/demo') {
+    return new Response(JSON.stringify({ 
+      message: "Demo endpoint working!",
+      path: path
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  
+  // Default response
+  return new Response(JSON.stringify({ 
+    error: "Endpoint not found",
+    path: path,
+    available: ['/ping', '/demo']
+  }), {
+    status: 404,
+    headers: { "Content-Type": "application/json" },
+  });
 };
