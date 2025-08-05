@@ -34,33 +34,16 @@ export const deleteAnimal = async (id: string): Promise<void> => {
 export const fetchWeightRecords = async (
   animalId?: string,
 ): Promise<WeightRecord[]> => {
-  const url = animalId
-    ? `${API_BASE}/weight-records?animalId=${animalId}&t=${Date.now()}`
-    : `${API_BASE}/weight-records?t=${Date.now()}`;
-
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch weight records");
-  }
-  return response.json();
+  const endpoint = animalId
+    ? `/weight-records?animalId=${animalId}`
+    : `/weight-records`;
+  return apiGet(endpoint);
 };
 
 export const createWeightRecord = async (
   record: Omit<WeightRecord, "id" | "createdAt">,
 ): Promise<WeightRecord> => {
-  const response = await fetch(`${API_BASE}/weight-records`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(record),
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to create weight record");
-  }
-
-  return response.json();
+  return apiPost("/weight-records", record);
 };
 
 // Breeding records
