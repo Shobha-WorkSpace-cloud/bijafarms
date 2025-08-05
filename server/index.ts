@@ -85,16 +85,16 @@ export function createServer() {
   registerRoute('get', '/demo', handleDemo);
 
   // Expense routes
-  app.get("/api/expenses", getExpenses);
-  app.post("/api/expenses", addExpense);
-  app.put("/api/expenses/:id", updateExpense);
-  app.delete("/api/expenses/:id", deleteExpense);
-  app.post("/api/expenses/import", importExpenses);
-  app.post("/api/expenses/bulk-delete", bulkDeleteExpenses);
-  app.get("/api/expenses/backup", backupExpenses);
-  app.get("/api/expenses/categories", getCategories);
-  app.post("/api/expenses/categories", saveCategories);
-  app.post("/api/expenses/populate-categories", populateCategories);
+  registerRoute('get', '/expenses', getExpenses);
+  registerRoute('post', '/expenses', addExpense);
+  registerRoute('put', '/expenses/:id', updateExpense);
+  registerRoute('delete', '/expenses/:id', deleteExpense);
+  registerRoute('post', '/expenses/import', importExpenses);
+  registerRoute('post', '/expenses/bulk-delete', bulkDeleteExpenses);
+  registerRoute('get', '/expenses/backup', backupExpenses);
+  registerRoute('get', '/expenses/categories', getCategories);
+  registerRoute('post', '/expenses/categories', saveCategories);
+  registerRoute('post', '/expenses/populate-categories', populateCategories);
 
   // WhatsApp reminder routes
   app.post("/api/send-whatsapp-reminder", sendWhatsAppReminderEndpoint);
