@@ -12,12 +12,21 @@ const getApiBaseUrl = (): string => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
-  
+
   // Check for runtime environment variable (for production builds)
   if (typeof window !== 'undefined' && (window as any).__API_BASE_URL__) {
     return (window as any).__API_BASE_URL__;
   }
-  
+
+  // Detect if we're in a cloud environment without backend
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    if (hostname.includes('fly.dev') || hostname.includes('vercel.app') || hostname.includes('netlify.app')) {
+      // For demo/preview environments, use mock mode
+      return '__MOCK_MODE__';
+    }
+  }
+
   // Default to local API for development
   return '/api';
 };
