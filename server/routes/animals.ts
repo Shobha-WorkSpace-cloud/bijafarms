@@ -28,10 +28,19 @@ const HEALTH_RECORDS_FILE = path.join(
   "server/data/health-records.json",
 );
 
-// Ensure data directory exists
-const dataDir = path.dirname(ANIMALS_FILE);
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+// Ensure data directory exists (skip in serverless)
+let serverlessMode = false;
+try {
+  const dataDir = path.dirname(ANIMALS_FILE);
+  if (!fs.existsSync(dataDir)) {
+    if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      serverlessMode = true;
+    } else {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+  }
+} catch (error) {
+  serverlessMode = true;
 }
 
 // Helper functions for file operations
