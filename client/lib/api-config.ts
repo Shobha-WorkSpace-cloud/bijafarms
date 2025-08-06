@@ -18,19 +18,15 @@ const getApiBaseUrl = (): string => {
     return (window as any).__API_BASE_URL__;
   }
 
-  // Detect if running in cloud environment
+  // Default to production API for GitHub Pages and localhost backend for development
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
-    // If running in cloud environment (not localhost), use mock mode
-    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
-      console.log(
-        "🌤️ Cloud environment detected, using mock mode for development",
-      );
-      return "__MOCK_MODE__";
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return "http://localhost:3001/api";
     }
   }
 
-  // Default to separate backend server on localhost:3001 for local development
+  // Use production API for GitHub Pages
   return "https://bijafarms-api.onrender.com/api";
 };
 
