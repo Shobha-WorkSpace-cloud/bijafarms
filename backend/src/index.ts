@@ -147,14 +147,15 @@ function createServer() {
 }
 
 // Start server if this file is run directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (require.main === module) {
   const app = createServer();
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3031;
 
   app.listen(port, () => {
     console.log(`🚀 Backend server running on http://localhost:${port}`);
     console.log(`📡 API endpoints available at http://localhost:${port}/api`);
+    console.log(`🔗 Visit http://localhost:${port}/api/ping to test the API`);
   });
 }
 
-export { createServer };
+module.exports = { createServer };
