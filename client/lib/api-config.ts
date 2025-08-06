@@ -19,8 +19,7 @@ const getApiBaseUrl = (): string => {
   }
 
   // Default to separate backend server on localhost:3001
-  // If backend is not running, enable mock mode for development
-  return "__MOCK_MODE__";
+  return "http://localhost:3001/api";
 };
 
 // API Configuration
