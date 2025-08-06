@@ -5,8 +5,8 @@ import { ExpenseRecord, CategoryManagementData } from "@shared/expense-types";
 
 const __dirname = process.cwd();
 
-const EXPENSES_FILE = path.join(process.cwd(), "server/data/expenses.json");
-const CATEGORIES_FILE = path.join(process.cwd(), "server/data/categories.json");
+const EXPENSES_FILE = path.join(process.cwd(), "src/data/expenses.json");
+const CATEGORIES_FILE = path.join(process.cwd(), "src/data/categories.json");
 
 // Ensure data directory exists
 const dataDir = path.dirname(EXPENSES_FILE);
