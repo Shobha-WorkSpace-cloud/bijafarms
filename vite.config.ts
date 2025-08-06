@@ -22,7 +22,10 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist",
     rollupOptions: {
-      input: 'client/main.tsx'
+      input: {
+        main: 'client/main.tsx',
+        index: 'index.html'
+      }
     },
     assetsInclude: ['**/*.js', '**/*.mjs'],
   },
