@@ -21,11 +21,11 @@ const BREEDING_RECORDS_FILE = path.join(
 );
 const VACCINATION_RECORDS_FILE = path.join(
   process.cwd(),
-  "server/data/vaccination-records.json",
+  "src/data/vaccination-records.json",
 );
 const HEALTH_RECORDS_FILE = path.join(
   process.cwd(),
-  "server/data/health-records.json",
+  "src/data/health-records.json",
 );
 
 // Ensure data directory exists
