@@ -18,7 +18,17 @@ const getApiBaseUrl = (): string => {
     return (window as any).__API_BASE_URL__;
   }
 
-  // Default to separate backend server on localhost:3001
+  // Detect if running in cloud environment
+  if (typeof window !== "undefined") {
+    const hostname = window.location.hostname;
+    // If running in cloud environment (not localhost), use mock mode
+    if (hostname !== "localhost" && hostname !== "127.0.0.1") {
+      console.log("🌤️ Cloud environment detected, using mock mode for development");
+      return "__MOCK_MODE__";
+    }
+  }
+
+  // Default to separate backend server on localhost:3001 for local development
   return "http://localhost:3001/api";
 };
 
