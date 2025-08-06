@@ -80,7 +80,7 @@ function createServer() {
   };
 
   // Example API routes
-  registerRoute("get", "/ping", (_req, res) => {
+  registerRoute("get", "/ping", (_req: any, res: any) => {
     const ping = process.env.PING_MESSAGE ?? "Backend API is running";
     res.json({ message: ping });
   });
