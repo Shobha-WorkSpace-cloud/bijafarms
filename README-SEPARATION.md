@@ -66,4 +66,4 @@ Consider using:
 - **Database**: Replace JSON files with PostgreSQL/MongoDB
 - **npm workspaces**: Share types between frontend/backend
 - **Docker**: Containerize both services
-- **Deployment**: Separate deployments for frontend (Netlify) and backend (Railway/Heroku)
+- **Deployment**: Separate deployments for frontend and backend services
