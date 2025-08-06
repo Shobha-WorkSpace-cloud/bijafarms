@@ -28,7 +28,15 @@ export default defineConfig(({ mode }) => ({
     },
     assetsInclude: ['**/*.js', '**/*.mjs'],
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: 'remove-duplicate-script',
+      transformIndexHtml(html) {
+        return html.replace(/<script type="module" src="\/client\/main\.tsx"><\/script>/, '');
+      }
+    }
+  ],
   base: "/builder-aura-haven/",
   resolve: {
     alias: {
