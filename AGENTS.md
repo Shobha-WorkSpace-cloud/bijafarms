@@ -92,12 +92,27 @@ Path aliases:
 
 ## Development Commands
 
+Frontend only:
 ```bash
-npm run dev        # Start dev server (client + server)
+npm run dev        # Start frontend dev server
 npm run build      # Production build
-npm run start      # Start production server
+npm run start      # Start production frontend
 npm run typecheck  # TypeScript validation
 npm test          # Run Vitest tests
+```
+
+Full-stack development:
+```bash
+npm run dev:fullstack  # Start both frontend and backend
+npm run dev:backend    # Start backend only
+```
+
+Backend only (from backend/ directory):
+```bash
+cd backend
+npm run dev        # Start backend dev server
+npm run build      # Build backend
+npm run start      # Start production backend
 ```
 
 ## Adding Features
