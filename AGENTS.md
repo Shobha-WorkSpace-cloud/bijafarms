@@ -20,9 +20,13 @@ client/                   # React SPA frontend
 ├── App.tsx                # App entry point and with SPA routing setup
 └── global.css            # TailwindCSS 3 theming and global styles
 
-server/                   # Express API backend
-├── index.ts              # Main server setup (express config + routes)
-└── routes/               # API handlers
+backend/                  # Separate Express API backend
+├── src/
+│   ├── index.ts          # Main server setup (express config + routes)
+│   ├── routes/           # API handlers
+│   └── data/             # JSON data files
+├── package.json          # Backend dependencies
+└── tsconfig.json         # Backend TypeScript config
 
 shared/                   # Types used by both client & server
 └── api.ts                # Example of how to share api interfaces
