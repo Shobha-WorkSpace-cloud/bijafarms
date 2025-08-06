@@ -21,7 +21,7 @@ client/                   # React SPA frontend
 └── global.css            # TailwindCSS 3 theming and global styles
 
 backend/                  # Separate Express API backend
-├── src/
+├���─ src/
 │   ├── index.ts          # Main server setup (express config + routes)
 │   ├── routes/           # API handlers
 │   └── data/             # JSON data files
@@ -70,15 +70,15 @@ className={cn(
 )}
 ```
 
-### Express Server Integration
+### Separate Backend Server
 
-- **Development**: Single port (8080) for both frontend/backend
-- **Hot reload**: Both client and server code
-- **API endpoints**: Prefixed with `/api/`
+- **Frontend**: Runs on port 8080 (Vite dev server)
+- **Backend**: Runs on port 3001 (Express server)
+- **API endpoints**: `http://localhost:3001/api/`
 
 #### Example API Routes
 - `GET /api/ping` - Simple ping api
-- `GET /api/demo` - Demo endpoint  
+- `GET /api/demo` - Demo endpoint
 
 ### Shared Types
 Import consistent types in both client and server:
@@ -87,8 +87,8 @@ import { DemoResponse } from '@shared/api';
 ```
 
 Path aliases:
-- `@shared/*` - Shared folder
-- `@/*` - Client folder
+- `@shared/*` - Shared folder (for both frontend and backend)
+- `@/*` - Client folder (frontend only)
 
 ## Development Commands
 
