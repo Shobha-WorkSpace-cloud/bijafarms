@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import fs from "fs";
 import path from "path";
-import { ExpenseRecord, CategoryManagementData } from "@shared/expense-types";
+import { ExpenseRecord, CategoryManagementData, CategoryConfig } from "@shared/expense-types";
 
 const __dirname = process.cwd();
 
