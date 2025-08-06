@@ -33,7 +33,7 @@ export default defineConfig(({ mode }) => ({
     {
       name: 'remove-duplicate-script',
       transformIndexHtml(html) {
-        return html.replace(/<script type="module" src="\/client\/main\.tsx"><\/script>/, '');
+        return html.replace(/<script type="module" src="\/src\/main\.tsx"><\/script>/, '');
       }
     }
   ],
