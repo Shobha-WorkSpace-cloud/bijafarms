@@ -5,11 +5,13 @@ Backend API server for the Aura Haven farm management system.
 ## Setup
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Copy environment variables:
+
 ```bash
 cp .env.example .env
 ```
@@ -37,10 +39,12 @@ npm start
 ## API Endpoints
 
 ### Core
+
 - `GET /api/ping` - Health check
 - `GET /api/demo` - Demo endpoint
 
 ### Expenses
+
 - `GET /api/expenses` - Get all expenses
 - `POST /api/expenses` - Create expense
 - `PUT /api/expenses/:id` - Update expense
@@ -50,6 +54,7 @@ npm start
 - `GET /api/expenses/backup` - Download backup
 
 ### Animals
+
 - `GET /api/animals` - Get all animals
 - `POST /api/animals` - Create animal
 - `PUT /api/animals/:id` - Update animal
@@ -58,6 +63,7 @@ npm start
 - `GET /api/animals/backup` - Download backup
 
 ### Tasks
+
 - `GET /api/tasks` - Get all tasks
 - `POST /api/tasks` - Create task
 - `PUT /api/tasks/:id` - Update task
@@ -66,6 +72,7 @@ npm start
 - `GET /api/tasks/backup` - Download backup
 
 ### Animal Records
+
 - `GET /api/weight-records` - Get weight records
 - `POST /api/weight-records` - Create weight record
 - `GET /api/breeding-records` - Get breeding records
@@ -78,6 +85,7 @@ npm start
 ## Data Storage
 
 The backend uses JSON files for data storage located in `src/data/`:
+
 - `animals.json` - Animal records
 - `expenses.json` - Expense records
 - `TaskTracker.json` - Task records
@@ -96,6 +104,7 @@ npm test
 ## Type Safety
 
 The backend shares types with the frontend through the `../shared/` directory:
+
 - `animal-types.ts` - Animal-related types
 - `expense-types.ts` - Expense-related types
 - `api.ts` - General API types

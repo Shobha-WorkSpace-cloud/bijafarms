@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
   },
   plugins: [react()],
-  base:"/builder-aura-haven/",
+  base: "/builder-aura-haven/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),

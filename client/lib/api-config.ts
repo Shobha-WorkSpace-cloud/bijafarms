@@ -23,7 +23,9 @@ const getApiBaseUrl = (): string => {
     const hostname = window.location.hostname;
     // If running in cloud environment (not localhost), use mock mode
     if (hostname !== "localhost" && hostname !== "127.0.0.1") {
-      console.log("🌤️ Cloud environment detected, using mock mode for development");
+      console.log(
+        "🌤️ Cloud environment detected, using mock mode for development",
+      );
       return "__MOCK_MODE__";
     }
   }

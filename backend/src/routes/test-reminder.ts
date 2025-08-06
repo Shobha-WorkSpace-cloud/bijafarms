@@ -124,7 +124,8 @@ export const checkReminderValidation: RequestHandler = (req, res) => {
         tasksNeedingReminders: validationResults.filter(
           (r: any) => r.shouldTriggerReminder && !r.reminderSent,
         ).length,
-        remindersSent: validationResults.filter((r: any) => r.reminderSent).length,
+        remindersSent: validationResults.filter((r: any) => r.reminderSent)
+          .length,
       },
     });
   } catch (error) {

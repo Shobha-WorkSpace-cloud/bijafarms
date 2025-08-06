@@ -56,10 +56,12 @@ function createServer() {
 
   // Middleware
   const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:8080";
-  app.use(cors({
-    origin: corsOrigin,
-    credentials: true
-  }));
+  app.use(
+    cors({
+      origin: corsOrigin,
+      credentials: true,
+    }),
+  );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
@@ -148,7 +150,7 @@ function createServer() {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const app = createServer();
   const port = process.env.PORT || 3001;
-  
+
   app.listen(port, () => {
     console.log(`🚀 Backend server running on http://localhost:${port}`);
     console.log(`📡 API endpoints available at http://localhost:${port}/api`);

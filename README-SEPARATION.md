@@ -5,6 +5,7 @@ The backend has been successfully separated into its own project. Here's how to 
 ## Quick Start
 
 ### Option 1: Run Both Frontend and Backend Together
+
 ```bash
 npm run dev:fullstack
 ```
@@ -12,6 +13,7 @@ npm run dev:fullstack
 ### Option 2: Run Separately
 
 **Terminal 1 - Backend:**
+
 ```bash
 cd backend
 npm install  # (if not already done)
@@ -19,6 +21,7 @@ npm run dev
 ```
 
 **Terminal 2 - Frontend:**
+
 ```bash
 npm run dev
 ```
@@ -59,6 +62,7 @@ npm run dev
 ## Next Steps
 
 Consider using:
+
 - **Database**: Replace JSON files with PostgreSQL/MongoDB
 - **npm workspaces**: Share types between frontend/backend
 - **Docker**: Containerize both services
