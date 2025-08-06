@@ -10,14 +10,14 @@ import {
   AnimalSummary,
 } from "@shared/animal-types";
 const __dirname = process.cwd();
-const ANIMALS_FILE = path.join(process.cwd(), "server/data/animals.json");
+const ANIMALS_FILE = path.join(process.cwd(), "src/data/animals.json");
 const WEIGHT_RECORDS_FILE = path.join(
   process.cwd(),
-  "server/data/weight-records.json",
+  "src/data/weight-records.json",
 );
 const BREEDING_RECORDS_FILE = path.join(
   process.cwd(),
-  "server/data/breeding-records.json",
+  "src/data/breeding-records.json",
 );
 const VACCINATION_RECORDS_FILE = path.join(
   process.cwd(),
