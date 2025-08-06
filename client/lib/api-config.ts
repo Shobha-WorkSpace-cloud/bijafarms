@@ -31,7 +31,7 @@ const getApiBaseUrl = (): string => {
   }
 
   // Default to separate backend server on localhost:3001 for local development
-  return "http://localhost:3001/api";
+  return "https://bijafarms-api.onrender.com/api";
 };
 
 // API Configuration
