@@ -5,6 +5,7 @@ import { createServer } from "./server/index";
 beforeAll(() => {
   // Set test environment variables
   process.env.NODE_ENV = "test";
+  process.env.VITE_API_BASE_URL = "https://bijafarms-api.onrender.com/api";
 
   // Mock console methods to reduce noise during tests
   vi.spyOn(console, "log").mockImplementation(() => {});
