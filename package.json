@@ -13,10 +13,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:client && npm run build:server && npm run test:ci",
+    "build": "npm run build:client && npm run test:ci",
     "build:client": "vite build",
-    "build:server": "vite build --config vite.config.server.ts",
-    "start": "node dist/server/node-build.mjs",
+    "start": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "test": "vitest",
@@ -24,10 +23,11 @@
     "test:ci": "vitest --run --reporter=verbose --no-coverage client/",
     "test:coverage": "vitest --coverage client/",
     "test:watch": "vitest --watch",
-    "test:server": "vitest --run server/",
     "test:all": "vitest --run --reporter=verbose",
     "format.fix": "prettier --write .",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "dev:fullstack": "concurrently \"npm run dev:backend\" \"npm run dev\"",
+    "dev:backend": "cd backend && npm run dev"
   },
   "dependencies": {
     "dotenv": "^17.2.0",
