@@ -26,8 +26,8 @@ const getApiBaseUrl = (): string => {
     }
   }
 
-  // Use relative path for production builds (will be proxied)
-  return "/api";
+  // Use production API for GitHub Pages
+  return "https://bijafarms-api.onrender.com/api";
 };
 
 // API Configuration
