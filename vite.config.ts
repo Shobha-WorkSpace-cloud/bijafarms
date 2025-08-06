@@ -14,6 +14,7 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     outDir: "dist",
+    assetsInclude: ['**/*.js', '**/*.mjs'],
   },
   plugins: [react()],
   base: "/builder-aura-haven/",
