@@ -29,13 +29,7 @@ export default defineConfig(({ mode }) => ({
     assetsInclude: ['**/*.js', '**/*.mjs'],
   },
   plugins: [
-    react(),
-    {
-      name: 'remove-duplicate-script',
-      transformIndexHtml(html) {
-        return html.replace(/<script type="module" src="\/src\/main\.tsx"><\/script>/, '');
-      }
-    }
+    react()
   ],
   base: mode === 'production' ? "/bijafarms/" : "/",
   resolve: {
