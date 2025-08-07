@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => ({
       }
     }
   ],
-  base: "/builder-aura-haven/",
+  base: mode === 'production' ? "/bijafarms/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),

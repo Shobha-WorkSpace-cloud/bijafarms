@@ -19,7 +19,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter basename="/builder-aura-haven">
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/expense-tracker" element={<Index />} />
