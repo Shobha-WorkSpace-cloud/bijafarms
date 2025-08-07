@@ -14,12 +14,15 @@ import NotFound from "../client/pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Get base path from environment
+const basename = import.meta.env.PROD ? '/bijafarms' : '/';
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/expense-tracker" element={<Index />} />
