@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => ({
         if (mode === 'production') {
           modifiedHtml = modifiedHtml.replace('</body>', '<script type="module" src="/bijafarms/src/main.tsx"></script>\n</body>');
         } else {
-          modifiedHtml = modifiedHtml.replace('</body>', '<script type="module" src="/src/main.tsx"></script>\n</body>');
+          modifiedHtml = modifiedHtml.replace('</body>', '<script type="module" src="/bijafarms/src/main.tsx"></script>\n</body>');
         }
         return modifiedHtml;
       }
