@@ -246,11 +246,15 @@ export default function BreedingManager({
 
       // Create animal records for living kids if requested
       const newAnimalIds: string[] = [];
-      for (const kid of formData.kids) {
-        if (kid.createAnimalRecord && kid.status === "alive" && kid.name) {
+      for (let index = 0; index < formData.kids.length; index++) {
+        const kid = formData.kids[index];
+        if (kid.createAnimalRecord && kid.status === "alive") {
           try {
+            // Generate default name if none provided
+            const kidName = kid.name || `${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate).getFullYear()}`;
+
             const newAnimal = await animalApi.createAnimal({
-              name: kid.name,
+              name: kidName,
               type: mother.type,
               breed: mother.breed,
               gender: kid.gender,
@@ -270,9 +274,15 @@ export default function BreedingManager({
             newAnimalIds.push(newAnimal.id);
           } catch (error) {
             console.error(
-              `Error creating animal record for ${kid.name}:`,
+              `Error creating animal record for Kid #${index + 1}:`,
               error,
             );
+            // Show user-friendly error message
+            toast({
+              title: "Error Creating Animal Record",
+              description: `Failed to create animal record for Kid #${index + 1}. The breeding record was saved, but this kid was not added to the livestock.`,
+              variant: "destructive",
+            });
           }
         }
       }
