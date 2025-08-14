@@ -308,11 +308,16 @@ export default function BreedingManager({
         description: `Breeding record created with ${formData.kids.length} kids. ${newAnimalIds.length} new animal records created.`,
       });
 
-      // Refresh breeding records first, then close dialog
+      // Refresh breeding records and keep dialog open to show updated history
       await loadBreedingRecords();
-      setIsDialogOpen(false);
       resetForm();
       onUpdateAnimals();
+
+      // Optional: close dialog after a short delay to show the updated history
+      // You can remove the timeout if you want to keep the dialog open
+      setTimeout(() => {
+        setIsDialogOpen(false);
+      }, 1500);
     } catch (error) {
       console.error("Error creating breeding record:", error);
       toast({
