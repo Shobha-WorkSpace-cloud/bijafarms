@@ -517,6 +517,16 @@ export default function MainPage() {
                         ? `${animalStats.totalAnimals} active animals (excluding sold/dead)`
                         : "No animals found - add your first livestock!"}
                     </span>
+                    {animalStats.totalAnimals > 0 && (
+                      <div className="mt-2">
+                        <Link
+                          to="/breeding-history"
+                          className="text-xs text-pink-600 hover:text-pink-700 underline font-medium"
+                        >
+                          📋 View Breeding History
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
