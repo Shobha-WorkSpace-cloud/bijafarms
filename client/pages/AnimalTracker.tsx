@@ -16,6 +16,8 @@ import {
   TrendingUp,
   TrendingDown,
   Users,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,6 +83,7 @@ export default function AnimalTracker() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState<AnimalRecord | null>(null);
   const [viewingAnimal, setViewingAnimal] = useState<AnimalRecord | null>(null);
+  const [isHealthSectionExpanded, setIsHealthSectionExpanded] = useState(true);
   const { toast } = useToast();
 
   // Pagination for filtered animals
@@ -511,17 +514,35 @@ export default function AnimalTracker() {
         {/* Health Records Management Section */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Stethoscope className="h-5 w-5 text-green-600" />
-              Health Records Management
-            </CardTitle>
-            <CardDescription>
-              Manage health records for all animals in your livestock
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Stethoscope className="h-5 w-5 text-green-600" />
+                  Health Records Management
+                </CardTitle>
+                <CardDescription>
+                  Manage health records for all animals in your livestock
+                </CardDescription>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsHealthSectionExpanded(!isHealthSectionExpanded)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                {isHealthSectionExpanded ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </CardHeader>
-          <CardContent>
-            <HealthRecordsOverview animals={animals} />
-          </CardContent>
+          {isHealthSectionExpanded && (
+            <CardContent className="transition-all duration-300 ease-in-out">
+              <HealthRecordsOverview animals={animals} />
+            </CardContent>
+          )}
         </Card>
 
         {/* Animals Grid */}
