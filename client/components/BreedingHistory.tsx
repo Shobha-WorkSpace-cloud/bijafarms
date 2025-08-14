@@ -20,6 +20,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import {
   Table,
   TableBody,
   TableCell,
@@ -107,6 +115,14 @@ export default function BreedingHistory() {
     dateFrom: "",
     dateTo: "",
   });
+  const [selectedRecord, setSelectedRecord] = useState<BreedingRecord | null>(
+    null,
+  );
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<BreedingRecord | null>(
+    null,
+  );
   const { toast } = useToast();
 
   useEffect(() => {
@@ -379,6 +395,38 @@ export default function BreedingHistory() {
     veterinarian: record.veterinarianName || "",
     complications: record.complications || "",
   }));
+
+  const handleViewRecord = (record: BreedingRecord) => {
+    setSelectedRecord(record);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleEditRecord = (record: BreedingRecord) => {
+    setEditingRecord({ ...record });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateRecord = async () => {
+    if (!editingRecord) return;
+
+    try {
+      await animalApi.updateBreedingRecord(editingRecord.id, editingRecord);
+      toast({
+        title: "Success",
+        description: "Breeding record updated successfully.",
+      });
+      setIsEditDialogOpen(false);
+      setEditingRecord(null);
+      await loadData(); // Refresh the data
+    } catch (error) {
+      console.error("Error updating breeding record:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update breeding record. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -816,10 +864,20 @@ export default function BreedingHistory() {
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-2">
-                                <Button size="sm" variant="outline">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleViewRecord(record)}
+                                  title="View Details"
+                                >
                                   <Eye className="h-4 w-4" />
                                 </Button>
-                                <Button size="sm" variant="outline">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditRecord(record)}
+                                  title="Edit Record"
+                                >
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               </div>
@@ -1067,6 +1125,417 @@ export default function BreedingHistory() {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* View Record Dialog */}
+        <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Breeding Record Details</DialogTitle>
+              <DialogDescription>
+                View detailed information about this breeding record
+              </DialogDescription>
+            </DialogHeader>
+            {selectedRecord && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium">Mother</Label>
+                    <p className="mt-1">
+                      {getAnimalName(selectedRecord.motherId)}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Father</Label>
+                    <p className="mt-1">
+                      {getAnimalName(selectedRecord.fatherId)}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Breeding Date</Label>
+                    <p className="mt-1">
+                      {selectedRecord.breedingDate
+                        ? formatDate(selectedRecord.breedingDate)
+                        : "Not recorded"}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Delivery Date</Label>
+                    <p className="mt-1">
+                      {selectedRecord.actualDeliveryDate
+                        ? formatDate(selectedRecord.actualDeliveryDate)
+                        : "Not delivered"}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Method</Label>
+                    <p className="mt-1">
+                      {selectedRecord.breedingMethod ===
+                      "artificial_insemination"
+                        ? "Artificial Insemination"
+                        : "Natural"}
+                    </p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Total Kids</Label>
+                    <p className="mt-1">{selectedRecord.totalKids || 0}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Male Kids</Label>
+                    <p className="mt-1">{selectedRecord.maleKids || 0}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Female Kids</Label>
+                    <p className="mt-1">{selectedRecord.femaleKids || 0}</p>
+                  </div>
+                </div>
+
+                {selectedRecord.veterinarianName && (
+                  <div>
+                    <Label className="text-sm font-medium">Veterinarian</Label>
+                    <p className="mt-1">{selectedRecord.veterinarianName}</p>
+                  </div>
+                )}
+
+                {selectedRecord.complications && (
+                  <div>
+                    <Label className="text-sm font-medium">Complications</Label>
+                    <p className="mt-1 text-red-600">
+                      {selectedRecord.complications}
+                    </p>
+                  </div>
+                )}
+
+                {selectedRecord.notes && (
+                  <div>
+                    <Label className="text-sm font-medium">Notes</Label>
+                    <p className="mt-1">{selectedRecord.notes}</p>
+                  </div>
+                )}
+
+                {selectedRecord.kidDetails &&
+                  selectedRecord.kidDetails.length > 0 && (
+                    <div>
+                      <Label className="text-sm font-medium">Kid Details</Label>
+                      <div className="mt-2 space-y-2">
+                        {selectedRecord.kidDetails.map((kid, index) => (
+                          <div
+                            key={index}
+                            className="border rounded p-3 bg-gray-50"
+                          >
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <strong>Name:</strong>{" "}
+                                {kid.name || `Kid ${index + 1}`}
+                              </div>
+                              <div>
+                                <strong>Gender:</strong> {kid.gender}
+                              </div>
+                              <div>
+                                <strong>Weight:</strong>{" "}
+                                {kid.weight
+                                  ? `${kid.weight} kg`
+                                  : "Not recorded"}
+                              </div>
+                              <div>
+                                <strong>Status:</strong> {kid.status}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Record Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Breeding Record</DialogTitle>
+              <DialogDescription>
+                Update the breeding record information
+              </DialogDescription>
+            </DialogHeader>
+            {editingRecord && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Mother</Label>
+                    <Select
+                      value={editingRecord.motherId}
+                      onValueChange={(value) =>
+                        setEditingRecord((prev) =>
+                          prev ? { ...prev, motherId: value } : null,
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {animals
+                          .filter((a) => a.gender === "female")
+                          .map((animal) => (
+                            <SelectItem key={animal.id} value={animal.id}>
+                              {animal.name} ({animal.breed})
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Father</Label>
+                    <Select
+                      value={editingRecord.fatherId || "unknown"}
+                      onValueChange={(value) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                fatherId:
+                                  value === "unknown" ? undefined : value,
+                              }
+                            : null,
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unknown">
+                          Unknown/No Record
+                        </SelectItem>
+                        {animals
+                          .filter((a) => a.gender === "male")
+                          .map((animal) => (
+                            <SelectItem key={animal.id} value={animal.id}>
+                              {animal.name} ({animal.breed})
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Breeding Date</Label>
+                    <Input
+                      type="date"
+                      value={editingRecord.breedingDate}
+                      onChange={(e) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? { ...prev, breedingDate: e.target.value }
+                            : null,
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Expected Delivery Date</Label>
+                    <Input
+                      type="date"
+                      value={editingRecord.expectedDeliveryDate || ""}
+                      onChange={(e) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                expectedDeliveryDate:
+                                  e.target.value || undefined,
+                              }
+                            : null,
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Actual Delivery Date</Label>
+                    <Input
+                      type="date"
+                      value={editingRecord.actualDeliveryDate || ""}
+                      onChange={(e) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                actualDeliveryDate: e.target.value || undefined,
+                              }
+                            : null,
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Breeding Method</Label>
+                    <Select
+                      value={editingRecord.breedingMethod || "natural"}
+                      onValueChange={(value) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                breedingMethod: value as
+                                  | "natural"
+                                  | "artificial_insemination",
+                              }
+                            : null,
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="natural">Natural</SelectItem>
+                        <SelectItem value="artificial_insemination">
+                          Artificial Insemination
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>Total Kids</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={editingRecord.totalKids || ""}
+                      onChange={(e) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                totalKids: e.target.value
+                                  ? parseInt(e.target.value)
+                                  : undefined,
+                              }
+                            : null,
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Male Kids</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={editingRecord.maleKids || ""}
+                      onChange={(e) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                maleKids: e.target.value
+                                  ? parseInt(e.target.value)
+                                  : undefined,
+                              }
+                            : null,
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Female Kids</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={editingRecord.femaleKids || ""}
+                      onChange={(e) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                femaleKids: e.target.value
+                                  ? parseInt(e.target.value)
+                                  : undefined,
+                              }
+                            : null,
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Veterinarian</Label>
+                    <Input
+                      value={editingRecord.veterinarianName || ""}
+                      onChange={(e) =>
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                veterinarianName: e.target.value || undefined,
+                              }
+                            : null,
+                        )
+                      }
+                      placeholder="Veterinarian name"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Complications</Label>
+                  <Textarea
+                    value={editingRecord.complications || ""}
+                    onChange={(e) =>
+                      setEditingRecord((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              complications: e.target.value || undefined,
+                            }
+                          : null,
+                      )
+                    }
+                    placeholder="Any complications during breeding or delivery"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label>Notes</Label>
+                  <Textarea
+                    value={editingRecord.notes || ""}
+                    onChange={(e) =>
+                      setEditingRecord((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              notes: e.target.value || undefined,
+                            }
+                          : null,
+                      )
+                    }
+                    placeholder="Additional notes"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsEditDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleUpdateRecord}>Update Record</Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

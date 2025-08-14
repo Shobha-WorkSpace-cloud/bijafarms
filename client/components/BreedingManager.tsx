@@ -208,10 +208,20 @@ export default function BreedingManager({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.actualDeliveryDate || formData.kids.length === 0) {
+    if (!formData.actualDeliveryDate) {
       toast({
-        title: "Error",
-        description: "Please fill in delivery date and add at least one kid.",
+        title: "Birth Date Required",
+        description: "Please select the birth date before saving the record.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.kids.length === 0) {
+      toast({
+        title: "No Kids Added",
+        description:
+          "Please click 'Add Kid' to add at least one offspring. For multiple births, click 'Add Kid' multiple times.",
         variant: "destructive",
       });
       return;
@@ -246,11 +256,17 @@ export default function BreedingManager({
 
       // Create animal records for living kids if requested
       const newAnimalIds: string[] = [];
-      for (const kid of formData.kids) {
-        if (kid.createAnimalRecord && kid.status === "alive" && kid.name) {
+      for (let index = 0; index < formData.kids.length; index++) {
+        const kid = formData.kids[index];
+        if (kid.createAnimalRecord && kid.status === "alive") {
           try {
+            // Generate default name if none provided
+            const kidName =
+              kid.name ||
+              `${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate).getFullYear()}`;
+
             const newAnimal = await animalApi.createAnimal({
-              name: kid.name,
+              name: kidName,
               type: mother.type,
               breed: mother.breed,
               gender: kid.gender,
@@ -270,9 +286,15 @@ export default function BreedingManager({
             newAnimalIds.push(newAnimal.id);
           } catch (error) {
             console.error(
-              `Error creating animal record for ${kid.name}:`,
+              `Error creating animal record for Kid #${index + 1}:`,
               error,
             );
+            // Show user-friendly error message
+            toast({
+              title: "Error Creating Animal Record",
+              description: `Failed to create animal record for Kid #${index + 1}. The breeding record was saved, but this kid was not added to the livestock.`,
+              variant: "destructive",
+            });
           }
         }
       }
@@ -314,7 +336,7 @@ export default function BreedingManager({
 
       toast({
         title: "Birth Record Created Successfully! 🎉",
-        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} new animal record${newAnimalIds.length !== 1 ? "s" : ""} created. Check the breeding history panel to see the new record.`,
+        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} live kid${newAnimalIds.length !== 1 ? "s" : ""} added to your livestock. All kids are now visible in the Animal Tracker and breeding history.`,
       });
 
       // Refresh breeding records and keep dialog open to show updated history
@@ -492,19 +514,27 @@ export default function BreedingManager({
                 <span className="text-lg">🐰</span>
                 <div>
                   <p className="font-semibold text-blue-800 mb-2">
-                    How to Add Birth Records:
+                    How to Add Multiple Kids:
                   </p>
                   <ul className="text-sm space-y-1 text-gray-600">
                     <li>• Fill in the birth date (required)</li>
-                    <li>• Click "Add Kid" for each offspring born</li>
+                    <li>
+                      <strong>
+                        • Click "Add Kid" button for EACH offspring born
+                      </strong>
+                    </li>
+                    <li>
+                      • Names are optional - system will auto-generate if empty
+                    </li>
                     <li>
                       • Check "Create animal record" to automatically add live
                       kids to your livestock
                     </li>
                     <li>
-                      • The breeding history will update immediately after
-                      saving
+                      • You can add as many kids as needed - twins, triplets,
+                      etc.
                     </li>
+                    <li>• Use the red trash icon to remove any kid entries</li>
                   </ul>
                 </div>
               </div>
@@ -607,16 +637,27 @@ export default function BreedingManager({
                     <h4 className="font-medium text-gray-900 flex items-center gap-2">
                       <Baby className="h-4 w-4 text-pink-600" />
                       Kids Information
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge
+                        variant={
+                          formData.kids.length > 1 ? "default" : "secondary"
+                        }
+                        className={
+                          formData.kids.length > 1
+                            ? "bg-green-100 text-green-800 text-xs"
+                            : "text-xs"
+                        }
+                      >
                         {formData.kids.length} Kid
                         {formData.kids.length !== 1 ? "s" : ""}
+                        {formData.kids.length > 1 && " (Multiple Birth)"}
                       </Badge>
                     </h4>
                     <Button
                       type="button"
                       onClick={addKid}
                       size="sm"
-                      className="bg-pink-600 hover:bg-pink-700 text-white"
+                      className="bg-pink-600 hover:bg-pink-700 text-white pulse-on-hover"
+                      title="Click to add another kid - you can add as many as needed!"
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Kid
@@ -631,8 +672,12 @@ export default function BreedingManager({
                           <p className="text-pink-600 font-medium mb-1">
                             No kids added yet
                           </p>
-                          <p className="text-pink-500 text-sm">
+                          <p className="text-pink-500 text-sm mb-2">
                             Click "Add Kid" to record offspring details
+                          </p>
+                          <p className="text-pink-400 text-xs">
+                            💡 For multiple births (twins, triplets, etc.),
+                            click "Add Kid" multiple times
                           </p>
                         </div>
                       ) : (
@@ -668,13 +713,13 @@ export default function BreedingManager({
                             <CardContent className="space-y-3">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div className="space-y-2">
-                                  <Label>Name</Label>
+                                  <Label>Name (Optional)</Label>
                                   <Input
                                     value={kid.name}
                                     onChange={(e) =>
                                       updateKid(index, "name", e.target.value)
                                     }
-                                    placeholder="Kid's name"
+                                    placeholder={`Auto: ${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate || new Date()).getFullYear()}`}
                                   />
                                 </div>
 

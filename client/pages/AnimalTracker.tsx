@@ -85,7 +85,7 @@ export default function AnimalTracker() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState<AnimalRecord | null>(null);
   const [viewingAnimal, setViewingAnimal] = useState<AnimalRecord | null>(null);
-  const [isHealthSectionExpanded, setIsHealthSectionExpanded] = useState(true);
+  const [isHealthSectionExpanded, setIsHealthSectionExpanded] = useState(false);
   const [hasBreedingData, setHasBreedingData] = useState(false);
   const [breedingLoading, setBreedingLoading] = useState(true);
   const { toast } = useToast();
