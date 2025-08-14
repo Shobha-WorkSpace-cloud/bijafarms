@@ -59,6 +59,8 @@ import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { usePagination } from "@/hooks/use-pagination";
 import { Pagination } from "@/components/ui/pagination";
+import { ExportCSVButton } from "@/components/ExportButton";
+import { createTaskExportConfig } from "@/lib/export-configs";
 import * as taskApi from "@/lib/task-api";
 
 interface Task {
