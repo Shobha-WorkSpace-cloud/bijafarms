@@ -306,49 +306,6 @@ export default function Index() {
     }
   };
 
-  const exportToCSV = () => {
-    const headers = [
-      "Date",
-      "Type",
-      "Description",
-      "Amount",
-      "Paid By",
-      "Category",
-      "Sub-Category",
-      "Source",
-      "Notes",
-    ];
-    const csvContent = [
-      headers.join(","),
-      ...filteredExpenses.map((expense) =>
-        [
-          expense.date,
-          expense.type,
-          `"${expense.description.replace(/"/g, '""')}"`,
-          expense.amount,
-          `"${expense.paidBy.replace(/"/g, '""')}"`,
-          `"${expense.category.replace(/"/g, '""')}"`,
-          `"${expense.subCategory.replace(/"/g, '""')}"`,
-          `"${expense.source.replace(/"/g, '""')}"`,
-          `"${expense.notes.replace(/"/g, '""')}"`,
-        ].join(","),
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `expenses_${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-
-    toast({
-      title: "Export Complete",
-      description: `Successfully exported ${filteredExpenses.length} transactions to CSV`,
-    });
-  };
-
   const exportToJSON = () => {
     const jsonContent = JSON.stringify(filteredExpenses, null, 2);
     const blob = new Blob([jsonContent], { type: "application/json" });
