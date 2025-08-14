@@ -18,16 +18,26 @@ const getApiBaseUrl = (): string => {
     return (window as any).__API_BASE_URL__;
   }
 
-  // Default to production API for GitHub Pages and localhost backend for development
+  // Force mock mode for development environments
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
-    if (hostname === "localhost" || hostname === "127.0.0.1") {
-     return  "__MOCK_MODE__";// "http://localhost:3031/api";        // Enable demo mode for development
+    const isLocalhost = hostname === "localhost" || hostname === "127.0.0.1";
+    const isDevelopment = import.meta.env.DEV || import.meta.env.NODE_ENV === "development";
+    const isBuilderDev = hostname.includes("fly.dev") || hostname.includes("builder.io");
+
+    // Enable mock mode for development, localhost, or builder.io development environments
+    if (isLocalhost || isDevelopment || isBuilderDev) {
+      return "__MOCK_MODE__";
     }
   }
 
-  // Use production API for GitHub Pages
-  return "https://bijafarms-api.onrender.com/api";
+  // Use production API for GitHub Pages (only when specifically deployed there)
+  if (typeof window !== "undefined" && window.location.hostname.includes("github.io")) {
+    return "https://bijafarms-api.onrender.com/api";
+  }
+
+  // Default to mock mode for safety if we can't determine the environment
+  return "__MOCK_MODE__";
 };
 
 // API Configuration
