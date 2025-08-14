@@ -47,6 +47,8 @@ import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { usePagination } from "@/hooks/use-pagination";
 import { Pagination } from "@/components/ui/pagination";
+import { ExportCSVButton } from "@/components/ExportButton";
+import { createAnimalExportConfig } from "@/lib/export-configs";
 import {
   AnimalRecord,
   AnimalFilters,
