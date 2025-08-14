@@ -131,6 +131,9 @@ export default function WorkTracker() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { toast } = useToast();
 
+  // Pagination for filtered tasks
+  const tasksPagination = usePagination(filteredTasks, 10);
+
   // Form state for new task
   const [newTask, setNewTask] = useState({
     title: "",
