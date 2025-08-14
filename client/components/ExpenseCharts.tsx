@@ -137,6 +137,60 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
       : []),
   ];
 
+  // Sub-category breakdown by category
+  const subCategoryData = useMemo(() => {
+    const categorySubMap = new Map<string, Map<string, { amount: number; count: number }>>();
+
+    expenses
+      .filter(
+        (expense) =>
+          expense.type === "Expense" &&
+          expense.amount > 0 &&
+          expense.description &&
+          expense.description.trim() !== "" &&
+          expense.description !== "No description" &&
+          expense.category !== "Other" &&
+          expense.subCategory &&
+          expense.subCategory.trim() !== ""
+      )
+      .forEach((expense) => {
+        if (!categorySubMap.has(expense.category)) {
+          categorySubMap.set(expense.category, new Map());
+        }
+
+        const subMap = categorySubMap.get(expense.category)!;
+        const existing = subMap.get(expense.subCategory) || { amount: 0, count: 0 };
+        subMap.set(expense.subCategory, {
+          amount: existing.amount + expense.amount,
+          count: existing.count + 1,
+        });
+      });
+
+    // Convert to array format for charts
+    const result: { category: string; subCategories: { subCategory: string; amount: number; count: number; fill: string }[] }[] = [];
+
+    Array.from(categorySubMap.entries()).forEach(([category, subMap], categoryIndex) => {
+      const subCategories = Array.from(subMap.entries())
+        .map(([subCategory, data], subIndex) => ({
+          subCategory,
+          amount: data.amount,
+          count: data.count,
+          fill: COLORS[(categoryIndex * 3 + subIndex) % COLORS.length],
+        }))
+        .sort((a, b) => b.amount - a.amount);
+
+      if (subCategories.length > 0) {
+        result.push({ category, subCategories });
+      }
+    });
+
+    return result.sort((a, b) => {
+      const totalA = a.subCategories.reduce((sum, sub) => sum + sub.amount, 0);
+      const totalB = b.subCategories.reduce((sum, sub) => sum + sub.amount, 0);
+      return totalB - totalA;
+    });
+  }, [expenses]);
+
   // Daily spending trend (last 30 days)
   const dailyTrend = useMemo(() => {
     const dailyMap = new Map<string, number>();
