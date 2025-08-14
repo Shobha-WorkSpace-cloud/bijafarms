@@ -502,18 +502,21 @@ export default function BreedingManager({
                 <span className="text-lg">🐰</span>
                 <div>
                   <p className="font-semibold text-blue-800 mb-2">
-                    How to Add Birth Records:
+                    How to Add Multiple Kids:
                   </p>
                   <ul className="text-sm space-y-1 text-gray-600">
                     <li>• Fill in the birth date (required)</li>
-                    <li>• Click "Add Kid" for each offspring born</li>
+                    <li><strong>• Click "Add Kid" button for EACH offspring born</strong></li>
+                    <li>• Names are optional - system will auto-generate if empty</li>
                     <li>
                       • Check "Create animal record" to automatically add live
                       kids to your livestock
                     </li>
                     <li>
-                      • The breeding history will update immediately after
-                      saving
+                      • You can add as many kids as needed - twins, triplets, etc.
+                    </li>
+                    <li>
+                      • Use the red trash icon to remove any kid entries
                     </li>
                   </ul>
                 </div>
