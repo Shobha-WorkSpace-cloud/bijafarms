@@ -528,20 +528,24 @@ export default function AnimalTracker() {
                     Health Records Management
                   </CardTitle>
                   <CardDescription>
-                  Manage health records for all animals in your livestock
-                  {!isHealthSectionExpanded && (
-                    <span className="ml-2 text-xs text-blue-600 font-medium">
-                      (Click to expand)
-                    </span>
-                  )}
-                </CardDescription>
+                    Manage health records for all animals in your livestock
+                    {!isHealthSectionExpanded && (
+                      <span className="ml-2 text-xs text-blue-600 font-medium">
+                        (Click to expand)
+                      </span>
+                    )}
+                  </CardDescription>
                 </div>
                 <Collapsible.Trigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
                     className="text-gray-500 hover:text-gray-700 transition-all duration-200 hover:bg-gray-100 rounded-md p-2"
-                    title={isHealthSectionExpanded ? "Minimize section" : "Expand section"}
+                    title={
+                      isHealthSectionExpanded
+                        ? "Minimize section"
+                        : "Expand section"
+                    }
                   >
                     {isHealthSectionExpanded ? (
                       <ChevronUp className="h-4 w-4" />
@@ -641,25 +645,30 @@ export default function AnimalTracker() {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
-                      {animal.gender === "female" && animal.status === "active" && (
-                        <BreedingManager
-                          mother={animal}
-                          allAnimals={animals}
-                          onUpdateAnimals={async () => {
-                            try {
-                              const [animalsData, summaryData] = await Promise.all([
-                                animalApi.fetchAnimals(),
-                                animalApi.fetchAnimalSummary(),
-                              ]);
-                              setAnimals(animalsData);
-                              setFilteredAnimals(animalsData);
-                              setSummary(summaryData);
-                            } catch (error) {
-                              console.error("Error refreshing animal data:", error);
-                            }
-                          }}
-                        />
-                      )}
+                      {animal.gender === "female" &&
+                        animal.status === "active" && (
+                          <BreedingManager
+                            mother={animal}
+                            allAnimals={animals}
+                            onUpdateAnimals={async () => {
+                              try {
+                                const [animalsData, summaryData] =
+                                  await Promise.all([
+                                    animalApi.fetchAnimals(),
+                                    animalApi.fetchAnimalSummary(),
+                                  ]);
+                                setAnimals(animalsData);
+                                setFilteredAnimals(animalsData);
+                                setSummary(summaryData);
+                              } catch (error) {
+                                console.error(
+                                  "Error refreshing animal data:",
+                                  error,
+                                );
+                              }
+                            }}
+                          />
+                        )}
                       <Button
                         size="sm"
                         variant="outline"

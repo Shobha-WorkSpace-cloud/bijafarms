@@ -10,11 +10,11 @@ const VisuallyHidden = React.forwardRef<HTMLSpanElement, VisuallyHiddenProps>(
       ref={ref}
       className={cn(
         "absolute h-px w-px p-0 -m-px overflow-hidden clip-[rect(0,0,0,0)] whitespace-nowrap border-0",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  ),
 );
 VisuallyHidden.displayName = "VisuallyHidden";
 

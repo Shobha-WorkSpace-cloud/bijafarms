@@ -58,8 +58,11 @@ export default function HealthRecordsOverview({
   const loadAllHealthRecords = async () => {
     try {
       setLoading(true);
-      const allRecords: (HealthRecord & { animalName: string; animalId: string })[] = [];
-      
+      const allRecords: (HealthRecord & {
+        animalName: string;
+        animalId: string;
+      })[] = [];
+
       // Load health records for all animals
       await Promise.all(
         animals.map(async (animal) => {
@@ -73,16 +76,19 @@ export default function HealthRecordsOverview({
               });
             });
           } catch (error) {
-            console.error(`Error loading health records for ${animal.name}:`, error);
+            console.error(
+              `Error loading health records for ${animal.name}:`,
+              error,
+            );
           }
-        })
+        }),
       );
 
       // Sort by date desc (newest first)
       setHealthRecords(
         allRecords.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        )
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        ),
       );
     } catch (error) {
       console.error("Error loading health records:", error);
@@ -101,12 +107,16 @@ export default function HealthRecordsOverview({
     const matchesSearch =
       record.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       record.animalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (record.veterinarianName && 
-        record.veterinarianName.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesType = typeFilter === "all" || record.recordType === typeFilter;
-    const matchesAnimal = animalFilter === "all" || record.animalId === animalFilter;
-    
+      (record.veterinarianName &&
+        record.veterinarianName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()));
+
+    const matchesType =
+      typeFilter === "all" || record.recordType === typeFilter;
+    const matchesAnimal =
+      animalFilter === "all" || record.animalId === animalFilter;
+
     return matchesSearch && matchesType && matchesAnimal;
   });
 
@@ -166,26 +176,24 @@ export default function HealthRecordsOverview({
 
     const totalCost = healthRecords.reduce(
       (sum, record) => sum + (record.cost || 0),
-      0
+      0,
     );
-    
-    const recentRecords = healthRecords.filter(
-      (record) => {
-        const recordDate = new Date(record.date);
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        return recordDate >= thirtyDaysAgo;
-      }
-    );
+
+    const recentRecords = healthRecords.filter((record) => {
+      const recordDate = new Date(record.date);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return recordDate >= thirtyDaysAgo;
+    });
 
     const upcomingCheckups = healthRecords.filter(
       (record) =>
-        record.nextCheckupDate && new Date(record.nextCheckupDate) > new Date()
+        record.nextCheckupDate && new Date(record.nextCheckupDate) > new Date(),
     );
 
     const overdueCheckups = healthRecords.filter(
       (record) =>
-        record.nextCheckupDate && new Date(record.nextCheckupDate) < new Date()
+        record.nextCheckupDate && new Date(record.nextCheckupDate) < new Date(),
     );
 
     return {
@@ -263,15 +271,25 @@ export default function HealthRecordsOverview({
             </CardContent>
           </Card>
 
-          <Card className={stats.overdueCheckups > 0 ? "border-red-200 bg-red-50" : ""}>
+          <Card
+            className={
+              stats.overdueCheckups > 0 ? "border-red-200 bg-red-50" : ""
+            }
+          >
             <CardContent className="p-4">
               <div className="flex items-center gap-2">
-                <AlertCircle className={`h-4 w-4 ${stats.overdueCheckups > 0 ? "text-red-600" : "text-gray-400"}`} />
-                <span className={`text-sm ${stats.overdueCheckups > 0 ? "text-red-600" : "text-gray-600"}`}>
+                <AlertCircle
+                  className={`h-4 w-4 ${stats.overdueCheckups > 0 ? "text-red-600" : "text-gray-400"}`}
+                />
+                <span
+                  className={`text-sm ${stats.overdueCheckups > 0 ? "text-red-600" : "text-gray-600"}`}
+                >
                   Overdue
                 </span>
               </div>
-              <div className={`text-xl font-bold ${stats.overdueCheckups > 0 ? "text-red-900" : "text-gray-900"}`}>
+              <div
+                className={`text-xl font-bold ${stats.overdueCheckups > 0 ? "text-red-900" : "text-gray-900"}`}
+              >
                 {stats.overdueCheckups}
               </div>
             </CardContent>
@@ -292,7 +310,7 @@ export default function HealthRecordsOverview({
                 className="pl-10"
               />
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-3">
               <Select value={typeFilter} onValueChange={setTypeFilter}>
                 <SelectTrigger className="w-full sm:w-40">
@@ -334,7 +352,8 @@ export default function HealthRecordsOverview({
             Health Records Overview
           </CardTitle>
           <CardDescription>
-            All health records across your livestock ({filteredRecords.length} records)
+            All health records across your livestock ({filteredRecords.length}{" "}
+            records)
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -343,10 +362,9 @@ export default function HealthRecordsOverview({
               <Stethoscope className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No health records found</p>
               <p className="text-sm text-gray-400">
-                {healthRecords.length === 0 
+                {healthRecords.length === 0
                   ? "Add health records to start tracking medical history."
-                  : "Try adjusting your search or filter criteria."
-                }
+                  : "Try adjusting your search or filter criteria."}
               </p>
             </div>
           ) : (
@@ -373,9 +391,7 @@ export default function HealthRecordsOverview({
                               <Calendar className="h-3 w-3" />
                               {formatDate(record.date)}
                             </div>
-                            <Badge variant="outline">
-                              {record.animalName}
-                            </Badge>
+                            <Badge variant="outline">{record.animalName}</Badge>
                           </div>
 
                           {record.cost && (
@@ -406,14 +422,18 @@ export default function HealthRecordsOverview({
                           {record.nextCheckupDate && (
                             <div className="flex items-center gap-1 text-gray-600">
                               <Clock className="h-3 w-3" />
-                              <span className="font-medium">Next checkup:</span>{" "}
+                              <span className="font-medium">
+                                Next checkup:
+                              </span>{" "}
                               {formatDate(record.nextCheckupDate)}
                             </div>
                           )}
                         </div>
 
                         {/* Clinical Information */}
-                        {(record.diagnosis || record.treatment || record.medications) && (
+                        {(record.diagnosis ||
+                          record.treatment ||
+                          record.medications) && (
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm bg-gray-50 p-3 rounded">
                             {record.diagnosis && (
                               <div>

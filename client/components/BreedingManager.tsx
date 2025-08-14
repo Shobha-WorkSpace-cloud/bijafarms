@@ -42,7 +42,11 @@ import {
   MaleIcon,
   Female,
 } from "lucide-react";
-import { AnimalRecord, BreedingRecord, AnimalGender } from "@shared/animal-types";
+import {
+  AnimalRecord,
+  BreedingRecord,
+  AnimalGender,
+} from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
 import { useToast } from "@/hooks/use-toast";
 import AnimalForm from "./AnimalForm";
@@ -109,7 +113,7 @@ export default function BreedingManager({
 
   // Get male animals for father selection
   const maleAnimals = allAnimals.filter(
-    (animal) => animal.gender === "male" && animal.status === "active"
+    (animal) => animal.gender === "male" && animal.status === "active",
   );
 
   useEffect(() => {
@@ -160,11 +164,15 @@ export default function BreedingManager({
     }));
   };
 
-  const updateKid = (index: number, field: keyof KidFormData, value: string | boolean) => {
+  const updateKid = (
+    index: number,
+    field: keyof KidFormData,
+    value: string | boolean,
+  ) => {
     setFormData((prev) => ({
       ...prev,
       kids: prev.kids.map((kid, i) =>
-        i === index ? { ...kid, [field]: value } : kid
+        i === index ? { ...kid, [field]: value } : kid,
       ),
     }));
   };
@@ -205,13 +213,15 @@ export default function BreedingManager({
       // Create breeding record
       const breedingRecord = await animalApi.createBreedingRecord({
         motherId: mother.id,
-        fatherId: formData.fatherId !== "unknown" ? formData.fatherId : undefined,
+        fatherId:
+          formData.fatherId !== "unknown" ? formData.fatherId : undefined,
         breedingDate: formData.breedingDate || formData.actualDeliveryDate,
         expectedDeliveryDate: formData.expectedDeliveryDate || undefined,
         actualDeliveryDate: formData.actualDeliveryDate,
         totalKids: formData.kids.length,
         maleKids: formData.kids.filter((kid) => kid.gender === "male").length,
-        femaleKids: formData.kids.filter((kid) => kid.gender === "female").length,
+        femaleKids: formData.kids.filter((kid) => kid.gender === "female")
+          .length,
         breedingMethod: formData.breedingMethod,
         veterinarianName: formData.veterinarianName || undefined,
         complications: formData.complications || undefined,
@@ -240,7 +250,8 @@ export default function BreedingManager({
               currentWeight: kid.weight ? parseFloat(kid.weight) : undefined,
               markings: kid.markings || undefined,
               motherId: mother.id,
-              fatherId: formData.fatherId !== "unknown" ? formData.fatherId : undefined,
+              fatherId:
+                formData.fatherId !== "unknown" ? formData.fatherId : undefined,
               breedingRecordId: breedingRecord.id,
               offspring: [],
               insured: false,
@@ -248,7 +259,10 @@ export default function BreedingManager({
             });
             newAnimalIds.push(newAnimal.id);
           } catch (error) {
-            console.error(`Error creating animal record for ${kid.name}:`, error);
+            console.error(
+              `Error creating animal record for ${kid.name}:`,
+              error,
+            );
           }
         }
       }
@@ -268,7 +282,11 @@ export default function BreedingManager({
       }
 
       // Update father's offspring list if father is selected
-      if (formData.fatherId !== "unknown" && formData.fatherId && newAnimalIds.length > 0) {
+      if (
+        formData.fatherId !== "unknown" &&
+        formData.fatherId &&
+        newAnimalIds.length > 0
+      ) {
         try {
           const father = allAnimals.find((a) => a.id === formData.fatherId);
           if (father) {
@@ -370,7 +388,9 @@ export default function BreedingManager({
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin h-6 w-6 border-2 border-pink-600 border-t-transparent rounded-full mx-auto mb-2"></div>
-                  <p className="text-sm text-gray-600">Loading breeding records...</p>
+                  <p className="text-sm text-gray-600">
+                    Loading breeding records...
+                  </p>
                 </div>
               ) : breedingRecords.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
@@ -385,21 +405,33 @@ export default function BreedingManager({
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <Badge className="bg-pink-100 text-pink-800">
-                              {record.totalKids} Kid{record.totalKids !== 1 ? "s" : ""}
+                              {record.totalKids} Kid
+                              {record.totalKids !== 1 ? "s" : ""}
                             </Badge>
                             <span className="text-sm text-gray-600">
-                              {formatDate(record.actualDeliveryDate || record.breedingDate)}
+                              {formatDate(
+                                record.actualDeliveryDate ||
+                                  record.breedingDate,
+                              )}
                             </span>
                           </div>
                           <div className="text-sm space-y-1">
-                            <p><strong>Father:</strong> {getFatherName(record.fatherId)}</p>
-                            {record.maleKids !== undefined && record.femaleKids !== undefined && (
-                              <p>
-                                <strong>Gender:</strong> {record.maleKids}♂ / {record.femaleKids}♀
-                              </p>
-                            )}
+                            <p>
+                              <strong>Father:</strong>{" "}
+                              {getFatherName(record.fatherId)}
+                            </p>
+                            {record.maleKids !== undefined &&
+                              record.femaleKids !== undefined && (
+                                <p>
+                                  <strong>Gender:</strong> {record.maleKids}♂ /{" "}
+                                  {record.femaleKids}♀
+                                </p>
+                              )}
                             {record.breedingMethod && (
-                              <p><strong>Method:</strong> {record.breedingMethod.replace("_", " ")}</p>
+                              <p>
+                                <strong>Method:</strong>{" "}
+                                {record.breedingMethod.replace("_", " ")}
+                              </p>
                             )}
                           </div>
                         </div>
@@ -418,8 +450,10 @@ export default function BreedingManager({
               <form onSubmit={handleSubmit} className="space-y-4 pr-3">
                 {/* Breeding Details */}
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Breeding Information</h4>
-                  
+                  <h4 className="font-medium text-gray-900">
+                    Breeding Information
+                  </h4>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="fatherId">Father (Optional)</Label>
@@ -433,7 +467,9 @@ export default function BreedingManager({
                           <SelectValue placeholder="Select father" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="unknown">Unknown/No Record</SelectItem>
+                          <SelectItem value="unknown">
+                            Unknown/No Record
+                          </SelectItem>
                           {maleAnimals.map((male) => (
                             <SelectItem key={male.id} value={male.id}>
                               {male.name} ({male.breed})
@@ -444,12 +480,16 @@ export default function BreedingManager({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="breedingDate">Breeding Date (Optional)</Label>
+                      <Label htmlFor="breedingDate">
+                        Breeding Date (Optional)
+                      </Label>
                       <Input
                         id="breedingDate"
                         type="date"
                         value={formData.breedingDate}
-                        onChange={(e) => handleBreedingDateChange(e.target.value)}
+                        onChange={(e) =>
+                          handleBreedingDateChange(e.target.value)
+                        }
                       />
                     </div>
 
@@ -476,7 +516,9 @@ export default function BreedingManager({
                         onValueChange={(value) =>
                           setFormData((prev) => ({
                             ...prev,
-                            breedingMethod: value as "natural" | "artificial_insemination",
+                            breedingMethod: value as
+                              | "natural"
+                              | "artificial_insemination",
                           }))
                         }
                       >
@@ -485,7 +527,9 @@ export default function BreedingManager({
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="natural">Natural</SelectItem>
-                          <SelectItem value="artificial_insemination">Artificial Insemination</SelectItem>
+                          <SelectItem value="artificial_insemination">
+                            Artificial Insemination
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -497,8 +541,15 @@ export default function BreedingManager({
                 {/* Kids Information */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-gray-900">Kids Information</h4>
-                    <Button type="button" onClick={addKid} size="sm" variant="outline">
+                    <h4 className="font-medium text-gray-900">
+                      Kids Information
+                    </h4>
+                    <Button
+                      type="button"
+                      onClick={addKid}
+                      size="sm"
+                      variant="outline"
+                    >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Kid
                     </Button>
@@ -508,7 +559,9 @@ export default function BreedingManager({
                     <Card key={index} className="border-blue-200">
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-sm">Kid #{index + 1}</CardTitle>
+                          <CardTitle className="text-sm">
+                            Kid #{index + 1}
+                          </CardTitle>
                           {formData.kids.length > 1 && (
                             <Button
                               type="button"
@@ -527,7 +580,9 @@ export default function BreedingManager({
                             <Label>Name</Label>
                             <Input
                               value={kid.name}
-                              onChange={(e) => updateKid(index, "name", e.target.value)}
+                              onChange={(e) =>
+                                updateKid(index, "name", e.target.value)
+                              }
                               placeholder="Kid's name"
                             />
                           </div>
@@ -537,7 +592,11 @@ export default function BreedingManager({
                             <Select
                               value={kid.gender}
                               onValueChange={(value) =>
-                                updateKid(index, "gender", value as AnimalGender)
+                                updateKid(
+                                  index,
+                                  "gender",
+                                  value as AnimalGender,
+                                )
                               }
                             >
                               <SelectTrigger>
@@ -556,7 +615,9 @@ export default function BreedingManager({
                               type="number"
                               step="0.1"
                               value={kid.weight}
-                              onChange={(e) => updateKid(index, "weight", e.target.value)}
+                              onChange={(e) =>
+                                updateKid(index, "weight", e.target.value)
+                              }
                               placeholder="Weight at birth"
                             />
                           </div>
@@ -566,7 +627,14 @@ export default function BreedingManager({
                             <Select
                               value={kid.status}
                               onValueChange={(value) =>
-                                updateKid(index, "status", value as "alive" | "stillborn" | "died_after_birth")
+                                updateKid(
+                                  index,
+                                  "status",
+                                  value as
+                                    | "alive"
+                                    | "stillborn"
+                                    | "died_after_birth",
+                                )
                               }
                             >
                               <SelectTrigger>
@@ -574,8 +642,12 @@ export default function BreedingManager({
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="alive">Alive</SelectItem>
-                                <SelectItem value="stillborn">Stillborn</SelectItem>
-                                <SelectItem value="died_after_birth">Died After Birth</SelectItem>
+                                <SelectItem value="stillborn">
+                                  Stillborn
+                                </SelectItem>
+                                <SelectItem value="died_after_birth">
+                                  Died After Birth
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -585,7 +657,9 @@ export default function BreedingManager({
                           <Label>Markings</Label>
                           <Input
                             value={kid.markings}
-                            onChange={(e) => updateKid(index, "markings", e.target.value)}
+                            onChange={(e) =>
+                              updateKid(index, "markings", e.target.value)
+                            }
                             placeholder="Physical markings"
                           />
                         </div>
@@ -596,7 +670,11 @@ export default function BreedingManager({
                               id={`create-record-${index}`}
                               checked={kid.createAnimalRecord}
                               onCheckedChange={(checked) =>
-                                updateKid(index, "createAnimalRecord", checked as boolean)
+                                updateKid(
+                                  index,
+                                  "createAnimalRecord",
+                                  checked as boolean,
+                                )
                               }
                             />
                             <Label
@@ -616,8 +694,10 @@ export default function BreedingManager({
 
                 {/* Additional Information */}
                 <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Additional Information</h4>
-                  
+                  <h4 className="font-medium text-gray-900">
+                    Additional Information
+                  </h4>
+
                   <div className="space-y-3">
                     <div className="space-y-2">
                       <Label htmlFor="veterinarianName">Veterinarian</Label>
@@ -656,7 +736,10 @@ export default function BreedingManager({
                         id="notes"
                         value={formData.notes}
                         onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, notes: e.target.value }))
+                          setFormData((prev) => ({
+                            ...prev,
+                            notes: e.target.value,
+                          }))
                         }
                         placeholder="Additional notes"
                         rows={2}

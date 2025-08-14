@@ -83,10 +83,11 @@ export default function BulkHealthRecordsManager({
 
   // Filter animals based on search and status
   const filteredAnimals = animals.filter((animal) => {
-    const matchesSearch = 
+    const matchesSearch =
       animal.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       animal.breed.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || animal.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || animal.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -102,7 +103,7 @@ export default function BulkHealthRecordsManager({
     setSelectedAnimals((prev) =>
       prev.includes(animalId)
         ? prev.filter((id) => id !== animalId)
-        : [...prev, animalId]
+        : [...prev, animalId],
     );
   };
 
@@ -145,7 +146,7 @@ export default function BulkHealthRecordsManager({
 
     try {
       setIsSubmitting(true);
-      
+
       // Create health records for all selected animals
       const createPromises = selectedAnimals.map((animalId) =>
         animalApi.createHealthRecord({
@@ -165,7 +166,7 @@ export default function BulkHealthRecordsManager({
           cost: formData.cost ? parseFloat(formData.cost) : undefined,
           nextCheckupDate: formData.nextCheckupDate || undefined,
           notes: formData.notes || undefined,
-        })
+        }),
       );
 
       await Promise.all(createPromises);
@@ -303,7 +304,10 @@ export default function BulkHealthRecordsManager({
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {animal.name}
                         </p>
-                        <Badge className={getStatusColor(animal.status)} size="sm">
+                        <Badge
+                          className={getStatusColor(animal.status)}
+                          size="sm"
+                        >
                           {animal.status}
                         </Badge>
                       </div>
@@ -326,7 +330,7 @@ export default function BulkHealthRecordsManager({
           {/* Health Record Form */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Health Record Details</h3>
-            
+
             <ScrollArea className="h-96">
               <form onSubmit={handleSubmit} className="space-y-4 pr-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -358,7 +362,10 @@ export default function BulkHealthRecordsManager({
                       type="date"
                       value={formData.date}
                       onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, date: e.target.value }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          date: e.target.value,
+                        }))
                       }
                       required
                     />
@@ -406,7 +413,10 @@ export default function BulkHealthRecordsManager({
                       step="0.01"
                       value={formData.cost}
                       onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, cost: e.target.value }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          cost: e.target.value,
+                        }))
                       }
                       placeholder="Treatment cost"
                     />
@@ -482,7 +492,10 @@ export default function BulkHealthRecordsManager({
                     id="notes"
                     value={formData.notes}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, notes: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        notes: e.target.value,
+                      }))
                     }
                     placeholder="Any additional notes"
                     rows={2}
@@ -501,7 +514,9 @@ export default function BulkHealthRecordsManager({
             disabled={isSubmitting || selectedAnimals.length === 0}
             className="bg-green-600 hover:bg-green-700"
           >
-            {isSubmitting ? "Adding..." : `Add Records (${selectedAnimals.length})`}
+            {isSubmitting
+              ? "Adding..."
+              : `Add Records (${selectedAnimals.length})`}
           </Button>
           <Button
             type="button"

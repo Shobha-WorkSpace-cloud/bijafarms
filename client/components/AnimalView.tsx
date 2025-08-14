@@ -378,7 +378,9 @@ export default function AnimalView({
           )}
 
           {/* Family Relationships */}
-          {((animal.motherId || animal.fatherId) || (animal.offspring && animal.offspring.length > 0)) && (
+          {(animal.motherId ||
+            animal.fatherId ||
+            (animal.offspring && animal.offspring.length > 0)) && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -401,7 +403,8 @@ export default function AnimalView({
                           <div>
                             <p className="text-sm text-gray-500">Mother</p>
                             <p className="font-medium">
-                              {allAnimals.find(a => a.id === animal.motherId)?.name || 'Unknown'}
+                              {allAnimals.find((a) => a.id === animal.motherId)
+                                ?.name || "Unknown"}
                             </p>
                           </div>
                         </div>
@@ -412,7 +415,8 @@ export default function AnimalView({
                           <div>
                             <p className="text-sm text-gray-500">Father</p>
                             <p className="font-medium">
-                              {allAnimals.find(a => a.id === animal.fatherId)?.name || 'Unknown'}
+                              {allAnimals.find((a) => a.id === animal.fatherId)
+                                ?.name || "Unknown"}
                             </p>
                           </div>
                         </div>
@@ -430,17 +434,25 @@ export default function AnimalView({
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {animal.offspring.map((offspringId) => {
-                        const offspring = allAnimals.find(a => a.id === offspringId);
+                        const offspring = allAnimals.find(
+                          (a) => a.id === offspringId,
+                        );
                         if (!offspring) return null;
                         return (
-                          <div key={offspringId} className="flex items-center gap-2 p-2 bg-green-50 rounded">
+                          <div
+                            key={offspringId}
+                            className="flex items-center gap-2 p-2 bg-green-50 rounded"
+                          >
                             <Baby className="h-4 w-4 text-green-600" />
                             <div>
                               <p className="font-medium">{offspring.name}</p>
                               <p className="text-sm text-gray-500">
                                 {offspring.gender} • {offspring.breed}
                                 {offspring.dateOfBirth && (
-                                  <> • Born {formatDate(offspring.dateOfBirth)}</>
+                                  <>
+                                    {" "}
+                                    • Born {formatDate(offspring.dateOfBirth)}
+                                  </>
                                 )}
                               </p>
                             </div>
@@ -499,7 +511,6 @@ export default function AnimalView({
             currentWeight={animal.currentWeight}
           />
         </TabsContent>
-
       </Tabs>
     </div>
   );
