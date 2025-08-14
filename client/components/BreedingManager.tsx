@@ -304,8 +304,8 @@ export default function BreedingManager({
       }
 
       toast({
-        title: "Success",
-        description: `Breeding record created with ${formData.kids.length} kids. ${newAnimalIds.length} new animal records created.`,
+        title: "Birth Record Created Successfully! 🎉",
+        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? 's' : ''} to breeding history. ${newAnimalIds.length} new animal record${newAnimalIds.length !== 1 ? 's' : ''} created. Check the breeding history panel to see the new record.`,
       });
 
       // Refresh breeding records and keep dialog open to show updated history
