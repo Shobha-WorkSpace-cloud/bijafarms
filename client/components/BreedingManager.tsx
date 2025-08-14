@@ -323,7 +323,7 @@ export default function BreedingManager({
       }
 
       toast({
-        title: "Birth Record Created Successfully! ���",
+        title: "Birth Record Created Successfully! 🎉",
         description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} live kid${newAnimalIds.length !== 1 ? "s" : ""} added to your livestock. All kids are now visible in the Animal Tracker and breeding history.`,
       });
 
@@ -620,16 +620,18 @@ export default function BreedingManager({
                     <h4 className="font-medium text-gray-900 flex items-center gap-2">
                       <Baby className="h-4 w-4 text-pink-600" />
                       Kids Information
-                      <Badge variant="secondary" className="text-xs">
+                      <Badge variant={formData.kids.length > 1 ? "default" : "secondary"} className={formData.kids.length > 1 ? "bg-green-100 text-green-800 text-xs" : "text-xs"}>
                         {formData.kids.length} Kid
                         {formData.kids.length !== 1 ? "s" : ""}
+                        {formData.kids.length > 1 && " (Multiple Birth)"}
                       </Badge>
                     </h4>
                     <Button
                       type="button"
                       onClick={addKid}
                       size="sm"
-                      className="bg-pink-600 hover:bg-pink-700 text-white"
+                      className="bg-pink-600 hover:bg-pink-700 text-white pulse-on-hover"
+                      title="Click to add another kid - you can add as many as needed!"
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Kid
