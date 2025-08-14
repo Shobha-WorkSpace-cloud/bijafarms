@@ -22,7 +22,7 @@ const getApiBaseUrl = (): string => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
-      return "__MOCK_MODE__";       // Enable demo mode for development
+     return  "__MOCK_MODE__";// "http://localhost:3031/api";        // Enable demo mode for development
     }
   }
 
@@ -343,8 +343,8 @@ const getMockData = (endpoint: string, method: string) => {
         id: "1",
         title: "Vaccination Schedule - Radha",
         description: "Annual vaccination for breeding goat",
-        category: "Healthcare",
-        taskType: "Vaccination",
+        category: "animal-health",
+        taskType: "vaccination",
         priority: "high",
         status: "pending",
         dueDate: "2024-02-15",
@@ -356,14 +356,41 @@ const getMockData = (endpoint: string, method: string) => {
         id: "2",
         title: "Weight Check - All Kids",
         description: "Monthly weight monitoring",
-        category: "Monitoring",
-        taskType: "Health Check",
+        category: "animal-health",
+        taskType: "checkup",
         priority: "medium",
         status: "pending",
         dueDate: "2024-02-01",
         assignedTo: "Farm Owner",
         notes: "Record growth patterns",
         createdAt: "2024-01-18T14:30:00.000Z",
+      },
+      {
+        id: "3",
+        title: "Feed Preparation",
+        description: "Prepare nutritious feed mix",
+        category: "general",
+        taskType: "feeding",
+        priority: "medium",
+        status: "in-progress",
+        dueDate: "2024-01-25",
+        assignedTo: "Farm Worker",
+        notes: "Include protein supplements",
+        createdAt: "2024-01-22T08:00:00.000Z",
+      },
+      {
+        id: "4",
+        title: "Barn Cleaning",
+        description: "Weekly cleaning of animal shelter",
+        category: "maintenance",
+        taskType: "cleaning",
+        priority: "low",
+        status: "completed",
+        dueDate: "2024-01-20",
+        assignedTo: "Farm Worker",
+        notes: "Disinfect after cleaning",
+        createdAt: "2024-01-18T06:00:00.000Z",
+        completedAt: "2024-01-20",
       },
     ];
   }

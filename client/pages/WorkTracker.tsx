@@ -909,8 +909,8 @@ export default function WorkTracker() {
                             </span>
                           </Badge>
                           <Badge variant="outline">
-                            <Beef className="h-3 w-3 mr-1" />
-                            {task.animalType}
+                            <Tractor className="h-3 w-3 mr-1" />
+                            {task.category.replace("-", " ")}
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-600 space-y-1">
@@ -976,8 +976,8 @@ export default function WorkTracker() {
                             </span>
                           </Badge>
                           <Badge variant="outline">
-                            <Beef className="h-3 w-3 mr-1" />
-                            {task.animalType}
+                            <Tractor className="h-3 w-3 mr-1" />
+                            {task.category.replace("-", " ")}
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-600 space-y-1">
@@ -1043,8 +1043,8 @@ export default function WorkTracker() {
                             </span>
                           </Badge>
                           <Badge variant="outline">
-                            <Beef className="h-3 w-3 mr-1" />
-                            {task.animalType}
+                            <Tractor className="h-3 w-3 mr-1" />
+                            {task.category.replace("-", " ")}
                           </Badge>
                         </div>
                         <div className="text-sm text-gray-600 space-y-1">

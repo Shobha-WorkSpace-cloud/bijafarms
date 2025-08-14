@@ -2,12 +2,32 @@ interface Task {
   id: string;
   title: string;
   description: string;
-  category: string;
-  taskType: string;
+  category:
+    | "animal-husbandry"
+    | "crop-management"
+    | "equipment"
+    | "irrigation"
+    | "harvesting"
+    | "maintenance"
+    | "general";
+  taskType:
+    | "vaccination"
+    | "checkup"
+    | "treatment"
+    | "feeding"
+    | "cleaning"
+    | "planting"
+    | "watering"
+    | "fertilizing"
+    | "harvesting"
+    | "equipment-maintenance"
+    | "repair"
+    | "inspection"
+    | "other";
   priority: "low" | "medium" | "high";
   status: "pending" | "in-progress" | "completed";
   dueDate: string;
-  assignedTo: string;
+  assigned_to: string;
   notes: string;
   createdAt: string;
   completedAt?: string;
