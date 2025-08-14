@@ -243,7 +243,6 @@ export default function AnimalTracker() {
     }).format(amount);
   };
 
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
@@ -519,82 +518,82 @@ export default function AnimalTracker() {
               </Card>
             ) : (
               animalsPagination.data.map((animal) => (
-              <Card
-                key={animal.id}
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{animal.name}</CardTitle>
-                      <CardDescription>
-                        {animal.breed} • {animal.type}
-                      </CardDescription>
-                    </div>
-                    <Badge className={getStatusColor(animal.status)}>
-                      {getStatusText(animal.status)}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <span className="text-gray-500">Gender:</span>
-                      <div className="font-medium capitalize">
-                        {animal.gender}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Weight:</span>
-                      <div className="font-medium">
-                        {animal.currentWeight
-                          ? `${animal.currentWeight} kg`
-                          : "N/A"}
-                      </div>
-                    </div>
-                    {animal.purchasePrice && (
+                <Card
+                  key={animal.id}
+                  className="hover:shadow-lg transition-shadow"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
                       <div>
-                        <span className="text-gray-500">Purchase:</span>
-                        <div className="font-medium">
-                          {formatCurrency(animal.purchasePrice)}
+                        <CardTitle className="text-lg">{animal.name}</CardTitle>
+                        <CardDescription>
+                          {animal.breed} • {animal.type}
+                        </CardDescription>
+                      </div>
+                      <Badge className={getStatusColor(animal.status)}>
+                        {getStatusText(animal.status)}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">Gender:</span>
+                        <div className="font-medium capitalize">
+                          {animal.gender}
                         </div>
                       </div>
-                    )}
-                    {animal.salePrice && (
                       <div>
-                        <span className="text-gray-500">Sale:</span>
+                        <span className="text-gray-500">Weight:</span>
                         <div className="font-medium">
-                          {formatCurrency(animal.salePrice)}
+                          {animal.currentWeight
+                            ? `${animal.currentWeight} kg`
+                            : "N/A"}
                         </div>
                       </div>
-                    )}
-                  </div>
+                      {animal.purchasePrice && (
+                        <div>
+                          <span className="text-gray-500">Purchase:</span>
+                          <div className="font-medium">
+                            {formatCurrency(animal.purchasePrice)}
+                          </div>
+                        </div>
+                      )}
+                      {animal.salePrice && (
+                        <div>
+                          <span className="text-gray-500">Sale:</span>
+                          <div className="font-medium">
+                            {formatCurrency(animal.salePrice)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setViewingAnimal(animal)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setEditingAnimal(animal)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteAnimal(animal.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setViewingAnimal(animal)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditingAnimal(animal)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDeleteAnimal(animal.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
               ))
             )}
           </div>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 
 export interface PaginationConfig {
   page: number;
@@ -20,7 +20,7 @@ export interface PaginationResult<T> {
 
 export function usePagination<T>(
   data: T[],
-  initialPageSize: number = 10
+  initialPageSize: number = 10,
 ): PaginationResult<T> {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);

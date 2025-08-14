@@ -314,7 +314,6 @@ export default function WorkTracker() {
     }
   };
 
-
   const getTaskIcon = (taskType: Task["taskType"]) => {
     switch (taskType) {
       case "vaccination":
@@ -508,190 +507,203 @@ export default function WorkTracker() {
               </div>
 
               <div className="flex gap-2">
-                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Task
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Add New Task</DialogTitle>
-                    <DialogDescription>
-                      Create a new farm task for any agricultural activity
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="title">Title *</Label>
-                      <Input
-                        id="title"
-                        value={newTask.title}
-                        onChange={(e) =>
-                          setNewTask({ ...newTask, title: e.target.value })
-                        }
-                        placeholder="Task title"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea
-                        id="description"
-                        value={newTask.description}
-                        onChange={(e) =>
-                          setNewTask({
-                            ...newTask,
-                            description: e.target.value,
-                          })
-                        }
-                        placeholder="Task description"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+                <Dialog
+                  open={isAddDialogOpen}
+                  onOpenChange={setIsAddDialogOpen}
+                >
+                  <DialogTrigger asChild>
+                    <Button className="bg-green-600 hover:bg-green-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Add Task
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Add New Task</DialogTitle>
+                      <DialogDescription>
+                        Create a new farm task for any agricultural activity
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
                       <div>
-                        <Label htmlFor="category">Category</Label>
-                        <Select
-                          value={newTask.category}
-                          onValueChange={(value: Task["category"]) =>
-                            setNewTask({ ...newTask, category: value })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="animal-health">
-                              Animal Health
-                            </SelectItem>
-                            <SelectItem value="crop-management">
-                              Crop Management
-                            </SelectItem>
-                            <SelectItem value="equipment">Equipment</SelectItem>
-                            <SelectItem value="irrigation">
-                              Irrigation
-                            </SelectItem>
-                            <SelectItem value="harvesting">
-                              Harvesting
-                            </SelectItem>
-                            <SelectItem value="maintenance">
-                              Maintenance
-                            </SelectItem>
-                            <SelectItem value="general">General</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="taskType">Task Type</Label>
-                        <Select
-                          value={newTask.taskType}
-                          onValueChange={(value: Task["taskType"]) =>
-                            setNewTask({ ...newTask, taskType: value })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="vaccination">
-                              Vaccination
-                            </SelectItem>
-                            <SelectItem value="checkup">
-                              Health Checkup
-                            </SelectItem>
-                            <SelectItem value="treatment">Treatment</SelectItem>
-                            <SelectItem value="feeding">Feeding</SelectItem>
-                            <SelectItem value="cleaning">Cleaning</SelectItem>
-                            <SelectItem value="planting">Planting</SelectItem>
-                            <SelectItem value="watering">Watering</SelectItem>
-                            <SelectItem value="fertilizing">
-                              Fertilizing
-                            </SelectItem>
-                            <SelectItem value="harvesting">
-                              Harvesting
-                            </SelectItem>
-                            <SelectItem value="equipment-maintenance">
-                              Equipment Maintenance
-                            </SelectItem>
-                            <SelectItem value="repair">Repair</SelectItem>
-                            <SelectItem value="inspection">
-                              Inspection
-                            </SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="priority">Priority</Label>
-                        <Select
-                          value={newTask.priority}
-                          onValueChange={(value: Task["priority"]) =>
-                            setNewTask({ ...newTask, priority: value })
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="low">Low</SelectItem>
-                            <SelectItem value="medium">Medium</SelectItem>
-                            <SelectItem value="high">High</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="dueDate">Due Date *</Label>
+                        <Label htmlFor="title">Title *</Label>
                         <Input
-                          id="dueDate"
-                          type="date"
-                          value={newTask.dueDate}
+                          id="title"
+                          value={newTask.title}
                           onChange={(e) =>
-                            setNewTask({ ...newTask, dueDate: e.target.value })
+                            setNewTask({ ...newTask, title: e.target.value })
                           }
+                          placeholder="Task title"
                         />
                       </div>
+                      <div>
+                        <Label htmlFor="description">Description</Label>
+                        <Textarea
+                          id="description"
+                          value={newTask.description}
+                          onChange={(e) =>
+                            setNewTask({
+                              ...newTask,
+                              description: e.target.value,
+                            })
+                          }
+                          placeholder="Task description"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="category">Category</Label>
+                          <Select
+                            value={newTask.category}
+                            onValueChange={(value: Task["category"]) =>
+                              setNewTask({ ...newTask, category: value })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="animal-health">
+                                Animal Health
+                              </SelectItem>
+                              <SelectItem value="crop-management">
+                                Crop Management
+                              </SelectItem>
+                              <SelectItem value="equipment">
+                                Equipment
+                              </SelectItem>
+                              <SelectItem value="irrigation">
+                                Irrigation
+                              </SelectItem>
+                              <SelectItem value="harvesting">
+                                Harvesting
+                              </SelectItem>
+                              <SelectItem value="maintenance">
+                                Maintenance
+                              </SelectItem>
+                              <SelectItem value="general">General</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="taskType">Task Type</Label>
+                          <Select
+                            value={newTask.taskType}
+                            onValueChange={(value: Task["taskType"]) =>
+                              setNewTask({ ...newTask, taskType: value })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="vaccination">
+                                Vaccination
+                              </SelectItem>
+                              <SelectItem value="checkup">
+                                Health Checkup
+                              </SelectItem>
+                              <SelectItem value="treatment">
+                                Treatment
+                              </SelectItem>
+                              <SelectItem value="feeding">Feeding</SelectItem>
+                              <SelectItem value="cleaning">Cleaning</SelectItem>
+                              <SelectItem value="planting">Planting</SelectItem>
+                              <SelectItem value="watering">Watering</SelectItem>
+                              <SelectItem value="fertilizing">
+                                Fertilizing
+                              </SelectItem>
+                              <SelectItem value="harvesting">
+                                Harvesting
+                              </SelectItem>
+                              <SelectItem value="equipment-maintenance">
+                                Equipment Maintenance
+                              </SelectItem>
+                              <SelectItem value="repair">Repair</SelectItem>
+                              <SelectItem value="inspection">
+                                Inspection
+                              </SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="priority">Priority</Label>
+                          <Select
+                            value={newTask.priority}
+                            onValueChange={(value: Task["priority"]) =>
+                              setNewTask({ ...newTask, priority: value })
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="low">Low</SelectItem>
+                              <SelectItem value="medium">Medium</SelectItem>
+                              <SelectItem value="high">High</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="dueDate">Due Date *</Label>
+                          <Input
+                            id="dueDate"
+                            type="date"
+                            value={newTask.dueDate}
+                            onChange={(e) =>
+                              setNewTask({
+                                ...newTask,
+                                dueDate: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <Label htmlFor="assignedTo">Assigned To *</Label>
+                        <Input
+                          id="assignedTo"
+                          value={newTask.assignedTo}
+                          onChange={(e) =>
+                            setNewTask({
+                              ...newTask,
+                              assignedTo: e.target.value,
+                            })
+                          }
+                          placeholder="Person responsible"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="notes">Notes</Label>
+                        <Textarea
+                          id="notes"
+                          value={newTask.notes}
+                          onChange={(e) =>
+                            setNewTask({ ...newTask, notes: e.target.value })
+                          }
+                          placeholder="Additional notes"
+                        />
+                      </div>
+                      <div className="flex gap-2 pt-4">
+                        <Button
+                          onClick={addTask}
+                          className="flex-1 bg-green-600 hover:bg-green-700"
+                        >
+                          Add Task
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsAddDialogOpen(false)}
+                          className="flex-1"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="assignedTo">Assigned To *</Label>
-                      <Input
-                        id="assignedTo"
-                        value={newTask.assignedTo}
-                        onChange={(e) =>
-                          setNewTask({ ...newTask, assignedTo: e.target.value })
-                        }
-                        placeholder="Person responsible"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="notes">Notes</Label>
-                      <Textarea
-                        id="notes"
-                        value={newTask.notes}
-                        onChange={(e) =>
-                          setNewTask({ ...newTask, notes: e.target.value })
-                        }
-                        placeholder="Additional notes"
-                      />
-                    </div>
-                    <div className="flex gap-2 pt-4">
-                      <Button
-                        onClick={addTask}
-                        className="flex-1 bg-green-600 hover:bg-green-700"
-                      >
-                        Add Task
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setIsAddDialogOpen(false)}
-                        className="flex-1"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                </DialogContent>
+                  </DialogContent>
                 </Dialog>
 
                 <ExportCSVButton
@@ -727,108 +739,112 @@ export default function WorkTracker() {
                   </Card>
                 ) : (
                   tasksPagination.data.map((task) => (
-                  <Card
-                    key={task.id}
-                    className="hover:shadow-md transition-shadow"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="font-semibold text-lg">
-                              {task.title}
-                            </h3>
-                            {getStatusIcon(task.status)}
-                          </div>
-                          {task.description && (
-                            <p className="text-gray-600 mb-3">
-                              {task.description}
-                            </p>
-                          )}
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            <Badge
-                              className={taskTypeColors[task.taskType]}
-                              variant="outline"
-                            >
-                              {getTaskIcon(task.taskType)}
-                              <span className="ml-1 capitalize">
-                                {task.taskType}
-                              </span>
-                            </Badge>
-                            <Badge
-                              className={priorityColors[task.priority]}
-                              variant="outline"
-                            >
-                              <span className="capitalize">
-                                {task.priority} Priority
-                              </span>
-                            </Badge>
-                            <Badge variant="outline">
-                              <Tractor className="h-3 w-3 mr-1" />
-                              {task.category.replace("-", " ")}
-                            </Badge>
-                          </div>
-                          <div className="text-sm text-gray-600 space-y-1">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4" />
-                              Due: {new Date(task.dueDate).toLocaleDateString()}
+                    <Card
+                      key={task.id}
+                      className="hover:shadow-md transition-shadow"
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h3 className="font-semibold text-lg">
+                                {task.title}
+                              </h3>
+                              {getStatusIcon(task.status)}
                             </div>
-                            <div>Assigned to: {task.assignedTo}</div>
-                            {task.notes && <div>Notes: {task.notes}</div>}
+                            {task.description && (
+                              <p className="text-gray-600 mb-3">
+                                {task.description}
+                              </p>
+                            )}
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              <Badge
+                                className={taskTypeColors[task.taskType]}
+                                variant="outline"
+                              >
+                                {getTaskIcon(task.taskType)}
+                                <span className="ml-1 capitalize">
+                                  {task.taskType}
+                                </span>
+                              </Badge>
+                              <Badge
+                                className={priorityColors[task.priority]}
+                                variant="outline"
+                              >
+                                <span className="capitalize">
+                                  {task.priority} Priority
+                                </span>
+                              </Badge>
+                              <Badge variant="outline">
+                                <Tractor className="h-3 w-3 mr-1" />
+                                {task.category.replace("-", " ")}
+                              </Badge>
+                            </div>
+                            <div className="text-sm text-gray-600 space-y-1">
+                              <div className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" />
+                                Due:{" "}
+                                {new Date(task.dueDate).toLocaleDateString()}
+                              </div>
+                              <div>Assigned to: {task.assignedTo}</div>
+                              {task.notes && <div>Notes: {task.notes}</div>}
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col gap-2 ml-4">
-                          <div className="flex gap-2 mb-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEditTask(task)}
-                              className="text-blue-600 hover:text-blue-700"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDeleteTask(task.id)}
-                              className="text-red-600 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          <div className="flex flex-col gap-2 ml-4">
+                            <div className="flex gap-2 mb-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleEditTask(task)}
+                                className="text-blue-600 hover:text-blue-700"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDeleteTask(task.id)}
+                                className="text-red-600 hover:text-red-700"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
 
-                          {task.status === "pending" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() =>
-                                updateTaskStatus(task.id, "in-progress")
-                              }
-                            >
-                              Start
-                            </Button>
-                          )}
-                          {task.status === "in-progress" && (
-                            <Button
-                              size="sm"
-                              className="bg-green-600 hover:bg-green-700"
-                              onClick={() =>
-                                updateTaskStatus(task.id, "completed")
-                              }
-                            >
-                              Complete
-                            </Button>
-                          )}
-                          {task.status === "completed" && task.completedAt && (
-                            <div className="text-xs text-green-600">
-                              Completed:{" "}
-                              {new Date(task.completedAt).toLocaleDateString()}
-                            </div>
-                          )}
+                            {task.status === "pending" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() =>
+                                  updateTaskStatus(task.id, "in-progress")
+                                }
+                              >
+                                Start
+                              </Button>
+                            )}
+                            {task.status === "in-progress" && (
+                              <Button
+                                size="sm"
+                                className="bg-green-600 hover:bg-green-700"
+                                onClick={() =>
+                                  updateTaskStatus(task.id, "completed")
+                                }
+                              >
+                                Complete
+                              </Button>
+                            )}
+                            {task.status === "completed" &&
+                              task.completedAt && (
+                                <div className="text-xs text-green-600">
+                                  Completed:{" "}
+                                  {new Date(
+                                    task.completedAt,
+                                  ).toLocaleDateString()}
+                                </div>
+                              )}
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
                   ))
                 )}
               </div>

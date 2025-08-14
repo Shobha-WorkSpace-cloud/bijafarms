@@ -12,10 +12,10 @@ import { exportToCSV, exportToJSON, ExportConfig } from "@/lib/export-utils";
 
 interface ExportButtonProps<T = any> {
   data: T[];
-  config: Omit<ExportConfig<T>, 'data'>;
+  config: Omit<ExportConfig<T>, "data">;
   disabled?: boolean;
-  variant?: 'button' | 'dropdown';
-  size?: 'sm' | 'default' | 'lg';
+  variant?: "button" | "dropdown";
+  size?: "sm" | "default" | "lg";
   className?: string;
 }
 
@@ -23,9 +23,9 @@ export function ExportButton<T = any>({
   data,
   config,
   disabled = false,
-  variant = 'button',
-  size = 'default',
-  className = '',
+  variant = "button",
+  size = "default",
+  className = "",
 }: ExportButtonProps<T>) {
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
@@ -82,7 +82,7 @@ export function ExportButton<T = any>({
     }
   };
 
-  if (variant === 'dropdown') {
+  if (variant === "dropdown") {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
