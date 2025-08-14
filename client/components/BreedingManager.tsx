@@ -544,14 +544,18 @@ export default function BreedingManager({
                 {/* Kids Information */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-gray-900">
+                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                      <Baby className="h-4 w-4 text-pink-600" />
                       Kids Information
+                      <Badge variant="secondary" className="text-xs">
+                        {formData.kids.length} Kid{formData.kids.length !== 1 ? 's' : ''}
+                      </Badge>
                     </h4>
                     <Button
                       type="button"
                       onClick={addKid}
                       size="sm"
-                      variant="outline"
+                      className="bg-pink-600 hover:bg-pink-700 text-white"
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Kid
