@@ -96,7 +96,6 @@ interface Task {
   notes: string;
   createdAt: string;
   completedAt?: string;
-  reminderSent?: boolean;
 }
 
 const taskTypeColors = {
@@ -213,62 +212,10 @@ export default function WorkTracker() {
     const updatedTasks = [createdTask, ...tasks];
     setTasks(updatedTasks);
 
-    // Schedule WhatsApp reminder
-    try {
-      const reminderResponse = await fetch("/api/schedule-reminder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          taskId: createdTask.id,
-          title: createdTask.title,
-          dueDate: createdTask.dueDate,
-          description: createdTask.description || createdTask.notes,
-        }),
-      });
-
-      const reminderResult = await reminderResponse.json();
-
-      if (reminderResult.success) {
-        console.log(
-          "WhatsApp reminder scheduled successfully:",
-          reminderResult,
-        );
-        toast({
-          title: "Success ✅",
-          description: `Task added successfully. WhatsApp reminder scheduled for +919985442209`,
-        });
-
-        // If immediate reminder was generated, optionally open WhatsApp
-        if (
-          reminderResult.whatsappUrl &&
-          reminderResult.scheduledFor === "immediate"
-        ) {
-          setTimeout(() => {
-            if (
-              confirm(
-                "This task is due soon! Open WhatsApp to send reminder now?",
-              )
-            ) {
-              window.open(reminderResult.whatsappUrl, "_blank");
-            }
-          }, 1000);
-        }
-      } else {
-        console.error("Failed to schedule WhatsApp reminder:", reminderResult);
-        toast({
-          title: "Task Added",
-          description: "Task created but WhatsApp reminder scheduling failed",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Error scheduling WhatsApp reminder:", error);
-      toast({
-        title: "Task Added",
-        description: "Task created but WhatsApp reminder scheduling failed",
-        variant: "destructive",
-      });
-    }
+    toast({
+      title: "Success",
+      description: "Task added successfully",
+    });
 
     setNewTask({
       title: "",
