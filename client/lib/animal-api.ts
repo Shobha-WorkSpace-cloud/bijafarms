@@ -62,6 +62,17 @@ export const createBreedingRecord = async (
   return apiPost("/breeding-records", record);
 };
 
+export const updateBreedingRecord = async (
+  id: string,
+  record: BreedingRecord,
+): Promise<BreedingRecord> => {
+  return apiPut(`/breeding-records/${id}`, record);
+};
+
+export const deleteBreedingRecord = async (id: string): Promise<void> => {
+  return apiDelete(`/breeding-records/${id}`);
+};
+
 // Vaccination records
 export const fetchVaccinationRecords = async (
   animalId?: string,
