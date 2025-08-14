@@ -68,11 +68,7 @@ export const bulkDeleteTasks = async (ids: string[]): Promise<void> => {
 
 // Export tasks backup
 export const exportTasksBackup = async (): Promise<void> => {
-  const response = await fetch("/api/tasks/backup");
-  if (!response.ok) {
-    throw new Error(`Failed to export tasks: ${response.statusText}`);
-  }
-
+  const response = await apiCall("/tasks/backup");
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -84,17 +80,7 @@ export const exportTasksBackup = async (): Promise<void> => {
 
 // Import tasks
 export const importTasks = async (tasks: Task[]): Promise<void> => {
-  const response = await fetch("/api/tasks/import", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(tasks),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to import tasks: ${response.statusText}`);
-  }
+  return apiPost("/tasks/import", tasks);
 };
 
 export type { Task };
