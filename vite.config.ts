@@ -29,18 +29,6 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    {
-      name: 'remove-duplicate-script',
-      transformIndexHtml(html, { mode }) {
-        let modifiedHtml = html.replace(/<script type="module" src="\/src\/main\.tsx"><\/script>/, '');
-        if (mode === 'production') {
-          modifiedHtml = modifiedHtml.replace('</body>', '<script type="module" src="/src/main.tsx"></script>\n</body>');
-        } else {
-          modifiedHtml = modifiedHtml.replace('</body>', '<script type="module" src="/bijafarms/src/main.tsx"></script>\n</body>');
-        }
-        return modifiedHtml;
-      }
-    }
   ],
   base: mode === 'production' ? "/bijafarms/" : "/",
   resolve: {
