@@ -384,7 +384,7 @@ export default function BreedingManager({
           {/* Breeding History */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Breeding History</h3>
-            <ScrollArea className="h-96 border rounded-md p-3">
+            <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px] border rounded-md p-3">
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin h-6 w-6 border-2 border-pink-600 border-t-transparent rounded-full mx-auto mb-2"></div>
@@ -423,7 +423,7 @@ export default function BreedingManager({
                             {record.maleKids !== undefined &&
                               record.femaleKids !== undefined && (
                                 <p>
-                                  <strong>Gender:</strong> {record.maleKids}♂ /{" "}
+                                  <strong>Gender:</strong> {record.maleKids}�� /{" "}
                                   {record.femaleKids}♀
                                 </p>
                               )}
@@ -445,8 +445,16 @@ export default function BreedingManager({
 
           {/* New Breeding Record Form */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Add New Birth Record</h3>
-            <ScrollArea className="h-96">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <Plus className="h-5 w-5 text-green-600" />
+              Add New Birth Record
+            </h3>
+            <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+              💡 <strong>Tip:</strong> Use this form to record new births and
+              offspring. You can add multiple kids per birth and choose to
+              automatically create animal records for living offspring.
+            </p>
+            <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px]">
               <form onSubmit={handleSubmit} className="space-y-4 pr-3">
                 {/* Breeding Details */}
                 <div className="space-y-4">
@@ -541,153 +549,188 @@ export default function BreedingManager({
                 {/* Kids Information */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-gray-900">
+                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                      <Baby className="h-4 w-4 text-pink-600" />
                       Kids Information
+                      <Badge variant="secondary" className="text-xs">
+                        {formData.kids.length} Kid
+                        {formData.kids.length !== 1 ? "s" : ""}
+                      </Badge>
                     </h4>
                     <Button
                       type="button"
                       onClick={addKid}
                       size="sm"
-                      variant="outline"
+                      className="bg-pink-600 hover:bg-pink-700 text-white"
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Kid
                     </Button>
                   </div>
 
-                  {formData.kids.map((kid, index) => (
-                    <Card key={index} className="border-blue-200">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-sm">
-                            Kid #{index + 1}
-                          </CardTitle>
-                          {formData.kids.length > 1 && (
-                            <Button
-                              type="button"
-                              onClick={() => removeKid(index)}
-                              size="sm"
-                              variant="outline"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
+                  <ScrollArea className="max-h-96 pr-2">
+                    <div className="space-y-3">
+                      {formData.kids.length === 0 ? (
+                        <div className="text-center py-8 border-2 border-dashed border-pink-200 rounded-lg bg-pink-50/30">
+                          <Baby className="h-8 w-8 mx-auto mb-2 text-pink-400" />
+                          <p className="text-pink-600 font-medium mb-1">
+                            No kids added yet
+                          </p>
+                          <p className="text-pink-500 text-sm">
+                            Click "Add Kid" to record offspring details
+                          </p>
                         </div>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div className="space-y-2">
-                            <Label>Name</Label>
-                            <Input
-                              value={kid.name}
-                              onChange={(e) =>
-                                updateKid(index, "name", e.target.value)
-                              }
-                              placeholder="Kid's name"
-                            />
-                          </div>
+                      ) : (
+                        formData.kids.map((kid, index) => (
+                          <Card
+                            key={index}
+                            className="border-pink-200 bg-pink-50/30"
+                          >
+                            <CardHeader className="pb-3">
+                              <div className="flex items-center justify-between">
+                                <CardTitle className="text-sm flex items-center gap-2">
+                                  <Baby className="h-4 w-4 text-pink-600" />
+                                  Kid #{index + 1}
+                                  {kid.name && (
+                                    <span className="text-pink-600 font-normal">
+                                      - {kid.name}
+                                    </span>
+                                  )}
+                                </CardTitle>
+                                {formData.kids.length > 1 && (
+                                  <Button
+                                    type="button"
+                                    onClick={() => removeKid(index)}
+                                    size="sm"
+                                    variant="outline"
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                )}
+                              </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="space-y-2">
+                                  <Label>Name</Label>
+                                  <Input
+                                    value={kid.name}
+                                    onChange={(e) =>
+                                      updateKid(index, "name", e.target.value)
+                                    }
+                                    placeholder="Kid's name"
+                                  />
+                                </div>
 
-                          <div className="space-y-2">
-                            <Label>Gender</Label>
-                            <Select
-                              value={kid.gender}
-                              onValueChange={(value) =>
-                                updateKid(
-                                  index,
-                                  "gender",
-                                  value as AnimalGender,
-                                )
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="female">Female</SelectItem>
-                                <SelectItem value="male">Male</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
+                                <div className="space-y-2">
+                                  <Label>Gender</Label>
+                                  <Select
+                                    value={kid.gender}
+                                    onValueChange={(value) =>
+                                      updateKid(
+                                        index,
+                                        "gender",
+                                        value as AnimalGender,
+                                      )
+                                    }
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="female">
+                                        Female
+                                      </SelectItem>
+                                      <SelectItem value="male">Male</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
 
-                          <div className="space-y-2">
-                            <Label>Birth Weight (kg)</Label>
-                            <Input
-                              type="number"
-                              step="0.1"
-                              value={kid.weight}
-                              onChange={(e) =>
-                                updateKid(index, "weight", e.target.value)
-                              }
-                              placeholder="Weight at birth"
-                            />
-                          </div>
+                                <div className="space-y-2">
+                                  <Label>Birth Weight (kg)</Label>
+                                  <Input
+                                    type="number"
+                                    step="0.1"
+                                    value={kid.weight}
+                                    onChange={(e) =>
+                                      updateKid(index, "weight", e.target.value)
+                                    }
+                                    placeholder="Weight at birth"
+                                  />
+                                </div>
 
-                          <div className="space-y-2">
-                            <Label>Status</Label>
-                            <Select
-                              value={kid.status}
-                              onValueChange={(value) =>
-                                updateKid(
-                                  index,
-                                  "status",
-                                  value as
-                                    | "alive"
-                                    | "stillborn"
-                                    | "died_after_birth",
-                                )
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="alive">Alive</SelectItem>
-                                <SelectItem value="stillborn">
-                                  Stillborn
-                                </SelectItem>
-                                <SelectItem value="died_after_birth">
-                                  Died After Birth
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
+                                <div className="space-y-2">
+                                  <Label>Status</Label>
+                                  <Select
+                                    value={kid.status}
+                                    onValueChange={(value) =>
+                                      updateKid(
+                                        index,
+                                        "status",
+                                        value as
+                                          | "alive"
+                                          | "stillborn"
+                                          | "died_after_birth",
+                                      )
+                                    }
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="alive">
+                                        Alive
+                                      </SelectItem>
+                                      <SelectItem value="stillborn">
+                                        Stillborn
+                                      </SelectItem>
+                                      <SelectItem value="died_after_birth">
+                                        Died After Birth
+                                      </SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
 
-                        <div className="space-y-2">
-                          <Label>Markings</Label>
-                          <Input
-                            value={kid.markings}
-                            onChange={(e) =>
-                              updateKid(index, "markings", e.target.value)
-                            }
-                            placeholder="Physical markings"
-                          />
-                        </div>
+                              <div className="space-y-2">
+                                <Label>Markings</Label>
+                                <Input
+                                  value={kid.markings}
+                                  onChange={(e) =>
+                                    updateKid(index, "markings", e.target.value)
+                                  }
+                                  placeholder="Physical markings"
+                                />
+                              </div>
 
-                        {kid.status === "alive" && (
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id={`create-record-${index}`}
-                              checked={kid.createAnimalRecord}
-                              onCheckedChange={(checked) =>
-                                updateKid(
-                                  index,
-                                  "createAnimalRecord",
-                                  checked as boolean,
-                                )
-                              }
-                            />
-                            <Label
-                              htmlFor={`create-record-${index}`}
-                              className="text-sm font-normal"
-                            >
-                              Create animal record for this kid
-                            </Label>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                              {kid.status === "alive" && (
+                                <div className="flex items-center space-x-2">
+                                  <Checkbox
+                                    id={`create-record-${index}`}
+                                    checked={kid.createAnimalRecord}
+                                    onCheckedChange={(checked) =>
+                                      updateKid(
+                                        index,
+                                        "createAnimalRecord",
+                                        checked as boolean,
+                                      )
+                                    }
+                                  />
+                                  <Label
+                                    htmlFor={`create-record-${index}`}
+                                    className="text-sm font-normal"
+                                  >
+                                    Create animal record for this kid
+                                  </Label>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        ))
+                      )}
+                    </div>
+                  </ScrollArea>
                 </div>
 
                 <Separator />
