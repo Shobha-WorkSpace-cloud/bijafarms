@@ -24,7 +24,6 @@ import {
   Stethoscope,
 } from "lucide-react";
 import WeightTracker from "@/components/WeightTracker";
-import HealthRecordsManager from "@/components/HealthRecordsManager";
 
 interface AnimalViewProps {
   animal: AnimalRecord;
@@ -130,7 +129,7 @@ export default function AnimalView({
 
       {/* Tabbed Content */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Eye className="h-4 w-4" />
             Overview
@@ -138,10 +137,6 @@ export default function AnimalView({
           <TabsTrigger value="weight" className="flex items-center gap-2">
             <Weight className="h-4 w-4" />
             Weight Tracking
-          </TabsTrigger>
-          <TabsTrigger value="health" className="flex items-center gap-2">
-            <Stethoscope className="h-4 w-4" />
-            Health Records
           </TabsTrigger>
         </TabsList>
 
@@ -423,10 +418,6 @@ export default function AnimalView({
           />
         </TabsContent>
 
-        {/* Health Records Tab */}
-        <TabsContent value="health" className="mt-6">
-          <HealthRecordsManager animalId={animal.id} animalName={animal.name} />
-        </TabsContent>
       </Tabs>
     </div>
   );
