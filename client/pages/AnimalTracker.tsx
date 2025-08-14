@@ -570,19 +570,20 @@ export default function AnimalTracker() {
         </Card>
 
         {/* Animals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAnimals.length === 0 ? (
-            <Card className="col-span-full">
-              <CardContent className="text-center py-12">
-                <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">No animals found</p>
-                <p className="text-gray-400">
-                  Try adjusting your filters or add a new animal.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredAnimals.map((animal) => (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredAnimals.length === 0 ? (
+              <Card className="col-span-full">
+                <CardContent className="text-center py-12">
+                  <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No animals found</p>
+                  <p className="text-gray-400">
+                    Try adjusting your filters or add a new animal.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              animalsPagination.data.map((animal) => (
               <Card
                 key={animal.id}
                 className="hover:shadow-lg transition-shadow"
@@ -659,7 +660,19 @@ export default function AnimalTracker() {
                   </div>
                 </CardContent>
               </Card>
-            ))
+              ))
+            )}
+          </div>
+
+          {filteredAnimals.length > 0 && (
+            <Pagination
+              currentPage={animalsPagination.pagination.page}
+              totalPages={animalsPagination.totalPages}
+              totalItems={animalsPagination.pagination.total}
+              pageSize={animalsPagination.pagination.pageSize}
+              onPageChange={animalsPagination.goToPage}
+              onPageSizeChange={animalsPagination.changePageSize}
+            />
           )}
         </div>
 
