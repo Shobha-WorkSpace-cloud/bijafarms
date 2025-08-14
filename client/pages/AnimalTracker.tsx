@@ -730,6 +730,19 @@ export default function AnimalTracker() {
                   setViewingAnimal(null);
                 }}
                 onClose={() => setViewingAnimal(null)}
+                onUpdate={async () => {
+                  try {
+                    const [animalsData, summaryData] = await Promise.all([
+                      animalApi.fetchAnimals(),
+                      animalApi.fetchAnimalSummary(),
+                    ]);
+                    setAnimals(animalsData);
+                    setFilteredAnimals(animalsData);
+                    setSummary(summaryData);
+                  } catch (error) {
+                    console.error("Error refreshing animal data:", error);
+                  }
+                }}
               />
             </DialogContent>
           </Dialog>

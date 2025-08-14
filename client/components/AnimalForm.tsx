@@ -17,6 +17,7 @@ import {
   AnimalGender,
   AnimalStatus,
 } from "@shared/animal-types";
+import { fetchAnimals } from "@/lib/animal-api";
 
 interface AnimalFormProps {
   animal?: AnimalRecord | null;
@@ -25,6 +26,9 @@ interface AnimalFormProps {
   ) => void;
   onCancel: () => void;
   isEditing?: boolean;
+  isOffspring?: boolean;
+  parentMotherId?: string;
+  parentFatherId?: string;
 }
 
 export default function AnimalForm({
@@ -32,6 +36,9 @@ export default function AnimalForm({
   onSubmit,
   onCancel,
   isEditing = false,
+  isOffspring = false,
+  parentMotherId,
+  parentFatherId,
 }: AnimalFormProps) {
   const [formData, setFormData] = useState({
     name: "",
@@ -56,7 +63,12 @@ export default function AnimalForm({
     insuranceAmount: "",
     insuranceExpiryDate: "",
     notes: "",
+    motherId: "",
+    fatherId: "",
   });
+
+  const [availableAnimals, setAvailableAnimals] = useState<AnimalRecord[]>([]);
+  const [loadingAnimals, setLoadingAnimals] = useState(false);
 
   useEffect(() => {
     if (animal) {
@@ -83,9 +95,35 @@ export default function AnimalForm({
         insuranceAmount: animal.insuranceAmount?.toString() || "",
         insuranceExpiryDate: animal.insuranceExpiryDate || "",
         notes: animal.notes || "",
+        motherId: animal.motherId || "",
+        fatherId: animal.fatherId || "",
       });
+    } else if (isOffspring) {
+      setFormData((prev) => ({
+        ...prev,
+        motherId: parentMotherId || "",
+        fatherId: parentFatherId || "",
+        status: "active" as AnimalStatus,
+      }));
     }
-  }, [animal]);
+  }, [animal, isOffspring, parentMotherId, parentFatherId]);
+
+  useEffect(() => {
+    const loadAnimals = async () => {
+      if (isOffspring && !isEditing) {
+        setLoadingAnimals(true);
+        try {
+          const animals = await fetchAnimals();
+          setAvailableAnimals(animals.filter((a) => a.status === "active"));
+        } catch (error) {
+          console.error("Failed to fetch animals:", error);
+        } finally {
+          setLoadingAnimals(false);
+        }
+      }
+    };
+    loadAnimals();
+  }, [isOffspring, isEditing]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,6 +160,9 @@ export default function AnimalForm({
         : undefined,
       insuranceExpiryDate: formData.insuranceExpiryDate || undefined,
       notes: formData.notes || undefined,
+      motherId: formData.motherId || undefined,
+      fatherId: formData.fatherId || undefined,
+      offspring: animal?.offspring || [],
     };
 
     if (isEditing && animal) {
@@ -148,8 +189,19 @@ export default function AnimalForm({
       {/* Basic Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">
-          Basic Information
+          {isOffspring ? "Offspring Information" : "Basic Information"}
         </h3>
+
+        {isOffspring && (
+          <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800 font-medium">
+              🐑 Creating offspring record
+            </p>
+            <p className="text-xs text-blue-600 mt-1">
+              Parent relationships will be automatically established
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="name">Name *</Label>
@@ -246,6 +298,61 @@ export default function AnimalForm({
         </div>
       </div>
 
+      {/* Parent Information (for offspring) */}
+      {isOffspring && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Parent Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="motherId">Mother *</Label>
+              <Select
+                value={formData.motherId}
+                onValueChange={(value) => handleInputChange("motherId", value)}
+                disabled={loadingAnimals}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select mother" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableAnimals
+                    .filter((animal) => animal.gender === "female")
+                    .map((animal) => (
+                      <SelectItem key={animal.id} value={animal.id}>
+                        {animal.name} ({animal.breed})
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fatherId">Father</Label>
+              <Select
+                value={formData.fatherId}
+                onValueChange={(value) => handleInputChange("fatherId", value)}
+                disabled={loadingAnimals}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select father (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No father selected</SelectItem>
+                  {availableAnimals
+                    .filter((animal) => animal.gender === "male")
+                    .map((animal) => (
+                      <SelectItem key={animal.id} value={animal.id}>
+                        {animal.name} ({animal.breed})
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Physical Information */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-gray-900">
@@ -264,63 +371,65 @@ export default function AnimalForm({
         </div>
       </div>
 
-      {/* Purchase Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">
-          Purchase Information
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="purchaseDate">Purchase Date</Label>
-            <Input
-              id="purchaseDate"
-              type="date"
-              value={formData.purchaseDate}
-              onChange={(e) =>
-                handleInputChange("purchaseDate", e.target.value)
-              }
-            />
-          </div>
+      {/* Purchase Information - Hidden for offspring */}
+      {!isOffspring && (
+        <div className="space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Purchase Information
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="purchaseDate">Purchase Date</Label>
+              <Input
+                id="purchaseDate"
+                type="date"
+                value={formData.purchaseDate}
+                onChange={(e) =>
+                  handleInputChange("purchaseDate", e.target.value)
+                }
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="purchasePrice">Purchase Price (₹)</Label>
-            <Input
-              id="purchasePrice"
-              type="number"
-              step="0.01"
-              value={formData.purchasePrice}
-              onChange={(e) =>
-                handleInputChange("purchasePrice", e.target.value)
-              }
-              placeholder="Enter purchase price"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="purchasePrice">Purchase Price (₹)</Label>
+              <Input
+                id="purchasePrice"
+                type="number"
+                step="0.01"
+                value={formData.purchasePrice}
+                onChange={(e) =>
+                  handleInputChange("purchasePrice", e.target.value)
+                }
+                placeholder="Enter purchase price"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="purchaseLocation">Purchase Location</Label>
-            <Input
-              id="purchaseLocation"
-              value={formData.purchaseLocation}
-              onChange={(e) =>
-                handleInputChange("purchaseLocation", e.target.value)
-              }
-              placeholder="Where was it purchased"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="purchaseLocation">Purchase Location</Label>
+              <Input
+                id="purchaseLocation"
+                value={formData.purchaseLocation}
+                onChange={(e) =>
+                  handleInputChange("purchaseLocation", e.target.value)
+                }
+                placeholder="Where was it purchased"
+              />
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="previousOwner">Previous Owner</Label>
-            <Input
-              id="previousOwner"
-              value={formData.previousOwner}
-              onChange={(e) =>
-                handleInputChange("previousOwner", e.target.value)
-              }
-              placeholder="Previous owner name"
-            />
+            <div className="space-y-2">
+              <Label htmlFor="previousOwner">Previous Owner</Label>
+              <Input
+                id="previousOwner"
+                value={formData.previousOwner}
+                onChange={(e) =>
+                  handleInputChange("previousOwner", e.target.value)
+                }
+                placeholder="Previous owner name"
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Sale Information (only if status is sold) */}
       {formData.status === "sold" && (
@@ -466,7 +575,11 @@ export default function AnimalForm({
       {/* Form Actions */}
       <div className="flex gap-2 pt-4 border-t">
         <Button type="submit" className="bg-green-600 hover:bg-green-700">
-          {isEditing ? "Update Animal" : "Add Animal"}
+          {isEditing
+            ? "Update Animal"
+            : isOffspring
+              ? "Add Offspring"
+              : "Add Animal"}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel

@@ -10,12 +10,13 @@ import Index from "../client/pages/Index";
 import MainPage from "../client/pages/MainPage";
 import WorkTracker from "../client/pages/WorkTracker";
 import AnimalTracker from "../client/pages/AnimalTracker";
+import BreedingHistory from "../client/pages/BreedingHistory";
 import NotFound from "../client/pages/NotFound";
 
 const queryClient = new QueryClient();
 
 // Get base path from environment
-const basename = import.meta.env.PROD ? '/bijafarms' : '/';
+const basename = import.meta.env.PROD ? "/bijafarms" : "/";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -27,7 +28,9 @@ const App = () => (
           <Route path="/" element={<MainPage />} />
           <Route path="/expense-tracker" element={<Index />} />
           <Route path="/work-tracker" element={<WorkTracker />} />
+          <Route path="/animals" element={<AnimalTracker />} />
           <Route path="/animal-tracker" element={<AnimalTracker />} />
+          <Route path="/breeding-history" element={<BreedingHistory />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
