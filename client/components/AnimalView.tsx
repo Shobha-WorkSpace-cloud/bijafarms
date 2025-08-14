@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,6 +8,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AnimalRecord, AnimalStatus } from "@shared/animal-types";
@@ -25,14 +33,19 @@ import {
   Users,
   Baby,
   Heart,
+  Plus,
 } from "lucide-react";
 import WeightTracker from "@/components/WeightTracker";
+import AnimalForm from "@/components/AnimalForm";
+import * as animalApi from "@/lib/animal-api";
+import { useToast } from "@/hooks/use-toast";
 
 interface AnimalViewProps {
   animal: AnimalRecord;
   allAnimals?: AnimalRecord[];
   onEdit: () => void;
   onClose: () => void;
+  onUpdate?: () => void;
 }
 
 export default function AnimalView({
@@ -40,7 +53,10 @@ export default function AnimalView({
   allAnimals = [],
   onEdit,
   onClose,
+  onUpdate,
 }: AnimalViewProps) {
+  const [isAddOffspringDialogOpen, setIsAddOffspringDialogOpen] = useState(false);
+  const { toast } = useToast();
   const getStatusColor = (status: AnimalStatus) => {
     switch (status) {
       case "active":
@@ -101,6 +117,52 @@ export default function AnimalView({
       const years = Math.floor(ageInDays / 365);
       const remainingMonths = Math.floor((ageInDays % 365) / 30);
       return `${years} year${years > 1 ? "s" : ""}${remainingMonths > 0 ? ` ${remainingMonths} month${remainingMonths > 1 ? "s" : ""}` : ""}`;
+    }
+  };
+
+  const handleAddOffspring = async (
+    newOffspring: Omit<AnimalRecord, "id" | "createdAt" | "updatedAt">,
+  ) => {
+    try {
+      const createdOffspring = await animalApi.createAnimal(newOffspring);
+
+      // Update parent's offspring list
+      const updatedParent = {
+        ...animal,
+        offspring: [...(animal.offspring || []), createdOffspring.id],
+        updatedAt: new Date().toISOString(),
+      };
+      await animalApi.updateAnimal(animal.id, updatedParent);
+
+      // Update father's offspring list if father is specified
+      if (newOffspring.fatherId) {
+        const father = allAnimals.find(a => a.id === newOffspring.fatherId);
+        if (father) {
+          const updatedFather = {
+            ...father,
+            offspring: [...(father.offspring || []), createdOffspring.id],
+            updatedAt: new Date().toISOString(),
+          };
+          await animalApi.updateAnimal(father.id, updatedFather);
+        }
+      }
+
+      setIsAddOffspringDialogOpen(false);
+      toast({
+        title: "Success",
+        description: "Offspring added successfully",
+      });
+
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error) {
+      console.error("Error adding offspring:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add offspring. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -426,42 +488,59 @@ export default function AnimalView({
                 )}
 
                 {/* Offspring */}
-                {animal.offspring && animal.offspring.length > 0 && (
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
                       <Baby className="h-4 w-4 text-green-600" />
-                      Offspring ({animal.offspring.length})
+                      Offspring ({animal.offspring?.length || 0})
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {animal.offspring.map((offspringId) => {
-                        const offspring = allAnimals.find(
-                          (a) => a.id === offspringId,
-                        );
-                        if (!offspring) return null;
-                        return (
-                          <div
-                            key={offspringId}
-                            className="flex items-center gap-2 p-2 bg-green-50 rounded"
-                          >
-                            <Baby className="h-4 w-4 text-green-600" />
-                            <div>
-                              <p className="font-medium">{offspring.name}</p>
-                              <p className="text-sm text-gray-500">
-                                {offspring.gender} • {offspring.breed}
-                                {offspring.dateOfBirth && (
-                                  <>
-                                    {" "}
-                                    • Born {formatDate(offspring.dateOfBirth)}
-                                  </>
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                    {(animal.gender === "female" || animal.gender === "male") && animal.status === "active" && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setIsAddOffspringDialogOpen(true)}
+                        className="text-green-600 border-green-600 hover:bg-green-50"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add Offspring
+                      </Button>
+                    )}
                   </div>
-                )}
+                  {animal.offspring && animal.offspring.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {animal.offspring.map((offspringId) => {
+                          const offspring = allAnimals.find(
+                            (a) => a.id === offspringId,
+                          );
+                          if (!offspring) return null;
+                          return (
+                            <div
+                              key={offspringId}
+                              className="flex items-center gap-2 p-2 bg-green-50 rounded"
+                            >
+                              <Baby className="h-4 w-4 text-green-600" />
+                              <div>
+                                <p className="font-medium">{offspring.name}</p>
+                                <p className="text-sm text-gray-500">
+                                  {offspring.gender} • {offspring.breed}
+                                  {offspring.dateOfBirth && (
+                                    <>
+                                      {" "}
+                                      • Born {formatDate(offspring.dateOfBirth)}
+                                    </>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 py-2">
+                        No offspring recorded yet.
+                      </p>
+                    )}
+                  </div>
               </CardContent>
             </Card>
           )}
@@ -512,6 +591,29 @@ export default function AnimalView({
           />
         </TabsContent>
       </Tabs>
+
+      {/* Add Offspring Dialog */}
+      <Dialog
+        open={isAddOffspringDialogOpen}
+        onOpenChange={setIsAddOffspringDialogOpen}
+      >
+        <DialogContent className="max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Offspring for {animal.name}</DialogTitle>
+            <DialogDescription>
+              Create a new animal record as offspring of {animal.name}.
+              Parent relationships will be automatically established.
+            </DialogDescription>
+          </DialogHeader>
+          <AnimalForm
+            onSubmit={handleAddOffspring}
+            onCancel={() => setIsAddOffspringDialogOpen(false)}
+            isOffspring={true}
+            parentMotherId={animal.gender === "female" ? animal.id : undefined}
+            parentFatherId={animal.gender === "male" ? animal.id : undefined}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
