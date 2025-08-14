@@ -46,6 +46,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import * as Collapsible from "@radix-ui/react-collapsible";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { usePagination } from "@/hooks/use-pagination";
@@ -513,36 +514,42 @@ export default function AnimalTracker() {
 
         {/* Health Records Management Section */}
         <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <Stethoscope className="h-5 w-5 text-green-600" />
-                  Health Records Management
-                </CardTitle>
-                <CardDescription>
-                  Manage health records for all animals in your livestock
-                </CardDescription>
+          <Collapsible.Root
+            open={isHealthSectionExpanded}
+            onOpenChange={setIsHealthSectionExpanded}
+          >
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Stethoscope className="h-5 w-5 text-green-600" />
+                    Health Records Management
+                  </CardTitle>
+                  <CardDescription>
+                    Manage health records for all animals in your livestock
+                  </CardDescription>
+                </div>
+                <Collapsible.Trigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-500 hover:text-gray-700 transition-transform duration-200"
+                  >
+                    {isHealthSectionExpanded ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                </Collapsible.Trigger>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsHealthSectionExpanded(!isHealthSectionExpanded)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                {isHealthSectionExpanded ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-          </CardHeader>
-          {isHealthSectionExpanded && (
-            <CardContent className="transition-all duration-300 ease-in-out">
-              <HealthRecordsOverview animals={animals} />
-            </CardContent>
-          )}
+            </CardHeader>
+            <Collapsible.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+              <CardContent>
+                <HealthRecordsOverview animals={animals} />
+              </CardContent>
+            </Collapsible.Content>
+          </Collapsible.Root>
         </Card>
 
         {/* Animals Grid */}
