@@ -10,6 +10,7 @@ import Index from "../client/pages/Index";
 import MainPage from "../client/pages/MainPage";
 import WorkTracker from "../client/pages/WorkTracker";
 import AnimalTracker from "../client/pages/AnimalTracker";
+import BreedingHistory from "../client/pages/BreedingHistory";
 import NotFound from "../client/pages/NotFound";
 
 const queryClient = new QueryClient();
