@@ -89,6 +89,7 @@ export default function BreedingManager({
   const [breedingRecords, setBreedingRecords] = useState<BreedingRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [refreshingHistory, setRefreshingHistory] = useState(false);
   const [formData, setFormData] = useState<BreedingFormData>({
     fatherId: "unknown",
     breedingDate: "",
@@ -123,9 +124,13 @@ export default function BreedingManager({
     }
   }, [isDialogOpen, mother.id]);
 
-  const loadBreedingRecords = async () => {
+  const loadBreedingRecords = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshingHistory(true);
+      } else {
+        setLoading(true);
+      }
       const records = await animalApi.fetchBreedingRecords(mother.id);
       setBreedingRecords(records);
     } catch (error) {
@@ -136,7 +141,11 @@ export default function BreedingManager({
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshingHistory(false);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
@@ -304,14 +313,20 @@ export default function BreedingManager({
       }
 
       toast({
-        title: "Success",
-        description: `Breeding record created with ${formData.kids.length} kids. ${newAnimalIds.length} new animal records created.`,
+        title: "Birth Record Created Successfully! 🎉",
+        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} new animal record${newAnimalIds.length !== 1 ? "s" : ""} created. Check the breeding history panel to see the new record.`,
       });
 
-      setIsDialogOpen(false);
+      // Refresh breeding records and keep dialog open to show updated history
+      await loadBreedingRecords(true);
       resetForm();
       onUpdateAnimals();
-      loadBreedingRecords();
+
+      // Optional: close dialog after a short delay to show the updated history
+      // You can remove the timeout if you want to keep the dialog open
+      setTimeout(() => {
+        setIsDialogOpen(false);
+      }, 1500);
     } catch (error) {
       console.error("Error creating breeding record:", error);
       toast({
@@ -365,7 +380,12 @@ export default function BreedingManager({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button
+          size="sm"
+          variant="outline"
+          className="bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100"
+          title="Breeding & Birth Records - Click to record new births and view breeding history"
+        >
           <Rabbit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
@@ -383,13 +403,31 @@ export default function BreedingManager({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(90vh-120px)]">
           {/* Breeding History */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Breeding History</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-pink-600" />
+                Breeding History
+              </h3>
+              {breedingRecords.length > 0 && (
+                <Badge className="bg-pink-100 text-pink-800">
+                  {breedingRecords.length} record
+                  {breedingRecords.length !== 1 ? "s" : ""}
+                </Badge>
+              )}
+            </div>
             <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px] border rounded-md p-3">
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin h-6 w-6 border-2 border-pink-600 border-t-transparent rounded-full mx-auto mb-2"></div>
                   <p className="text-sm text-gray-600">
                     Loading breeding records...
+                  </p>
+                </div>
+              ) : refreshingHistory ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin h-6 w-6 border-2 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+                  <p className="text-sm text-green-600">
+                    Updating breeding history...
                   </p>
                 </div>
               ) : breedingRecords.length === 0 ? (
@@ -449,11 +487,28 @@ export default function BreedingManager({
               <Plus className="h-5 w-5 text-green-600" />
               Add New Birth Record
             </h3>
-            <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
-              💡 <strong>Tip:</strong> Use this form to record new births and
-              offspring. You can add multiple kids per birth and choose to
-              automatically create animal records for living offspring.
-            </p>
+            <div className="text-sm text-gray-700 bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg border border-blue-200">
+              <div className="flex items-start gap-2">
+                <span className="text-lg">🐰</span>
+                <div>
+                  <p className="font-semibold text-blue-800 mb-2">
+                    How to Add Birth Records:
+                  </p>
+                  <ul className="text-sm space-y-1 text-gray-600">
+                    <li>• Fill in the birth date (required)</li>
+                    <li>• Click "Add Kid" for each offspring born</li>
+                    <li>
+                      • Check "Create animal record" to automatically add live
+                      kids to your livestock
+                    </li>
+                    <li>
+                      • The breeding history will update immediately after
+                      saving
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
             <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px]">
               <form onSubmit={handleSubmit} className="space-y-4 pr-3">
                 {/* Breeding Details */}
