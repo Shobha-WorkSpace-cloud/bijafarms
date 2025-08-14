@@ -28,7 +28,11 @@ import {
 import { ExpenseRecord } from "@shared/expense-types";
 import * as api from "@/lib/api";
 import { Task, fetchTasks } from "@/lib/task-api";
-import { AnimalRecord, fetchAnimals, fetchBreedingRecords } from "@/lib/animal-api";
+import {
+  AnimalRecord,
+  fetchAnimals,
+  fetchBreedingRecords,
+} from "@/lib/animal-api";
 import { getApiConfig } from "@/lib/api-config";
 
 export default function MainPage() {
@@ -532,16 +536,18 @@ export default function MainPage() {
                         ? `${animalStats.totalAnimals} active animals (excluding sold/dead)`
                         : "No animals found - add your first livestock!"}
                     </span>
-                    {animalStats.totalAnimals > 0 && hasBreedingData && !breedingLoading && (
-                      <div className="mt-2">
-                        <Link
-                          to="/breeding-history"
-                          className="text-xs text-pink-600 hover:text-pink-700 underline font-medium"
-                        >
-                          📋 View Breeding History
-                        </Link>
-                      </div>
-                    )}
+                    {animalStats.totalAnimals > 0 &&
+                      hasBreedingData &&
+                      !breedingLoading && (
+                        <div className="mt-2">
+                          <Link
+                            to="/breeding-history"
+                            className="text-xs text-pink-600 hover:text-pink-700 underline font-medium"
+                          >
+                            📋 View Breeding History
+                          </Link>
+                        </div>
+                      )}
                   </div>
                 </div>
               )}
