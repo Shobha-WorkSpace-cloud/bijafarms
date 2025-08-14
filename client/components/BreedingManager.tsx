@@ -324,7 +324,7 @@ export default function BreedingManager({
 
       toast({
         title: "Birth Record Created Successfully! 🎉",
-        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} new animal record${newAnimalIds.length !== 1 ? "s" : ""} created. Check the breeding history panel to see the new record.`,
+        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} live kid${newAnimalIds.length !== 1 ? "s" : ""} added to your livestock. All kids are now visible in the Animal Tracker and breeding history.`,
       });
 
       // Refresh breeding records and keep dialog open to show updated history
