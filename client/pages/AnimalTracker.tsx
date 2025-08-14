@@ -715,6 +715,7 @@ export default function AnimalTracker() {
               </VisuallyHidden>
               <AnimalView
                 animal={viewingAnimal}
+                allAnimals={animals}
                 onEdit={() => {
                   setEditingAnimal(viewingAnimal);
                   setViewingAnimal(null);
