@@ -55,7 +55,8 @@ export default function AnimalView({
   onClose,
   onUpdate,
 }: AnimalViewProps) {
-  const [isAddOffspringDialogOpen, setIsAddOffspringDialogOpen] = useState(false);
+  const [isAddOffspringDialogOpen, setIsAddOffspringDialogOpen] =
+    useState(false);
   const { toast } = useToast();
   const getStatusColor = (status: AnimalStatus) => {
     switch (status) {
@@ -136,7 +137,7 @@ export default function AnimalView({
 
       // Update father's offspring list if father is specified
       if (newOffspring.fatherId) {
-        const father = allAnimals.find(a => a.id === newOffspring.fatherId);
+        const father = allAnimals.find((a) => a.id === newOffspring.fatherId);
         if (father) {
           const updatedFather = {
             ...father,
@@ -494,53 +495,54 @@ export default function AnimalView({
                       <Baby className="h-4 w-4 text-green-600" />
                       Offspring ({animal.offspring?.length || 0})
                     </h4>
-                    {(animal.gender === "female" || animal.gender === "male") && animal.status === "active" && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setIsAddOffspringDialogOpen(true)}
-                        className="text-green-600 border-green-600 hover:bg-green-50"
-                      >
-                        <Plus className="h-4 w-4 mr-1" />
-                        Add Offspring
-                      </Button>
-                    )}
+                    {(animal.gender === "female" || animal.gender === "male") &&
+                      animal.status === "active" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setIsAddOffspringDialogOpen(true)}
+                          className="text-green-600 border-green-600 hover:bg-green-50"
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add Offspring
+                        </Button>
+                      )}
                   </div>
                   {animal.offspring && animal.offspring.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {animal.offspring.map((offspringId) => {
-                          const offspring = allAnimals.find(
-                            (a) => a.id === offspringId,
-                          );
-                          if (!offspring) return null;
-                          return (
-                            <div
-                              key={offspringId}
-                              className="flex items-center gap-2 p-2 bg-green-50 rounded"
-                            >
-                              <Baby className="h-4 w-4 text-green-600" />
-                              <div>
-                                <p className="font-medium">{offspring.name}</p>
-                                <p className="text-sm text-gray-500">
-                                  {offspring.gender} • {offspring.breed}
-                                  {offspring.dateOfBirth && (
-                                    <>
-                                      {" "}
-                                      • Born {formatDate(offspring.dateOfBirth)}
-                                    </>
-                                  )}
-                                </p>
-                              </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {animal.offspring.map((offspringId) => {
+                        const offspring = allAnimals.find(
+                          (a) => a.id === offspringId,
+                        );
+                        if (!offspring) return null;
+                        return (
+                          <div
+                            key={offspringId}
+                            className="flex items-center gap-2 p-2 bg-green-50 rounded"
+                          >
+                            <Baby className="h-4 w-4 text-green-600" />
+                            <div>
+                              <p className="font-medium">{offspring.name}</p>
+                              <p className="text-sm text-gray-500">
+                                {offspring.gender} • {offspring.breed}
+                                {offspring.dateOfBirth && (
+                                  <>
+                                    {" "}
+                                    • Born {formatDate(offspring.dateOfBirth)}
+                                  </>
+                                )}
+                              </p>
                             </div>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <p className="text-sm text-gray-500 py-2">
-                        No offspring recorded yet.
-                      </p>
-                    )}
-                  </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500 py-2">
+                      No offspring recorded yet.
+                    </p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           )}
@@ -601,8 +603,8 @@ export default function AnimalView({
           <DialogHeader>
             <DialogTitle>Add Offspring for {animal.name}</DialogTitle>
             <DialogDescription>
-              Create a new animal record as offspring of {animal.name}.
-              Parent relationships will be automatically established.
+              Create a new animal record as offspring of {animal.name}. Parent
+              relationships will be automatically established.
             </DialogDescription>
           </DialogHeader>
           <AnimalForm

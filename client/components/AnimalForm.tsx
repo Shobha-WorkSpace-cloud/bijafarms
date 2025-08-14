@@ -99,7 +99,7 @@ export default function AnimalForm({
         fatherId: animal.fatherId || "",
       });
     } else if (isOffspring) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         motherId: parentMotherId || "",
         fatherId: parentFatherId || "",
@@ -114,7 +114,7 @@ export default function AnimalForm({
         setLoadingAnimals(true);
         try {
           const animals = await fetchAnimals();
-          setAvailableAnimals(animals.filter(a => a.status === "active"));
+          setAvailableAnimals(animals.filter((a) => a.status === "active"));
         } catch (error) {
           console.error("Failed to fetch animals:", error);
         } finally {
@@ -317,12 +317,12 @@ export default function AnimalForm({
                 </SelectTrigger>
                 <SelectContent>
                   {availableAnimals
-                    .filter(animal => animal.gender === "female")
-                    .map(animal => (
-                    <SelectItem key={animal.id} value={animal.id}>
-                      {animal.name} ({animal.breed})
-                    </SelectItem>
-                  ))}
+                    .filter((animal) => animal.gender === "female")
+                    .map((animal) => (
+                      <SelectItem key={animal.id} value={animal.id}>
+                        {animal.name} ({animal.breed})
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -340,12 +340,12 @@ export default function AnimalForm({
                 <SelectContent>
                   <SelectItem value="">No father selected</SelectItem>
                   {availableAnimals
-                    .filter(animal => animal.gender === "male")
-                    .map(animal => (
-                    <SelectItem key={animal.id} value={animal.id}>
-                      {animal.name} ({animal.breed})
-                    </SelectItem>
-                  ))}
+                    .filter((animal) => animal.gender === "male")
+                    .map((animal) => (
+                      <SelectItem key={animal.id} value={animal.id}>
+                        {animal.name} ({animal.breed})
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -575,7 +575,11 @@ export default function AnimalForm({
       {/* Form Actions */}
       <div className="flex gap-2 pt-4 border-t">
         <Button type="submit" className="bg-green-600 hover:bg-green-700">
-          {isEditing ? "Update Animal" : (isOffspring ? "Add Offspring" : "Add Animal")}
+          {isEditing
+            ? "Update Animal"
+            : isOffspring
+              ? "Add Offspring"
+              : "Add Animal"}
         </Button>
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel

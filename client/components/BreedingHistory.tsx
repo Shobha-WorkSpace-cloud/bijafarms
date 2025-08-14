@@ -162,34 +162,46 @@ export default function BreedingHistory() {
     }
 
     if (filters.motherId) {
-      filtered = filtered.filter((record) => record.motherId === filters.motherId);
+      filtered = filtered.filter(
+        (record) => record.motherId === filters.motherId,
+      );
     }
 
     if (filters.fatherId) {
-      filtered = filtered.filter((record) => record.fatherId === filters.fatherId);
+      filtered = filtered.filter(
+        (record) => record.fatherId === filters.fatherId,
+      );
     }
 
     if (filters.method) {
-      filtered = filtered.filter((record) => record.breedingMethod === filters.method);
+      filtered = filtered.filter(
+        (record) => record.breedingMethod === filters.method,
+      );
     }
 
     if (filters.year) {
       filtered = filtered.filter((record) => {
-        const year = new Date(record.actualDeliveryDate || record.breedingDate).getFullYear();
+        const year = new Date(
+          record.actualDeliveryDate || record.breedingDate,
+        ).getFullYear();
         return year.toString() === filters.year;
       });
     }
 
     if (filters.dateFrom) {
       filtered = filtered.filter((record) => {
-        const recordDate = new Date(record.actualDeliveryDate || record.breedingDate);
+        const recordDate = new Date(
+          record.actualDeliveryDate || record.breedingDate,
+        );
         return recordDate >= new Date(filters.dateFrom);
       });
     }
 
     if (filters.dateTo) {
       filtered = filtered.filter((record) => {
-        const recordDate = new Date(record.actualDeliveryDate || record.breedingDate);
+        const recordDate = new Date(
+          record.actualDeliveryDate || record.breedingDate,
+        );
         return recordDate <= new Date(filters.dateTo);
       });
     }
@@ -200,19 +212,19 @@ export default function BreedingHistory() {
   const calculateStats = () => {
     const totalBreedings = breedingRecords.length;
     const successfulBreedings = breedingRecords.filter(
-      (r) => r.totalKids && r.totalKids > 0
+      (r) => r.totalKids && r.totalKids > 0,
     ).length;
     const totalOffspring = breedingRecords.reduce(
       (sum, r) => sum + (r.totalKids || 0),
-      0
+      0,
     );
     const maleOffspringCount = breedingRecords.reduce(
       (sum, r) => sum + (r.maleKids || 0),
-      0
+      0,
     );
     const femaleOffspringCount = breedingRecords.reduce(
       (sum, r) => sum + (r.femaleKids || 0),
-      0
+      0,
     );
 
     // Calculate mortality rate
@@ -225,9 +237,13 @@ export default function BreedingHistory() {
 
     const deaths = breedingRecords.reduce((sum, record) => {
       if (record.kidDetails) {
-        return sum + record.kidDetails.filter(
-          (kid) => kid.status === "stillborn" || kid.status === "died_after_birth"
-        ).length;
+        return (
+          sum +
+          record.kidDetails.filter(
+            (kid) =>
+              kid.status === "stillborn" || kid.status === "died_after_birth",
+          ).length
+        );
       }
       return sum;
     }, 0);
@@ -238,7 +254,8 @@ export default function BreedingHistory() {
       totalBreedings,
       successfulBreedings,
       totalOffspring,
-      averageKidsPerBreeding: totalBreedings > 0 ? totalOffspring / totalBreedings : 0,
+      averageKidsPerBreeding:
+        totalBreedings > 0 ? totalOffspring / totalBreedings : 0,
       mortalityRate,
       activePregnancies: 0, // Would need additional data to track pregnancies
       maleOffspringCount,
@@ -264,43 +281,75 @@ export default function BreedingHistory() {
 
   const getBreedingStatus = (record: BreedingRecord) => {
     if (record.actualDeliveryDate) {
-      return { status: "completed", label: "Delivered", color: "bg-green-100 text-green-800" };
+      return {
+        status: "completed",
+        label: "Delivered",
+        color: "bg-green-100 text-green-800",
+      };
     }
     if (record.expectedDeliveryDate) {
       const expected = new Date(record.expectedDeliveryDate);
       const now = new Date();
       if (now > expected) {
-        return { status: "overdue", label: "Overdue", color: "bg-red-100 text-red-800" };
+        return {
+          status: "overdue",
+          label: "Overdue",
+          color: "bg-red-100 text-red-800",
+        };
       }
-      return { status: "pregnant", label: "Pregnant", color: "bg-blue-100 text-blue-800" };
+      return {
+        status: "pregnant",
+        label: "Pregnant",
+        color: "bg-blue-100 text-blue-800",
+      };
     }
-    return { status: "bred", label: "Bred", color: "bg-yellow-100 text-yellow-800" };
+    return {
+      status: "bred",
+      label: "Bred",
+      color: "bg-yellow-100 text-yellow-800",
+    };
   };
 
   // Chart data
-  const monthlyBreedingData = breedingRecords.reduce((acc, record) => {
-    const date = new Date(record.actualDeliveryDate || record.breedingDate);
-    const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    
-    if (!acc[monthYear]) {
-      acc[monthYear] = { month: monthYear, breedings: 0, offspring: 0 };
-    }
-    acc[monthYear].breedings += 1;
-    acc[monthYear].offspring += record.totalKids || 0;
-    
-    return acc;
-  }, {} as Record<string, { month: string; breedings: number; offspring: number }>);
+  const monthlyBreedingData = breedingRecords.reduce(
+    (acc, record) => {
+      const date = new Date(record.actualDeliveryDate || record.breedingDate);
+      const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
-  const chartData = Object.values(monthlyBreedingData).sort((a, b) => a.month.localeCompare(b.month));
+      if (!acc[monthYear]) {
+        acc[monthYear] = { month: monthYear, breedings: 0, offspring: 0 };
+      }
+      acc[monthYear].breedings += 1;
+      acc[monthYear].offspring += record.totalKids || 0;
+
+      return acc;
+    },
+    {} as Record<
+      string,
+      { month: string; breedings: number; offspring: number }
+    >,
+  );
+
+  const chartData = Object.values(monthlyBreedingData).sort((a, b) =>
+    a.month.localeCompare(b.month),
+  );
 
   const genderDistributionData = [
     { name: "Male", value: stats?.maleOffspringCount || 0, color: "#3B82F6" },
-    { name: "Female", value: stats?.femaleOffspringCount || 0, color: "#EC4899" },
+    {
+      name: "Female",
+      value: stats?.femaleOffspringCount || 0,
+      color: "#EC4899",
+    },
   ];
 
-  const uniqueYears = [...new Set(breedingRecords.map(r => 
-    new Date(r.actualDeliveryDate || r.breedingDate).getFullYear()
-  ))].sort((a, b) => b - a);
+  const uniqueYears = [
+    ...new Set(
+      breedingRecords.map((r) =>
+        new Date(r.actualDeliveryDate || r.breedingDate).getFullYear(),
+      ),
+    ),
+  ].sort((a, b) => b - a);
 
   const breedingExportConfig = {
     filename: "breeding-history",
@@ -318,7 +367,7 @@ export default function BreedingHistory() {
     ],
   };
 
-  const exportData = filteredRecords.map(record => ({
+  const exportData = filteredRecords.map((record) => ({
     date: formatDate(record.actualDeliveryDate || record.breedingDate),
     mother: getAnimalName(record.motherId),
     father: getAnimalName(record.fatherId),
@@ -450,23 +499,33 @@ export default function BreedingHistory() {
               </CardContent>
             </Card>
 
-            <Card className={`bg-gradient-to-br border ${
-              stats.mortalityRate > 10 
-                ? "from-red-50 to-red-100 border-red-200" 
-                : "from-yellow-50 to-yellow-100 border-yellow-200"
-            }`}>
+            <Card
+              className={`bg-gradient-to-br border ${
+                stats.mortalityRate > 10
+                  ? "from-red-50 to-red-100 border-red-200"
+                  : "from-yellow-50 to-yellow-100 border-yellow-200"
+              }`}
+            >
               <CardHeader className="pb-2">
-                <CardTitle className={`text-sm font-medium flex items-center gap-2 ${
-                  stats.mortalityRate > 10 ? "text-red-800" : "text-yellow-800"
-                }`}>
+                <CardTitle
+                  className={`text-sm font-medium flex items-center gap-2 ${
+                    stats.mortalityRate > 10
+                      ? "text-red-800"
+                      : "text-yellow-800"
+                  }`}
+                >
                   <AlertTriangle className="h-4 w-4" />
                   Mortality Rate
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className={`text-2xl font-bold ${
-                  stats.mortalityRate > 10 ? "text-red-900" : "text-yellow-900"
-                }`}>
+                <div
+                  className={`text-2xl font-bold ${
+                    stats.mortalityRate > 10
+                      ? "text-red-900"
+                      : "text-yellow-900"
+                  }`}
+                >
                   {stats.mortalityRate.toFixed(1)}%
                 </div>
               </CardContent>
@@ -481,9 +540,13 @@ export default function BreedingHistory() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-orange-900">
-                  {stats.totalBreedings > 0 
-                    ? ((stats.successfulBreedings / stats.totalBreedings) * 100).toFixed(1)
-                    : 0}%
+                  {stats.totalBreedings > 0
+                    ? (
+                        (stats.successfulBreedings / stats.totalBreedings) *
+                        100
+                      ).toFixed(1)
+                    : 0}
+                  %
                 </div>
               </CardContent>
             </Card>
@@ -498,7 +561,7 @@ export default function BreedingHistory() {
                 <Filter className="h-5 w-5 text-gray-600" />
                 <h3 className="text-lg font-semibold">Filters & Search</h3>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label>Search</Label>
@@ -507,7 +570,12 @@ export default function BreedingHistory() {
                     <Input
                       placeholder="Search by animal name, vet..."
                       value={filters.search}
-                      onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          search: e.target.value,
+                        }))
+                      }
                       className="pl-10"
                     />
                   </div>
@@ -517,18 +585,22 @@ export default function BreedingHistory() {
                   <Label>Mother</Label>
                   <Select
                     value={filters.motherId}
-                    onValueChange={(value) => setFilters(prev => ({ ...prev, motherId: value }))}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, motherId: value }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All mothers" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All mothers</SelectItem>
-                      {animals.filter(a => a.gender === "female").map(animal => (
-                        <SelectItem key={animal.id} value={animal.id}>
-                          {animal.name} ({animal.breed})
-                        </SelectItem>
-                      ))}
+                      {animals
+                        .filter((a) => a.gender === "female")
+                        .map((animal) => (
+                          <SelectItem key={animal.id} value={animal.id}>
+                            {animal.name} ({animal.breed})
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -537,18 +609,22 @@ export default function BreedingHistory() {
                   <Label>Father</Label>
                   <Select
                     value={filters.fatherId}
-                    onValueChange={(value) => setFilters(prev => ({ ...prev, fatherId: value }))}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, fatherId: value }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All fathers" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All fathers</SelectItem>
-                      {animals.filter(a => a.gender === "male").map(animal => (
-                        <SelectItem key={animal.id} value={animal.id}>
-                          {animal.name} ({animal.breed})
-                        </SelectItem>
-                      ))}
+                      {animals
+                        .filter((a) => a.gender === "male")
+                        .map((animal) => (
+                          <SelectItem key={animal.id} value={animal.id}>
+                            {animal.name} ({animal.breed})
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -557,7 +633,9 @@ export default function BreedingHistory() {
                   <Label>Method</Label>
                   <Select
                     value={filters.method}
-                    onValueChange={(value) => setFilters(prev => ({ ...prev, method: value }))}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, method: value }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All methods" />
@@ -565,7 +643,9 @@ export default function BreedingHistory() {
                     <SelectContent>
                       <SelectItem value="">All methods</SelectItem>
                       <SelectItem value="natural">Natural</SelectItem>
-                      <SelectItem value="artificial_insemination">AI</SelectItem>
+                      <SelectItem value="artificial_insemination">
+                        AI
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -574,14 +654,16 @@ export default function BreedingHistory() {
                   <Label>Year</Label>
                   <Select
                     value={filters.year}
-                    onValueChange={(value) => setFilters(prev => ({ ...prev, year: value }))}
+                    onValueChange={(value) =>
+                      setFilters((prev) => ({ ...prev, year: value }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="All years" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">All years</SelectItem>
-                      {uniqueYears.map(year => (
+                      {uniqueYears.map((year) => (
                         <SelectItem key={year} value={year.toString()}>
                           {year}
                         </SelectItem>
@@ -595,7 +677,12 @@ export default function BreedingHistory() {
                   <Input
                     type="date"
                     value={filters.dateFrom}
-                    onChange={(e) => setFilters(prev => ({ ...prev, dateFrom: e.target.value }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        dateFrom: e.target.value,
+                      }))
+                    }
                   />
                 </div>
 
@@ -604,17 +691,30 @@ export default function BreedingHistory() {
                   <Input
                     type="date"
                     value={filters.dateTo}
-                    onChange={(e) => setFilters(prev => ({ ...prev, dateTo: e.target.value }))}
+                    onChange={(e) =>
+                      setFilters((prev) => ({
+                        ...prev,
+                        dateTo: e.target.value,
+                      }))
+                    }
                   />
                 </div>
 
                 <div className="flex items-end">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setFilters({
-                      search: "", motherId: "", fatherId: "", method: "", 
-                      status: "", year: "", dateFrom: "", dateTo: ""
-                    })}
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      setFilters({
+                        search: "",
+                        motherId: "",
+                        fatherId: "",
+                        method: "",
+                        status: "",
+                        year: "",
+                        dateFrom: "",
+                        dateTo: "",
+                      })
+                    }
                     className="w-full"
                   >
                     Clear Filters
@@ -633,7 +733,7 @@ export default function BreedingHistory() {
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
               <TabsTrigger value="calendar">Calendar</TabsTrigger>
             </TabsList>
-            
+
             <ExportCSVButton
               data={exportData}
               config={breedingExportConfig}
@@ -646,7 +746,9 @@ export default function BreedingHistory() {
           <TabsContent value="records">
             <Card>
               <CardHeader>
-                <CardTitle>Breeding Records ({filteredRecords.length})</CardTitle>
+                <CardTitle>
+                  Breeding Records ({filteredRecords.length})
+                </CardTitle>
                 <CardDescription>
                   Detailed breeding history and birth records
                 </CardDescription>
@@ -671,7 +773,10 @@ export default function BreedingHistory() {
                         return (
                           <TableRow key={record.id}>
                             <TableCell>
-                              {formatDate(record.actualDeliveryDate || record.breedingDate)}
+                              {formatDate(
+                                record.actualDeliveryDate ||
+                                  record.breedingDate,
+                              )}
                             </TableCell>
                             <TableCell className="font-medium">
                               {getAnimalName(record.motherId)}
@@ -681,12 +786,17 @@ export default function BreedingHistory() {
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline">
-                                {record.breedingMethod === "artificial_insemination" ? "AI" : "Natural"}
+                                {record.breedingMethod ===
+                                "artificial_insemination"
+                                  ? "AI"
+                                  : "Natural"}
                               </Badge>
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold">{record.totalKids || 0}</span>
+                                <span className="font-semibold">
+                                  {record.totalKids || 0}
+                                </span>
                                 {(record.maleKids || 0) > 0 && (
                                   <Badge className="bg-blue-100 text-blue-800">
                                     {record.maleKids}♂
@@ -731,7 +841,9 @@ export default function BreedingHistory() {
               <Card>
                 <CardHeader>
                   <CardTitle>Monthly Breeding Trends</CardTitle>
-                  <CardDescription>Breedings and offspring over time</CardDescription>
+                  <CardDescription>
+                    Breedings and offspring over time
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -740,17 +852,17 @@ export default function BreedingHistory() {
                       <XAxis dataKey="month" />
                       <YAxis />
                       <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="breedings" 
-                        stroke="#3B82F6" 
+                      <Line
+                        type="monotone"
+                        dataKey="breedings"
+                        stroke="#3B82F6"
                         strokeWidth={2}
                         name="Breedings"
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="offspring" 
-                        stroke="#EC4899" 
+                      <Line
+                        type="monotone"
+                        dataKey="offspring"
+                        stroke="#EC4899"
                         strokeWidth={2}
                         name="Offspring"
                       />
@@ -763,7 +875,9 @@ export default function BreedingHistory() {
               <Card>
                 <CardHeader>
                   <CardTitle>Offspring Gender Distribution</CardTitle>
-                  <CardDescription>Male vs Female offspring ratio</CardDescription>
+                  <CardDescription>
+                    Male vs Female offspring ratio
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
@@ -790,20 +904,27 @@ export default function BreedingHistory() {
               <Card>
                 <CardHeader>
                   <CardTitle>Breeding Method Distribution</CardTitle>
-                  <CardDescription>Natural vs Artificial Insemination</CardDescription>
+                  <CardDescription>
+                    Natural vs Artificial Insemination
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <BarChart 
+                    <BarChart
                       data={[
                         {
                           method: "Natural",
-                          count: breedingRecords.filter(r => r.breedingMethod === "natural").length
+                          count: breedingRecords.filter(
+                            (r) => r.breedingMethod === "natural",
+                          ).length,
                         },
                         {
                           method: "AI",
-                          count: breedingRecords.filter(r => r.breedingMethod === "artificial_insemination").length
-                        }
+                          count: breedingRecords.filter(
+                            (r) =>
+                              r.breedingMethod === "artificial_insemination",
+                          ).length,
+                        },
                       ]}
                     >
                       <CartesianGrid strokeDasharray="3 3" />
@@ -825,21 +946,26 @@ export default function BreedingHistory() {
                 <CardContent>
                   <div className="space-y-3">
                     {animals
-                      .filter(a => a.gender === "female")
-                      .map(mother => ({
+                      .filter((a) => a.gender === "female")
+                      .map((mother) => ({
                         ...mother,
                         totalOffspring: breedingRecords
-                          .filter(r => r.motherId === mother.id)
-                          .reduce((sum, r) => sum + (r.totalKids || 0), 0)
+                          .filter((r) => r.motherId === mother.id)
+                          .reduce((sum, r) => sum + (r.totalKids || 0), 0),
                       }))
-                      .filter(m => m.totalOffspring > 0)
+                      .filter((m) => m.totalOffspring > 0)
                       .sort((a, b) => b.totalOffspring - a.totalOffspring)
                       .slice(0, 5)
-                      .map(mother => (
-                        <div key={mother.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      .map((mother) => (
+                        <div
+                          key={mother.id}
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                        >
                           <div>
                             <p className="font-medium">{mother.name}</p>
-                            <p className="text-sm text-gray-600">{mother.breed}</p>
+                            <p className="text-sm text-gray-600">
+                              {mother.breed}
+                            </p>
                           </div>
                           <Badge className="bg-green-100 text-green-800">
                             {mother.totalOffspring} kids
@@ -857,20 +983,39 @@ export default function BreedingHistory() {
             <Card>
               <CardHeader>
                 <CardTitle>Breeding Calendar</CardTitle>
-                <CardDescription>Timeline view of breeding events and expected deliveries</CardDescription>
+                <CardDescription>
+                  Timeline view of breeding events and expected deliveries
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {filteredRecords
-                    .sort((a, b) => new Date(b.actualDeliveryDate || b.expectedDeliveryDate || b.breedingDate).getTime() - 
-                                   new Date(a.actualDeliveryDate || a.expectedDeliveryDate || a.breedingDate).getTime())
+                    .sort(
+                      (a, b) =>
+                        new Date(
+                          b.actualDeliveryDate ||
+                            b.expectedDeliveryDate ||
+                            b.breedingDate,
+                        ).getTime() -
+                        new Date(
+                          a.actualDeliveryDate ||
+                            a.expectedDeliveryDate ||
+                            a.breedingDate,
+                        ).getTime(),
+                    )
                     .map((record) => {
                       const breedingStatus = getBreedingStatus(record);
                       return (
-                        <div key={record.id} className="flex items-center gap-4 p-4 border rounded-lg">
+                        <div
+                          key={record.id}
+                          className="flex items-center gap-4 p-4 border rounded-lg"
+                        >
                           <div className="flex flex-col items-center">
                             <Calendar className="h-6 w-6 text-gray-600 mb-1" />
-                            <Badge className={breedingStatus.color} variant="secondary">
+                            <Badge
+                              className={breedingStatus.color}
+                              variant="secondary"
+                            >
                               {breedingStatus.label}
                             </Badge>
                           </div>
@@ -878,16 +1023,22 @@ export default function BreedingHistory() {
                             <div className="flex items-center justify-between">
                               <div>
                                 <h4 className="font-semibold">
-                                  {getAnimalName(record.motherId)} × {getAnimalName(record.fatherId)}
+                                  {getAnimalName(record.motherId)} ×{" "}
+                                  {getAnimalName(record.fatherId)}
                                 </h4>
                                 <p className="text-sm text-gray-600">
-                                  {record.breedingDate && `Bred: ${formatDate(record.breedingDate)}`}
-                                  {record.expectedDeliveryDate && ` • Expected: ${formatDate(record.expectedDeliveryDate)}`}
-                                  {record.actualDeliveryDate && ` • Delivered: ${formatDate(record.actualDeliveryDate)}`}
+                                  {record.breedingDate &&
+                                    `Bred: ${formatDate(record.breedingDate)}`}
+                                  {record.expectedDeliveryDate &&
+                                    ` • Expected: ${formatDate(record.expectedDeliveryDate)}`}
+                                  {record.actualDeliveryDate &&
+                                    ` • Delivered: ${formatDate(record.actualDeliveryDate)}`}
                                 </p>
                               </div>
                               <div className="text-right">
-                                <p className="font-semibold">{record.totalKids || 0} kids</p>
+                                <p className="font-semibold">
+                                  {record.totalKids || 0} kids
+                                </p>
                                 <div className="flex gap-1">
                                   {(record.maleKids || 0) > 0 && (
                                     <Badge className="bg-blue-100 text-blue-800 text-xs">
