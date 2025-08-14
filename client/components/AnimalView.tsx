@@ -22,18 +22,22 @@ import {
   Eye,
   Activity,
   Stethoscope,
+  Users,
+  Baby,
+  Heart,
 } from "lucide-react";
 import WeightTracker from "@/components/WeightTracker";
-import HealthRecordsManager from "@/components/HealthRecordsManager";
 
 interface AnimalViewProps {
   animal: AnimalRecord;
+  allAnimals?: AnimalRecord[];
   onEdit: () => void;
   onClose: () => void;
 }
 
 export default function AnimalView({
   animal,
+  allAnimals = [],
   onEdit,
   onClose,
 }: AnimalViewProps) {
@@ -130,7 +134,7 @@ export default function AnimalView({
 
       {/* Tabbed Content */}
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Eye className="h-4 w-4" />
             Overview
@@ -138,10 +142,6 @@ export default function AnimalView({
           <TabsTrigger value="weight" className="flex items-center gap-2">
             <Weight className="h-4 w-4" />
             Weight Tracking
-          </TabsTrigger>
-          <TabsTrigger value="health" className="flex items-center gap-2">
-            <Stethoscope className="h-4 w-4" />
-            Health Records
           </TabsTrigger>
         </TabsList>
 
@@ -377,6 +377,95 @@ export default function AnimalView({
             </Card>
           )}
 
+          {/* Family Relationships */}
+          {(animal.motherId ||
+            animal.fatherId ||
+            (animal.offspring && animal.offspring.length > 0)) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Users className="h-5 w-5 text-blue-600" />
+                  Family Relationships
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Parents */}
+                {(animal.motherId || animal.fatherId) && (
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                      <Heart className="h-4 w-4 text-red-500" />
+                      Parents
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {animal.motherId && (
+                        <div className="flex items-center gap-2 p-2 bg-pink-50 rounded">
+                          <Baby className="h-4 w-4 text-pink-600" />
+                          <div>
+                            <p className="text-sm text-gray-500">Mother</p>
+                            <p className="font-medium">
+                              {allAnimals.find((a) => a.id === animal.motherId)
+                                ?.name || "Unknown"}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      {animal.fatherId && (
+                        <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
+                          <User className="h-4 w-4 text-blue-600" />
+                          <div>
+                            <p className="text-sm text-gray-500">Father</p>
+                            <p className="font-medium">
+                              {allAnimals.find((a) => a.id === animal.fatherId)
+                                ?.name || "Unknown"}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Offspring */}
+                {animal.offspring && animal.offspring.length > 0 && (
+                  <div>
+                    <h4 className="font-medium text-gray-900 mb-2 flex items-center gap-2">
+                      <Baby className="h-4 w-4 text-green-600" />
+                      Offspring ({animal.offspring.length})
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {animal.offspring.map((offspringId) => {
+                        const offspring = allAnimals.find(
+                          (a) => a.id === offspringId,
+                        );
+                        if (!offspring) return null;
+                        return (
+                          <div
+                            key={offspringId}
+                            className="flex items-center gap-2 p-2 bg-green-50 rounded"
+                          >
+                            <Baby className="h-4 w-4 text-green-600" />
+                            <div>
+                              <p className="font-medium">{offspring.name}</p>
+                              <p className="text-sm text-gray-500">
+                                {offspring.gender} • {offspring.breed}
+                                {offspring.dateOfBirth && (
+                                  <>
+                                    {" "}
+                                    • Born {formatDate(offspring.dateOfBirth)}
+                                  </>
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Notes */}
           {animal.notes && (
             <Card>
@@ -421,11 +510,6 @@ export default function AnimalView({
             animalName={animal.name}
             currentWeight={animal.currentWeight}
           />
-        </TabsContent>
-
-        {/* Health Records Tab */}
-        <TabsContent value="health" className="mt-6">
-          <HealthRecordsManager animalId={animal.id} animalName={animal.name} />
         </TabsContent>
       </Tabs>
     </div>

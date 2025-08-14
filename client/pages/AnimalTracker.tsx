@@ -16,6 +16,9 @@ import {
   TrendingUp,
   TrendingDown,
   Users,
+  ChevronDown,
+  ChevronUp,
+  Baby,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +45,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import * as Collapsible from "@radix-ui/react-collapsible";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { usePagination } from "@/hooks/use-pagination";
@@ -60,6 +65,9 @@ import {
 import * as animalApi from "@/lib/animal-api";
 import AnimalForm from "@/components/AnimalForm";
 import AnimalView from "@/components/AnimalView";
+import BulkHealthRecordsManager from "@/components/BulkHealthRecordsManager";
+import HealthRecordsOverview from "@/components/HealthRecordsOverview";
+import BreedingManager from "@/components/BreedingManager";
 
 export default function AnimalTracker() {
   const [animals, setAnimals] = useState<AnimalRecord[]>([]);
@@ -78,6 +86,7 @@ export default function AnimalTracker() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingAnimal, setEditingAnimal] = useState<AnimalRecord | null>(null);
   const [viewingAnimal, setViewingAnimal] = useState<AnimalRecord | null>(null);
+  const [isHealthSectionExpanded, setIsHealthSectionExpanded] = useState(true);
   const { toast } = useToast();
 
   // Pagination for filtered animals
@@ -493,6 +502,8 @@ export default function AnimalTracker() {
                   </DialogContent>
                 </Dialog>
 
+                <BulkHealthRecordsManager animals={animals} />
+
                 <ExportCSVButton
                   data={filteredAnimals}
                   config={createAnimalExportConfig()}
@@ -501,6 +512,56 @@ export default function AnimalTracker() {
               </div>
             </div>
           </CardContent>
+        </Card>
+
+        {/* Health Records Management Section */}
+        <Card>
+          <Collapsible.Root
+            open={isHealthSectionExpanded}
+            onOpenChange={setIsHealthSectionExpanded}
+          >
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Stethoscope className="h-5 w-5 text-green-600" />
+                    Health Records Management
+                  </CardTitle>
+                  <CardDescription>
+                    Manage health records for all animals in your livestock
+                    {!isHealthSectionExpanded && (
+                      <span className="ml-2 text-xs text-blue-600 font-medium">
+                        (Click to expand)
+                      </span>
+                    )}
+                  </CardDescription>
+                </div>
+                <Collapsible.Trigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-500 hover:text-gray-700 transition-all duration-200 hover:bg-gray-100 rounded-md p-2"
+                    title={
+                      isHealthSectionExpanded
+                        ? "Minimize section"
+                        : "Expand section"
+                    }
+                  >
+                    {isHealthSectionExpanded ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
+                </Collapsible.Trigger>
+              </div>
+            </CardHeader>
+            <Collapsible.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+              <CardContent>
+                <HealthRecordsOverview animals={animals} />
+              </CardContent>
+            </Collapsible.Content>
+          </Collapsible.Root>
         </Card>
 
         {/* Animals Grid */}
@@ -569,7 +630,7 @@ export default function AnimalTracker() {
                       )}
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Button
                         size="sm"
                         variant="outline"
@@ -584,6 +645,30 @@ export default function AnimalTracker() {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
+                      {animal.gender === "female" &&
+                        animal.status === "active" && (
+                          <BreedingManager
+                            mother={animal}
+                            allAnimals={animals}
+                            onUpdateAnimals={async () => {
+                              try {
+                                const [animalsData, summaryData] =
+                                  await Promise.all([
+                                    animalApi.fetchAnimals(),
+                                    animalApi.fetchAnimalSummary(),
+                                  ]);
+                                setAnimals(animalsData);
+                                setFilteredAnimals(animalsData);
+                                setSummary(summaryData);
+                              } catch (error) {
+                                console.error(
+                                  "Error refreshing animal data:",
+                                  error,
+                                );
+                              }
+                            }}
+                          />
+                        )}
                       <Button
                         size="sm"
                         variant="outline"
@@ -634,8 +719,12 @@ export default function AnimalTracker() {
         {viewingAnimal && (
           <Dialog open={true} onOpenChange={() => setViewingAnimal(null)}>
             <DialogContent className="max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+              <VisuallyHidden>
+                <DialogTitle>View Animal - {viewingAnimal.name}</DialogTitle>
+              </VisuallyHidden>
               <AnimalView
                 animal={viewingAnimal}
+                allAnimals={animals}
                 onEdit={() => {
                   setEditingAnimal(viewingAnimal);
                   setViewingAnimal(null);

@@ -1,0 +1,494 @@
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Stethoscope,
+  Calendar,
+  User,
+  IndianRupee,
+  AlertCircle,
+  FileText,
+  Clock,
+  Pill,
+  Activity,
+  Search,
+  TrendingUp,
+  Heart,
+} from "lucide-react";
+import { AnimalRecord, HealthRecord } from "@shared/animal-types";
+import * as animalApi from "@/lib/animal-api";
+import { useToast } from "@/hooks/use-toast";
+
+interface HealthRecordsOverviewProps {
+  animals: AnimalRecord[];
+}
+
+export default function HealthRecordsOverview({
+  animals,
+}: HealthRecordsOverviewProps) {
+  const [healthRecords, setHealthRecords] = useState<
+    (HealthRecord & { animalName: string; animalId: string })[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [animalFilter, setAnimalFilter] = useState("all");
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadAllHealthRecords();
+  }, [animals]);
+
+  const loadAllHealthRecords = async () => {
+    try {
+      setLoading(true);
+      const allRecords: (HealthRecord & {
+        animalName: string;
+        animalId: string;
+      })[] = [];
+
+      // Load health records for all animals
+      await Promise.all(
+        animals.map(async (animal) => {
+          try {
+            const records = await animalApi.fetchHealthRecords(animal.id);
+            records.forEach((record) => {
+              allRecords.push({
+                ...record,
+                animalName: animal.name,
+                animalId: animal.id,
+              });
+            });
+          } catch (error) {
+            console.error(
+              `Error loading health records for ${animal.name}:`,
+              error,
+            );
+          }
+        }),
+      );
+
+      // Sort by date desc (newest first)
+      setHealthRecords(
+        allRecords.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        ),
+      );
+    } catch (error) {
+      console.error("Error loading health records:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load health records. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter health records
+  const filteredRecords = healthRecords.filter((record) => {
+    const matchesSearch =
+      record.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      record.animalName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (record.veterinarianName &&
+        record.veterinarianName
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()));
+
+    const matchesType =
+      typeFilter === "all" || record.recordType === typeFilter;
+    const matchesAnimal =
+      animalFilter === "all" || record.animalId === animalFilter;
+
+    return matchesSearch && matchesType && matchesAnimal;
+  });
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+    }).format(amount);
+  };
+
+  const getRecordTypeInfo = (type: string) => {
+    switch (type) {
+      case "checkup":
+        return {
+          icon: Stethoscope,
+          color: "bg-green-100 text-green-800",
+          label: "Checkup",
+        };
+      case "treatment":
+        return {
+          icon: Pill,
+          color: "bg-blue-100 text-blue-800",
+          label: "Treatment",
+        };
+      case "illness":
+        return {
+          icon: AlertCircle,
+          color: "bg-red-100 text-red-800",
+          label: "Illness",
+        };
+      case "injury":
+        return {
+          icon: Activity,
+          color: "bg-orange-100 text-orange-800",
+          label: "Injury",
+        };
+      default:
+        return {
+          icon: FileText,
+          color: "bg-gray-100 text-gray-800",
+          label: "Other",
+        };
+    }
+  };
+
+  // Get statistics
+  const getHealthStats = () => {
+    if (healthRecords.length === 0) return null;
+
+    const totalCost = healthRecords.reduce(
+      (sum, record) => sum + (record.cost || 0),
+      0,
+    );
+
+    const recentRecords = healthRecords.filter((record) => {
+      const recordDate = new Date(record.date);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return recordDate >= thirtyDaysAgo;
+    });
+
+    const upcomingCheckups = healthRecords.filter(
+      (record) =>
+        record.nextCheckupDate && new Date(record.nextCheckupDate) > new Date(),
+    );
+
+    const overdueCheckups = healthRecords.filter(
+      (record) =>
+        record.nextCheckupDate && new Date(record.nextCheckupDate) < new Date(),
+    );
+
+    return {
+      totalRecords: healthRecords.length,
+      totalCost,
+      recentRecords: recentRecords.length,
+      upcomingCheckups: upcomingCheckups.length,
+      overdueCheckups: overdueCheckups.length,
+    };
+  };
+
+  const stats = getHealthStats();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="text-center">
+          <div className="animate-spin h-6 w-6 border-2 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+          <p className="text-sm text-gray-600">Loading health records...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Health Statistics */}
+      {stats && (
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-blue-600" />
+                <span className="text-sm text-gray-600">Total Records</span>
+              </div>
+              <div className="text-xl font-bold text-blue-900">
+                {stats.totalRecords}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <IndianRupee className="h-4 w-4 text-green-600" />
+                <span className="text-sm text-gray-600">Total Cost</span>
+              </div>
+              <div className="text-lg font-bold text-green-900">
+                {formatCurrency(stats.totalCost)}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-purple-600" />
+                <span className="text-sm text-gray-600">Recent (30d)</span>
+              </div>
+              <div className="text-xl font-bold text-purple-900">
+                {stats.recentRecords}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-orange-600" />
+                <span className="text-sm text-gray-600">Upcoming</span>
+              </div>
+              <div className="text-xl font-bold text-orange-900">
+                {stats.upcomingCheckups}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className={
+              stats.overdueCheckups > 0 ? "border-red-200 bg-red-50" : ""
+            }
+          >
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2">
+                <AlertCircle
+                  className={`h-4 w-4 ${stats.overdueCheckups > 0 ? "text-red-600" : "text-gray-400"}`}
+                />
+                <span
+                  className={`text-sm ${stats.overdueCheckups > 0 ? "text-red-600" : "text-gray-600"}`}
+                >
+                  Overdue
+                </span>
+              </div>
+              <div
+                className={`text-xl font-bold ${stats.overdueCheckups > 0 ? "text-red-900" : "text-gray-900"}`}
+              >
+                {stats.overdueCheckups}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* Filters */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search by description, animal name, or veterinarian..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Select value={typeFilter} onValueChange={setTypeFilter}>
+                <SelectTrigger className="w-full sm:w-40">
+                  <SelectValue placeholder="Record Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="checkup">Checkup</SelectItem>
+                  <SelectItem value="treatment">Treatment</SelectItem>
+                  <SelectItem value="illness">Illness</SelectItem>
+                  <SelectItem value="injury">Injury</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={animalFilter} onValueChange={setAnimalFilter}>
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="Animal" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Animals</SelectItem>
+                  {animals.map((animal) => (
+                    <SelectItem key={animal.id} value={animal.id}>
+                      {animal.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Health Records List */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Heart className="h-5 w-5 text-red-500" />
+            Health Records Overview
+          </CardTitle>
+          <CardDescription>
+            All health records across your livestock ({filteredRecords.length}{" "}
+            records)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {filteredRecords.length === 0 ? (
+            <div className="text-center py-8">
+              <Stethoscope className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No health records found</p>
+              <p className="text-sm text-gray-400">
+                {healthRecords.length === 0
+                  ? "Add health records to start tracking medical history."
+                  : "Try adjusting your search or filter criteria."}
+              </p>
+            </div>
+          ) : (
+            <ScrollArea className="h-96">
+              <div className="space-y-4 pr-3">
+                {filteredRecords.map((record) => {
+                  const typeInfo = getRecordTypeInfo(record.recordType);
+                  const TypeIcon = typeInfo.icon;
+
+                  return (
+                    <div
+                      key={`${record.animalId}-${record.id}`}
+                      className="border rounded-lg p-4 hover:bg-gray-50"
+                    >
+                      <div className="space-y-3">
+                        {/* Header */}
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3">
+                            <Badge className={typeInfo.color}>
+                              <TypeIcon className="h-3 w-3 mr-1" />
+                              {typeInfo.label}
+                            </Badge>
+                            <div className="flex items-center gap-1 text-sm text-gray-600">
+                              <Calendar className="h-3 w-3" />
+                              {formatDate(record.date)}
+                            </div>
+                            <Badge variant="outline">{record.animalName}</Badge>
+                          </div>
+
+                          {record.cost && (
+                            <div className="flex items-center gap-1 text-sm font-medium text-green-700">
+                              <IndianRupee className="h-3 w-3" />
+                              {formatCurrency(record.cost)}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Description */}
+                        <div>
+                          <h4 className="font-medium text-gray-900">
+                            {record.description}
+                          </h4>
+                        </div>
+
+                        {/* Details */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          {record.veterinarianName && (
+                            <div className="flex items-center gap-1 text-gray-600">
+                              <User className="h-3 w-3" />
+                              <span className="font-medium">Vet:</span>{" "}
+                              {record.veterinarianName}
+                            </div>
+                          )}
+
+                          {record.nextCheckupDate && (
+                            <div className="flex items-center gap-1 text-gray-600">
+                              <Clock className="h-3 w-3" />
+                              <span className="font-medium">
+                                Next checkup:
+                              </span>{" "}
+                              {formatDate(record.nextCheckupDate)}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Clinical Information */}
+                        {(record.diagnosis ||
+                          record.treatment ||
+                          record.medications) && (
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm bg-gray-50 p-3 rounded">
+                            {record.diagnosis && (
+                              <div>
+                                <span className="font-medium text-gray-700">
+                                  Diagnosis:
+                                </span>
+                                <p className="text-gray-600 mt-1">
+                                  {record.diagnosis}
+                                </p>
+                              </div>
+                            )}
+
+                            {record.treatment && (
+                              <div>
+                                <span className="font-medium text-gray-700">
+                                  Treatment:
+                                </span>
+                                <p className="text-gray-600 mt-1">
+                                  {record.treatment}
+                                </p>
+                              </div>
+                            )}
+
+                            {record.medications && (
+                              <div>
+                                <span className="font-medium text-gray-700">
+                                  Medications:
+                                </span>
+                                <p className="text-gray-600 mt-1">
+                                  {record.medications}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Notes */}
+                        {record.notes && (
+                          <div className="flex items-start gap-1 text-sm text-gray-700 bg-blue-50 p-3 rounded">
+                            <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                            <div>
+                              <span className="font-medium">Notes:</span>
+                              <p className="mt-1">{record.notes}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
