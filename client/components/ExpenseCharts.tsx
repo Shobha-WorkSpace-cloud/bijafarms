@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -20,6 +20,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   ExpenseRecord,
   CategoryChartData,
@@ -207,32 +214,8 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
     });
   }, [expenses]);
 
-  // Daily spending trend (last 30 days)
-  const dailyTrend = useMemo(() => {
-    const dailyMap = new Map<string, number>();
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    expenses
-      .filter(
-        (expense) =>
-          expense.type === "Expense" &&
-          new Date(expense.date) >= thirtyDaysAgo &&
-          expense.amount > 0 &&
-          expense.description &&
-          expense.description.trim() !== "" &&
-          expense.description !== "No description",
-      )
-      .forEach((expense) => {
-        const date = expense.date;
-        const existing = dailyMap.get(date) || 0;
-        dailyMap.set(date, existing + expense.amount);
-      });
-
-    return Array.from(dailyMap.entries())
-      .map(([date, amount]) => ({ date, amount }))
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  }, [expenses]);
+  // State for selected category in sub-category breakdown
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("en-IN", {
@@ -307,7 +290,11 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
             <BarChart data={monthlyData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
-              <YAxis tickFormatter={formatCurrency} />
+              <YAxis
+                tickFormatter={formatCurrency}
+                width={80}
+                tick={{ fontSize: 12 }}
+              />
               <Tooltip content={<CustomTooltip />} />
               <Bar dataKey="expenses" fill="#EF4444" name="Expenses" />
             </BarChart>
@@ -458,53 +445,6 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
         </Card>
       )}
 
-      {/* Daily Spending Trend */}
-      {dailyTrend.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Daily Spending Trend (Last 30 Days)</CardTitle>
-            <CardDescription>Your daily expense patterns</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={dailyTrend}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="date"
-                  tickFormatter={(date) =>
-                    new Date(date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })
-                  }
-                />
-                <YAxis tickFormatter={formatCurrency} />
-                <Tooltip
-                  labelFormatter={(date) =>
-                    new Date(date).toLocaleDateString("en-US", {
-                      weekday: "long",
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  }
-                  formatter={(value: number) => [
-                    formatCurrency(value),
-                    "Spent",
-                  ]}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="amount"
-                  stroke="#EF4444"
-                  strokeWidth={2}
-                  dot={{ fill: "#EF4444" }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
