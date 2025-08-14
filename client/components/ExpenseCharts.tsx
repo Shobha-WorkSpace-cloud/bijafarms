@@ -335,6 +335,110 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
         </CardContent>
       </Card>
 
+      {/* Sub-Category Breakdown by Category */}
+      {subCategoryData.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Sub-Category Breakdown by Category</CardTitle>
+            <CardDescription>
+              Detailed breakdown of spending within each category
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {subCategoryData.slice(0, 6).map((categoryData) => {
+                const totalCategoryAmount = categoryData.subCategories.reduce(
+                  (sum, sub) => sum + sub.amount,
+                  0
+                );
+
+                return (
+                  <div key={categoryData.category} className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold text-slate-800">
+                        {categoryData.category}
+                      </h4>
+                      <span className="text-sm text-slate-600 font-medium">
+                        {formatCurrency(totalCategoryAmount)}
+                      </span>
+                    </div>
+
+                    <ResponsiveContainer width="100%" height={200}>
+                      <BarChart
+                        data={categoryData.subCategories}
+                        layout="horizontal"
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          type="number"
+                          tickFormatter={formatCurrency}
+                          domain={[0, 'dataMax']}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="subCategory"
+                          width={120}
+                          tick={{ fontSize: 12 }}
+                        />
+                        <Tooltip
+                          formatter={(value: number, name: string) => [
+                            formatCurrency(value),
+                            "Amount"
+                          ]}
+                          labelFormatter={(label) => `${label}`}
+                          contentStyle={{
+                            backgroundColor: "white",
+                            border: "1px solid #ccc",
+                            borderRadius: "8px",
+                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                          }}
+                        />
+                        <Bar
+                          dataKey="amount"
+                          fill={(entry: any) => entry.fill}
+                          radius={[0, 4, 4, 0]}
+                        >
+                          {categoryData.subCategories.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+
+                    <div className="flex flex-wrap gap-2">
+                      {categoryData.subCategories.map((sub, index) => {
+                        const percentage = (sub.amount / totalCategoryAmount) * 100;
+                        return (
+                          <div
+                            key={sub.subCategory}
+                            className="flex items-center space-x-2 text-xs"
+                          >
+                            <div
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: sub.fill }}
+                            />
+                            <span className="text-slate-600">
+                              {sub.subCategory}: {formatCurrency(sub.amount)} ({percentage.toFixed(1)}%)
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {subCategoryData.length > 6 && (
+                <div className="text-center text-sm text-slate-500 pt-4 border-t">
+                  Showing top 6 categories. {subCategoryData.length - 6} more categories available.
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Daily Spending Trend */}
       {dailyTrend.length > 0 && (
         <Card>
