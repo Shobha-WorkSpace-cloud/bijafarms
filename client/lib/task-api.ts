@@ -63,17 +63,7 @@ export const deleteTask = async (id: string): Promise<void> => {
 
 // Bulk delete tasks
 export const bulkDeleteTasks = async (ids: string[]): Promise<void> => {
-  const response = await fetch("/api/tasks/bulk-delete", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ ids }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to bulk delete tasks: ${response.statusText}`);
-  }
+  return apiPost("/tasks/bulk-delete", { ids });
 };
 
 // Export tasks backup
