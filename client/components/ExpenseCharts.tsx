@@ -139,7 +139,10 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
 
   // Sub-category breakdown by category
   const subCategoryData = useMemo(() => {
-    const categorySubMap = new Map<string, Map<string, { amount: number; count: number }>>();
+    const categorySubMap = new Map<
+      string,
+      Map<string, { amount: number; count: number }>
+    >();
 
     expenses
       .filter(
@@ -151,7 +154,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
           expense.description !== "No description" &&
           expense.category !== "Other" &&
           expense.subCategory &&
-          expense.subCategory.trim() !== ""
+          expense.subCategory.trim() !== "",
       )
       .forEach((expense) => {
         if (!categorySubMap.has(expense.category)) {
@@ -159,7 +162,10 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
         }
 
         const subMap = categorySubMap.get(expense.category)!;
-        const existing = subMap.get(expense.subCategory) || { amount: 0, count: 0 };
+        const existing = subMap.get(expense.subCategory) || {
+          amount: 0,
+          count: 0,
+        };
         subMap.set(expense.subCategory, {
           amount: existing.amount + expense.amount,
           count: existing.count + 1,
@@ -167,22 +173,32 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
       });
 
     // Convert to array format for charts
-    const result: { category: string; subCategories: { subCategory: string; amount: number; count: number; fill: string }[] }[] = [];
+    const result: {
+      category: string;
+      subCategories: {
+        subCategory: string;
+        amount: number;
+        count: number;
+        fill: string;
+      }[];
+    }[] = [];
 
-    Array.from(categorySubMap.entries()).forEach(([category, subMap], categoryIndex) => {
-      const subCategories = Array.from(subMap.entries())
-        .map(([subCategory, data], subIndex) => ({
-          subCategory,
-          amount: data.amount,
-          count: data.count,
-          fill: COLORS[(categoryIndex * 3 + subIndex) % COLORS.length],
-        }))
-        .sort((a, b) => b.amount - a.amount);
+    Array.from(categorySubMap.entries()).forEach(
+      ([category, subMap], categoryIndex) => {
+        const subCategories = Array.from(subMap.entries())
+          .map(([subCategory, data], subIndex) => ({
+            subCategory,
+            amount: data.amount,
+            count: data.count,
+            fill: COLORS[(categoryIndex * 3 + subIndex) % COLORS.length],
+          }))
+          .sort((a, b) => b.amount - a.amount);
 
-      if (subCategories.length > 0) {
-        result.push({ category, subCategories });
-      }
-    });
+        if (subCategories.length > 0) {
+          result.push({ category, subCategories });
+        }
+      },
+    );
 
     return result.sort((a, b) => {
       const totalA = a.subCategories.reduce((sum, sub) => sum + sub.amount, 0);
@@ -349,7 +365,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
               {subCategoryData.slice(0, 6).map((categoryData) => {
                 const totalCategoryAmount = categoryData.subCategories.reduce(
                   (sum, sub) => sum + sub.amount,
-                  0
+                  0,
                 );
 
                 return (
@@ -373,7 +389,7 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
                         <XAxis
                           type="number"
                           tickFormatter={formatCurrency}
-                          domain={[0, 'dataMax']}
+                          domain={[0, "dataMax"]}
                         />
                         <YAxis
                           type="category"
@@ -384,14 +400,14 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
                         <Tooltip
                           formatter={(value: number, name: string) => [
                             formatCurrency(value),
-                            "Amount"
+                            "Amount",
                           ]}
                           labelFormatter={(label) => `${label}`}
                           contentStyle={{
                             backgroundColor: "white",
                             border: "1px solid #ccc",
                             borderRadius: "8px",
-                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
                           }}
                         />
                         <Bar
@@ -408,7 +424,8 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
 
                     <div className="flex flex-wrap gap-2">
                       {categoryData.subCategories.map((sub, index) => {
-                        const percentage = (sub.amount / totalCategoryAmount) * 100;
+                        const percentage =
+                          (sub.amount / totalCategoryAmount) * 100;
                         return (
                           <div
                             key={sub.subCategory}
@@ -419,7 +436,8 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
                               style={{ backgroundColor: sub.fill }}
                             />
                             <span className="text-slate-600">
-                              {sub.subCategory}: {formatCurrency(sub.amount)} ({percentage.toFixed(1)}%)
+                              {sub.subCategory}: {formatCurrency(sub.amount)} (
+                              {percentage.toFixed(1)}%)
                             </span>
                           </div>
                         );
@@ -431,7 +449,8 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
 
               {subCategoryData.length > 6 && (
                 <div className="text-center text-sm text-slate-500 pt-4 border-t">
-                  Showing top 6 categories. {subCategoryData.length - 6} more categories available.
+                  Showing top 6 categories. {subCategoryData.length - 6} more
+                  categories available.
                 </div>
               )}
             </div>
