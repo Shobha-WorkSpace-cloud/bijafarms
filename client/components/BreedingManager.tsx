@@ -412,6 +412,13 @@ export default function BreedingManager({
                     Loading breeding records...
                   </p>
                 </div>
+              ) : refreshingHistory ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin h-6 w-6 border-2 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+                  <p className="text-sm text-green-600">
+                    Updating breeding history...
+                  </p>
+                </div>
               ) : breedingRecords.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Baby className="h-8 w-8 mx-auto mb-2 text-gray-400" />
