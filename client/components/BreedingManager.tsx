@@ -314,7 +314,7 @@ export default function BreedingManager({
 
       toast({
         title: "Birth Record Created Successfully! 🎉",
-        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? 's' : ''} to breeding history. ${newAnimalIds.length} new animal record${newAnimalIds.length !== 1 ? 's' : ''} created. Check the breeding history panel to see the new record.`,
+        description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} new animal record${newAnimalIds.length !== 1 ? "s" : ""} created. Check the breeding history panel to see the new record.`,
       });
 
       // Refresh breeding records and keep dialog open to show updated history
@@ -410,7 +410,8 @@ export default function BreedingManager({
               </h3>
               {breedingRecords.length > 0 && (
                 <Badge className="bg-pink-100 text-pink-800">
-                  {breedingRecords.length} record{breedingRecords.length !== 1 ? 's' : ''}
+                  {breedingRecords.length} record
+                  {breedingRecords.length !== 1 ? "s" : ""}
                 </Badge>
               )}
             </div>
@@ -490,12 +491,20 @@ export default function BreedingManager({
               <div className="flex items-start gap-2">
                 <span className="text-lg">🐰</span>
                 <div>
-                  <p className="font-semibold text-blue-800 mb-2">How to Add Birth Records:</p>
+                  <p className="font-semibold text-blue-800 mb-2">
+                    How to Add Birth Records:
+                  </p>
                   <ul className="text-sm space-y-1 text-gray-600">
                     <li>• Fill in the birth date (required)</li>
                     <li>• Click "Add Kid" for each offspring born</li>
-                    <li>• Check "Create animal record" to automatically add live kids to your livestock</li>
-                    <li>• The breeding history will update immediately after saving</li>
+                    <li>
+                      • Check "Create animal record" to automatically add live
+                      kids to your livestock
+                    </li>
+                    <li>
+                      • The breeding history will update immediately after
+                      saving
+                    </li>
                   </ul>
                 </div>
               </div>
