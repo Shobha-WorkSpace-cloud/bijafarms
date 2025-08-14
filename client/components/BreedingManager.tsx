@@ -323,7 +323,7 @@ export default function BreedingManager({
       }
 
       toast({
-        title: "Birth Record Created Successfully! 🎉",
+        title: "Birth Record Created Successfully! ���",
         description: `Added ${formData.kids.length} kid${formData.kids.length !== 1 ? "s" : ""} to breeding history. ${newAnimalIds.length} live kid${newAnimalIds.length !== 1 ? "s" : ""} added to your livestock. All kids are now visible in the Animal Tracker and breeding history.`,
       });
 
@@ -681,13 +681,13 @@ export default function BreedingManager({
                             <CardContent className="space-y-3">
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div className="space-y-2">
-                                  <Label>Name</Label>
+                                  <Label>Name (Optional)</Label>
                                   <Input
                                     value={kid.name}
                                     onChange={(e) =>
                                       updateKid(index, "name", e.target.value)
                                     }
-                                    placeholder="Kid's name"
+                                    placeholder={`Auto: ${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate || new Date()).getFullYear()}`}
                                   />
                                 </div>
 
