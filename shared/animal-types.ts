@@ -30,6 +30,12 @@ export interface AnimalRecord {
   deathDate?: string;
   deathCause?: string;
 
+  // Family relationships
+  motherId?: string;
+  fatherId?: string;
+  breedingRecordId?: string; // Links to the breeding record that produced this animal
+  offspring?: string[]; // Array of animal IDs that are offspring of this animal
+
   // Insurance
   insured: boolean;
   insuranceProvider?: string;
