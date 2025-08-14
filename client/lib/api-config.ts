@@ -304,19 +304,19 @@ const getMockData = (endpoint: string, method: string) => {
   if (endpoint.includes("/animals") && method === "GET") {
     if (endpoint.includes("/summary")) {
       return {
-        totalAnimals: 12,
-        totalGoats: 8,
-        totalSheep: 4,
-        totalMales: 5,
-        totalFemales: 7,
-        activeAnimals: 12,
-        soldAnimals: 2,
-        readyToSell: 3,
+        totalAnimals: 2,
+        totalGoats: 2,
+        totalSheep: 0,
+        totalMales: 1,
+        totalFemales: 1,
+        activeAnimals: 2,
+        soldAnimals: 0,
+        readyToSell: 0,
         deadAnimals: 0,
-        averageWeight: 42.5,
-        totalInvestment: 45000,
-        totalRevenue: 23000,
-        profitLoss: -22000,
+        averageWeight: 50.0,
+        totalInvestment: 0,
+        totalRevenue: 0,
+        profitLoss: 0,
       };
     }
     return [
