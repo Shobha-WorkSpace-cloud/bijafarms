@@ -7,11 +7,11 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
     proxy: {
-      '/api': {
-        target: 'https://bijafarms-api.onrender.com',
+      "/api": {
+        target: "https://bijafarms-api.onrender.com",
         changeOrigin: true,
-        secure: true
-      }
+        secure: true,
+      },
     },
     fs: {
       allow: ["./client", "./shared", "./src"],
@@ -22,27 +22,13 @@ export default defineConfig(({ mode }) => ({
     outDir: "dist",
     rollupOptions: {
       input: {
-        main: 'index.html'
-      }
+        main: "index.html",
+      },
     },
-    assetsInclude: ['**/*.js', '**/*.mjs'],
+    assetsInclude: ["**/*.js", "**/*.mjs"],
   },
-  plugins: [
-    react(),
-    {
-      name: 'remove-duplicate-script',
-      transformIndexHtml(html, { mode }) {
-        let modifiedHtml = html.replace(/<script type="module" src="\/src\/main\.tsx"><\/script>/, '');
-        if (mode === 'production') {
-          modifiedHtml = modifiedHtml.replace('</body>', '<script type="module" src="/bijafarms/src/main.tsx"></script>\n</body>');
-        } else {
-          modifiedHtml = modifiedHtml.replace('</body>', '<script type="module" src="/bijafarms/src/main.tsx"></script>\n</body>');
-        }
-        return modifiedHtml;
-      }
-    }
-  ],
-  base: mode === 'production' ? "/bijafarms/" : "/",
+  plugins: [react()],
+  base: mode === "production" ? "/bijafarms/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
