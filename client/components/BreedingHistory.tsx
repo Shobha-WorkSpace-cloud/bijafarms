@@ -20,6 +20,14 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import {
   Table,
   TableBody,
   TableCell,
@@ -803,7 +811,7 @@ export default function BreedingHistory() {
                                 </span>
                                 {(record.maleKids || 0) > 0 && (
                                   <Badge className="bg-blue-100 text-blue-800">
-                                    {record.maleKids}���
+                                    {record.maleKids}♂
                                   </Badge>
                                 )}
                                 {(record.femaleKids || 0) > 0 && (
