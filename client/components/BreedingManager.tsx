@@ -41,6 +41,7 @@ import {
   Users,
   MaleIcon,
   Female,
+  Rabbit,
 } from "lucide-react";
 import {
   AnimalRecord,
