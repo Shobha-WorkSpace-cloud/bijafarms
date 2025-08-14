@@ -344,100 +344,149 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
           <CardHeader>
             <CardTitle>Sub-Category Breakdown by Category</CardTitle>
             <CardDescription>
-              Detailed breakdown of spending within each category
+              Select a category to view its sub-category breakdown
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {subCategoryData.slice(0, 6).map((categoryData) => {
+              {/* Category Selection Dropdown */}
+              <div className="flex items-center space-x-4">
+                <label className="text-sm font-medium text-slate-700 min-w-fit">
+                  Select Category:
+                </label>
+                <Select
+                  value={selectedCategory}
+                  onValueChange={setSelectedCategory}
+                >
+                  <SelectTrigger className="w-[280px]">
+                    <SelectValue placeholder="Choose a category to view breakdown" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {subCategoryData.map((categoryData) => (
+                      <SelectItem key={categoryData.category} value={categoryData.category}>
+                        {categoryData.category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Selected Category Breakdown */}
+              {selectedCategory && (() => {
+                const categoryData = subCategoryData.find(
+                  (data) => data.category === selectedCategory
+                );
+
+                if (!categoryData) return null;
+
                 const totalCategoryAmount = categoryData.subCategories.reduce(
                   (sum, sub) => sum + sub.amount,
                   0,
                 );
 
                 return (
-                  <div key={categoryData.category} className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-slate-800">
+                      <h4 className="font-semibold text-slate-800 text-lg">
                         {categoryData.category}
                       </h4>
-                      <span className="text-sm text-slate-600 font-medium">
+                      <span className="text-lg text-slate-600 font-medium">
                         {formatCurrency(totalCategoryAmount)}
                       </span>
                     </div>
 
-                    <ResponsiveContainer width="100%" height={200}>
-                      <BarChart
-                        data={categoryData.subCategories}
-                        layout="horizontal"
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis
-                          type="number"
-                          tickFormatter={formatCurrency}
-                          domain={[0, "dataMax"]}
-                        />
-                        <YAxis
-                          type="category"
-                          dataKey="subCategory"
-                          width={120}
-                          tick={{ fontSize: 12 }}
-                        />
-                        <Tooltip
-                          formatter={(value: number, name: string) => [
-                            formatCurrency(value),
-                            "Amount",
-                          ]}
-                          labelFormatter={(label) => `${label}`}
-                          contentStyle={{
-                            backgroundColor: "white",
-                            border: "1px solid #ccc",
-                            borderRadius: "8px",
-                            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                          }}
-                        />
-                        <Bar
-                          dataKey="amount"
-                          fill={(entry: any) => entry.fill}
-                          radius={[0, 4, 4, 0]}
-                        >
-                          {categoryData.subCategories.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-
-                    <div className="flex flex-wrap gap-2">
-                      {categoryData.subCategories.map((sub, index) => {
-                        const percentage =
-                          (sub.amount / totalCategoryAmount) * 100;
-                        return (
-                          <div
-                            key={sub.subCategory}
-                            className="flex items-center space-x-2 text-xs"
-                          >
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: sub.fill }}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {/* Pie Chart */}
+                      <div>
+                        <ResponsiveContainer width="100%" height={350}>
+                          <PieChart>
+                            <Pie
+                              data={categoryData.subCategories}
+                              cx="50%"
+                              cy="50%"
+                              labelLine={false}
+                              label={({ subCategory, amount }) => {
+                                const percentage = (amount / totalCategoryAmount) * 100;
+                                return percentage > 5 ? `${subCategory} ${percentage.toFixed(0)}%` : '';
+                              }}
+                              outerRadius={120}
+                              fill="#8884d8"
+                              dataKey="amount"
+                            >
+                              {categoryData.subCategories.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.fill} />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              formatter={(value: number, name: string) => [
+                                formatCurrency(value),
+                                "Amount",
+                              ]}
+                              labelFormatter={(label) => `${label}`}
+                              contentStyle={{
+                                backgroundColor: "white",
+                                border: "1px solid #ccc",
+                                borderRadius: "8px",
+                                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                              }}
                             />
-                            <span className="text-slate-600">
-                              {sub.subCategory}: {formatCurrency(sub.amount)} (
-                              {percentage.toFixed(1)}%)
-                            </span>
-                          </div>
-                        );
-                      })}
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      {/* Legend and Details */}
+                      <div className="space-y-3">
+                        <h5 className="font-medium text-slate-700 text-sm uppercase tracking-wider">
+                          Sub-Category Breakdown
+                        </h5>
+                        <div className="space-y-2 max-h-80 overflow-y-auto">
+                          {categoryData.subCategories
+                            .sort((a, b) => b.amount - a.amount)
+                            .map((sub, index) => {
+                              const percentage = (sub.amount / totalCategoryAmount) * 100;
+                              return (
+                                <div
+                                  key={sub.subCategory}
+                                  className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div
+                                      className="w-4 h-4 rounded-full flex-shrink-0"
+                                      style={{ backgroundColor: sub.fill }}
+                                    />
+                                    <div className="min-w-0">
+                                      <div className="font-medium text-slate-800 text-sm truncate">
+                                        {sub.subCategory}
+                                      </div>
+                                      <div className="text-xs text-slate-600">
+                                        {sub.count} transaction{sub.count !== 1 ? 's' : ''}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="font-semibold text-slate-800 text-sm">
+                                      {formatCurrency(sub.amount)}
+                                    </div>
+                                    <div className="text-xs text-slate-600">
+                                      {percentage.toFixed(1)}%
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
-              })}
+              })()}
 
-              {subCategoryData.length > 6 && (
-                <div className="text-center text-sm text-slate-500 pt-4 border-t">
-                  Showing top 6 categories. {subCategoryData.length - 6} more
-                  categories available.
+              {!selectedCategory && (
+                <div className="text-center py-12 text-slate-500">
+                  <div className="text-lg font-medium mb-2">No category selected</div>
+                  <div className="text-sm">
+                    Choose a category from the dropdown above to view its breakdown
+                  </div>
                 </div>
               )}
             </div>
