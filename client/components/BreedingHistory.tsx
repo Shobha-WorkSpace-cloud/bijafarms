@@ -860,10 +860,20 @@ export default function BreedingHistory() {
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-2">
-                                <Button size="sm" variant="outline">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleViewRecord(record)}
+                                  title="View Details"
+                                >
                                   <Eye className="h-4 w-4" />
                                 </Button>
-                                <Button size="sm" variant="outline">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditRecord(record)}
+                                  title="Edit Record"
+                                >
                                   <Edit className="h-4 w-4" />
                                 </Button>
                               </div>
