@@ -494,14 +494,11 @@ export default function AnimalTracker() {
                   </DialogContent>
                 </Dialog>
 
-                <Button
-                  variant="outline"
-                  onClick={handleExportAnimals}
+                <ExportCSVButton
+                  data={filteredAnimals}
+                  config={createAnimalExportConfig()}
                   disabled={filteredAnimals.length === 0}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export CSV
-                </Button>
+                />
               </div>
             </div>
           </CardContent>
