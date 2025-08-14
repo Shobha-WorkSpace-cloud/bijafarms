@@ -107,6 +107,10 @@ export default function BreedingHistory() {
     dateFrom: "",
     dateTo: "",
   });
+  const [selectedRecord, setSelectedRecord] = useState<BreedingRecord | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<BreedingRecord | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -799,7 +803,7 @@ export default function BreedingHistory() {
                                 </span>
                                 {(record.maleKids || 0) > 0 && (
                                   <Badge className="bg-blue-100 text-blue-800">
-                                    {record.maleKids}♂
+                                    {record.maleKids}���
                                   </Badge>
                                 )}
                                 {(record.femaleKids || 0) > 0 && (
