@@ -646,8 +646,11 @@ export default function BreedingManager({
                           <p className="text-pink-600 font-medium mb-1">
                             No kids added yet
                           </p>
-                          <p className="text-pink-500 text-sm">
+                          <p className="text-pink-500 text-sm mb-2">
                             Click "Add Kid" to record offspring details
+                          </p>
+                          <p className="text-pink-400 text-xs">
+                            💡 For multiple births (twins, triplets, etc.), click "Add Kid" multiple times
                           </p>
                         </div>
                       ) : (
