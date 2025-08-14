@@ -60,6 +60,7 @@ import {
 import * as animalApi from "@/lib/animal-api";
 import AnimalForm from "@/components/AnimalForm";
 import AnimalView from "@/components/AnimalView";
+import BulkHealthRecordsManager from "@/components/BulkHealthRecordsManager";
 
 export default function AnimalTracker() {
   const [animals, setAnimals] = useState<AnimalRecord[]>([]);
@@ -492,6 +493,8 @@ export default function AnimalTracker() {
                     />
                   </DialogContent>
                 </Dialog>
+
+                <BulkHealthRecordsManager animals={animals} />
 
                 <ExportCSVButton
                   data={filteredAnimals}
