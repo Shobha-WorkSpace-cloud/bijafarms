@@ -318,7 +318,7 @@ export default function BreedingManager({
       });
 
       // Refresh breeding records and keep dialog open to show updated history
-      await loadBreedingRecords();
+      await loadBreedingRecords(true);
       resetForm();
       onUpdateAnimals();
 
