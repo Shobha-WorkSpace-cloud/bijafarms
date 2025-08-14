@@ -392,6 +392,38 @@ export default function BreedingHistory() {
     complications: record.complications || "",
   }));
 
+  const handleViewRecord = (record: BreedingRecord) => {
+    setSelectedRecord(record);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleEditRecord = (record: BreedingRecord) => {
+    setEditingRecord({ ...record });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateRecord = async () => {
+    if (!editingRecord) return;
+
+    try {
+      await animalApi.updateBreedingRecord(editingRecord.id, editingRecord);
+      toast({
+        title: "Success",
+        description: "Breeding record updated successfully.",
+      });
+      setIsEditDialogOpen(false);
+      setEditingRecord(null);
+      await loadData(); // Refresh the data
+    } catch (error) {
+      console.error("Error updating breeding record:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update breeding record. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
