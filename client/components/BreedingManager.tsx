@@ -124,9 +124,13 @@ export default function BreedingManager({
     }
   }, [isDialogOpen, mother.id]);
 
-  const loadBreedingRecords = async () => {
+  const loadBreedingRecords = async (isRefresh = false) => {
     try {
-      setLoading(true);
+      if (isRefresh) {
+        setRefreshingHistory(true);
+      } else {
+        setLoading(true);
+      }
       const records = await animalApi.fetchBreedingRecords(mother.id);
       setBreedingRecords(records);
     } catch (error) {
@@ -137,7 +141,11 @@ export default function BreedingManager({
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      if (isRefresh) {
+        setRefreshingHistory(false);
+      } else {
+        setLoading(false);
+      }
     }
   };
 
