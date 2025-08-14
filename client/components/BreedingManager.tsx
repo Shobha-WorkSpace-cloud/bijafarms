@@ -308,10 +308,11 @@ export default function BreedingManager({
         description: `Breeding record created with ${formData.kids.length} kids. ${newAnimalIds.length} new animal records created.`,
       });
 
+      // Refresh breeding records first, then close dialog
+      await loadBreedingRecords();
       setIsDialogOpen(false);
       resetForm();
       onUpdateAnimals();
-      loadBreedingRecords();
     } catch (error) {
       console.error("Error creating breeding record:", error);
       toast({
