@@ -61,6 +61,7 @@ import * as animalApi from "@/lib/animal-api";
 import AnimalForm from "@/components/AnimalForm";
 import AnimalView from "@/components/AnimalView";
 import BulkHealthRecordsManager from "@/components/BulkHealthRecordsManager";
+import HealthRecordsOverview from "@/components/HealthRecordsOverview";
 
 export default function AnimalTracker() {
   const [animals, setAnimals] = useState<AnimalRecord[]>([]);
@@ -503,6 +504,22 @@ export default function AnimalTracker() {
                 />
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Health Records Management Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Stethoscope className="h-5 w-5 text-green-600" />
+              Health Records Management
+            </CardTitle>
+            <CardDescription>
+              Manage health records for all animals in your livestock
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <HealthRecordsOverview animals={animals} />
           </CardContent>
         </Card>
 
