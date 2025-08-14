@@ -423,7 +423,7 @@ export default function BreedingManager({
                             {record.maleKids !== undefined &&
                               record.femaleKids !== undefined && (
                                 <p>
-                                  <strong>Gender:</strong> {record.maleKids}♂ /{" "}
+                                  <strong>Gender:</strong> {record.maleKids}�� /{" "}
                                   {record.femaleKids}♀
                                 </p>
                               )}
@@ -562,25 +562,32 @@ export default function BreedingManager({
                     </Button>
                   </div>
 
-                  {formData.kids.map((kid, index) => (
-                    <Card key={index} className="border-blue-200">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center justify-between">
-                          <CardTitle className="text-sm">
-                            Kid #{index + 1}
-                          </CardTitle>
-                          {formData.kids.length > 1 && (
-                            <Button
-                              type="button"
-                              onClick={() => removeKid(index)}
-                              size="sm"
-                              variant="outline"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </CardHeader>
+                  <ScrollArea className="max-h-96 pr-2">
+                    <div className="space-y-3">
+                      {formData.kids.map((kid, index) => (
+                        <Card key={index} className="border-pink-200 bg-pink-50/30">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-center justify-between">
+                              <CardTitle className="text-sm flex items-center gap-2">
+                                <Baby className="h-4 w-4 text-pink-600" />
+                                Kid #{index + 1}
+                                {kid.name && (
+                                  <span className="text-pink-600 font-normal">- {kid.name}</span>
+                                )}
+                              </CardTitle>
+                              {formData.kids.length > 1 && (
+                                <Button
+                                  type="button"
+                                  onClick={() => removeKid(index)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              )}
+                            </div>
+                          </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           <div className="space-y-2">
@@ -691,10 +698,12 @@ export default function BreedingManager({
                               Create animal record for this kid
                             </Label>
                           </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                          )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </div>
 
                 <Separator />
