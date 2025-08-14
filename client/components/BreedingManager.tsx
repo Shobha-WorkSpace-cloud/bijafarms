@@ -85,7 +85,7 @@ export default function BreedingManager({
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<BreedingFormData>({
-    fatherId: "",
+    fatherId: "unknown",
     breedingDate: "",
     expectedDeliveryDate: "",
     actualDeliveryDate: new Date().toISOString().split("T")[0],
@@ -205,7 +205,7 @@ export default function BreedingManager({
       // Create breeding record
       const breedingRecord = await animalApi.createBreedingRecord({
         motherId: mother.id,
-        fatherId: formData.fatherId || undefined,
+        fatherId: formData.fatherId !== "unknown" ? formData.fatherId : undefined,
         breedingDate: formData.breedingDate || formData.actualDeliveryDate,
         expectedDeliveryDate: formData.expectedDeliveryDate || undefined,
         actualDeliveryDate: formData.actualDeliveryDate,
@@ -240,7 +240,7 @@ export default function BreedingManager({
               currentWeight: kid.weight ? parseFloat(kid.weight) : undefined,
               markings: kid.markings || undefined,
               motherId: mother.id,
-              fatherId: formData.fatherId || undefined,
+              fatherId: formData.fatherId !== "unknown" ? formData.fatherId : undefined,
               breedingRecordId: breedingRecord.id,
               offspring: [],
               insured: false,
@@ -268,7 +268,7 @@ export default function BreedingManager({
       }
 
       // Update father's offspring list if father is selected
-      if (formData.fatherId && newAnimalIds.length > 0) {
+      if (formData.fatherId !== "unknown" && formData.fatherId && newAnimalIds.length > 0) {
         try {
           const father = allAnimals.find((a) => a.id === formData.fatherId);
           if (father) {
@@ -307,7 +307,7 @@ export default function BreedingManager({
 
   const resetForm = () => {
     setFormData({
-      fatherId: "",
+      fatherId: "unknown",
       breedingDate: "",
       expectedDeliveryDate: "",
       actualDeliveryDate: new Date().toISOString().split("T")[0],
@@ -433,7 +433,7 @@ export default function BreedingManager({
                           <SelectValue placeholder="Select father" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Unknown/No Record</SelectItem>
+                          <SelectItem value="unknown">Unknown/No Record</SelectItem>
                           {maleAnimals.map((male) => (
                             <SelectItem key={male.id} value={male.id}>
                               {male.name} ({male.breed})
