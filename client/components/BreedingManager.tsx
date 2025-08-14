@@ -403,7 +403,17 @@ export default function BreedingManager({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(90vh-120px)]">
           {/* Breeding History */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Breeding History</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-pink-600" />
+                Breeding History
+              </h3>
+              {breedingRecords.length > 0 && (
+                <Badge className="bg-pink-100 text-pink-800">
+                  {breedingRecords.length} record{breedingRecords.length !== 1 ? 's' : ''}
+                </Badge>
+              )}
+            </div>
             <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px] border rounded-md p-3">
               {loading ? (
                 <div className="text-center py-8">
