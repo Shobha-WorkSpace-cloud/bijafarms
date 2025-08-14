@@ -235,7 +235,7 @@ export default function MainPage() {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           {/* Expense Tracker Card */}
           <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-green-200 hover:border-green-300 bg-white/90 backdrop-blur-sm">
             <CardHeader className="pb-4">
@@ -517,6 +517,16 @@ export default function MainPage() {
                         ? `${animalStats.totalAnimals} active animals (excluding sold/dead)`
                         : "No animals found - add your first livestock!"}
                     </span>
+                    {animalStats.totalAnimals > 0 && (
+                      <div className="mt-2">
+                        <Link
+                          to="/breeding-history"
+                          className="text-xs text-pink-600 hover:text-pink-700 underline font-medium"
+                        >
+                          📋 View Breeding History
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -525,69 +535,6 @@ export default function MainPage() {
                 <Link to="/animal-tracker">
                   <Button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium py-3">
                     Open Animal Tracker
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Breeding History Card */}
-          <Card className="group hover:shadow-xl transition-all duration-300 border-2 border-green-200 hover:border-green-300 bg-white/90 backdrop-blur-sm">
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="p-3 bg-gradient-to-br from-pink-500 to-pink-600 rounded-lg">
-                    <Baby className="h-8 w-8 text-white" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl text-slate-800">
-                      Breeding History
-                    </CardTitle>
-                    <CardDescription className="text-slate-600 mt-1">
-                      Track breeding records and offspring
-                    </CardDescription>
-                  </div>
-                </div>
-                <ChevronRight className="h-6 w-6 text-slate-400 group-hover:text-slate-600 transition-colors" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="bg-gradient-to-r from-pink-50 to-rose-50 p-4 rounded-lg border border-pink-200">
-                <h4 className="font-semibold text-pink-800 mb-3">
-                  Breeding Management:
-                </h4>
-                <div className="space-y-3">
-                  <div className="bg-white/60 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-pink-700 mb-1">
-                      <Baby className="h-4 w-4" />
-                      <span className="text-xs font-medium">Track Offspring</span>
-                    </div>
-                    <div className="text-sm text-pink-800">
-                      Monitor births and breeding success
-                    </div>
-                  </div>
-                  <div className="bg-white/60 p-3 rounded-lg">
-                    <div className="flex items-center space-x-2 text-pink-700 mb-1">
-                      <Heart className="h-4 w-4" />
-                      <span className="text-xs font-medium">Breeding Records</span>
-                    </div>
-                    <div className="text-sm text-pink-800">
-                      Complete breeding history and analytics
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-3 pt-3 border-t border-pink-200 text-center">
-                  <span className="text-xs text-pink-600">
-                    Comprehensive livestock breeding management
-                  </span>
-                </div>
-              </div>
-
-              <div className="pt-4">
-                <Link to="/breeding-history">
-                  <Button className="w-full bg-gradient-to-r from-pink-600 to-pink-700 hover:from-pink-700 hover:to-pink-800 text-white font-medium py-3">
-                    Open Breeding History
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
