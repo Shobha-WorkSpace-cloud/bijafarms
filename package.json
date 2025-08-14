@@ -16,13 +16,11 @@
     "build": "npm run build:client",
     "build:client": "vite build",
     "start": "vite preview",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build --mode gh-pages",
     "deploy": "gh-pages -d dist",
 
     "format.fix": "prettier --write .",
-    "typecheck": "tsc",
-    "dev:fullstack": "concurrently \"npm run dev:backend\" \"npm run dev\"",
-    "dev:backend": "cd backend && npm run dev"
+    "typecheck": "tsc"
   },
   "dependencies": {
     "react-is": "^18.3.1",
