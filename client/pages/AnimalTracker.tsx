@@ -526,14 +526,20 @@ export default function AnimalTracker() {
                     Health Records Management
                   </CardTitle>
                   <CardDescription>
-                    Manage health records for all animals in your livestock
-                  </CardDescription>
+                  Manage health records for all animals in your livestock
+                  {!isHealthSectionExpanded && (
+                    <span className="ml-2 text-xs text-blue-600 font-medium">
+                      (Click to expand)
+                    </span>
+                  )}
+                </CardDescription>
                 </div>
                 <Collapsible.Trigger asChild>
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-gray-500 hover:text-gray-700 transition-transform duration-200"
+                    className="text-gray-500 hover:text-gray-700 transition-all duration-200 hover:bg-gray-100 rounded-md p-2"
+                    title={isHealthSectionExpanded ? "Minimize section" : "Expand section"}
                   >
                     {isHealthSectionExpanded ? (
                       <ChevronUp className="h-4 w-4" />
