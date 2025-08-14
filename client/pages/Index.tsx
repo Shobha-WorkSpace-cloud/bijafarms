@@ -61,6 +61,8 @@ import { ClearCacheButton } from "@/components/ClearCacheButton";
 import { CategoryManager } from "@/components/CategoryManager";
 
 import { useToast } from "@/hooks/use-toast";
+import { ExportDropdown } from "@/components/ExportButton";
+import { createExpenseExportConfig } from "@/lib/export-configs";
 import * as api from "@/lib/api";
 
 export default function Index() {
