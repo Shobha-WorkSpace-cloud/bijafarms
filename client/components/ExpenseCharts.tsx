@@ -363,7 +363,10 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
                   </SelectTrigger>
                   <SelectContent>
                     {subCategoryData.map((categoryData) => (
-                      <SelectItem key={categoryData.category} value={categoryData.category}>
+                      <SelectItem
+                        key={categoryData.category}
+                        value={categoryData.category}
+                      >
                         {categoryData.category}
                       </SelectItem>
                     ))}
@@ -372,120 +375,135 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
               </div>
 
               {/* Selected Category Breakdown */}
-              {selectedCategory && (() => {
-                const categoryData = subCategoryData.find(
-                  (data) => data.category === selectedCategory
-                );
+              {selectedCategory &&
+                (() => {
+                  const categoryData = subCategoryData.find(
+                    (data) => data.category === selectedCategory,
+                  );
 
-                if (!categoryData) return null;
+                  if (!categoryData) return null;
 
-                const totalCategoryAmount = categoryData.subCategories.reduce(
-                  (sum, sub) => sum + sub.amount,
-                  0,
-                );
+                  const totalCategoryAmount = categoryData.subCategories.reduce(
+                    (sum, sub) => sum + sub.amount,
+                    0,
+                  );
 
-                return (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-semibold text-slate-800 text-lg">
-                        {categoryData.category}
-                      </h4>
-                      <span className="text-lg text-slate-600 font-medium">
-                        {formatCurrency(totalCategoryAmount)}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Pie Chart */}
-                      <div>
-                        <ResponsiveContainer width="100%" height={350}>
-                          <PieChart>
-                            <Pie
-                              data={categoryData.subCategories}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              label={({ subCategory, amount }) => {
-                                const percentage = (amount / totalCategoryAmount) * 100;
-                                return percentage > 5 ? `${subCategory} ${percentage.toFixed(0)}%` : '';
-                              }}
-                              outerRadius={120}
-                              fill="#8884d8"
-                              dataKey="amount"
-                            >
-                              {categoryData.subCategories.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.fill} />
-                              ))}
-                            </Pie>
-                            <Tooltip
-                              formatter={(value: number, name: string) => [
-                                formatCurrency(value),
-                                "Amount",
-                              ]}
-                              labelFormatter={(label) => `${label}`}
-                              contentStyle={{
-                                backgroundColor: "white",
-                                border: "1px solid #ccc",
-                                borderRadius: "8px",
-                                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                              }}
-                            />
-                          </PieChart>
-                        </ResponsiveContainer>
+                  return (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-slate-800 text-lg">
+                          {categoryData.category}
+                        </h4>
+                        <span className="text-lg text-slate-600 font-medium">
+                          {formatCurrency(totalCategoryAmount)}
+                        </span>
                       </div>
 
-                      {/* Legend and Details */}
-                      <div className="space-y-3">
-                        <h5 className="font-medium text-slate-700 text-sm uppercase tracking-wider">
-                          Sub-Category Breakdown
-                        </h5>
-                        <div className="space-y-2 max-h-80 overflow-y-auto">
-                          {categoryData.subCategories
-                            .sort((a, b) => b.amount - a.amount)
-                            .map((sub, index) => {
-                              const percentage = (sub.amount / totalCategoryAmount) * 100;
-                              return (
-                                <div
-                                  key={sub.subCategory}
-                                  className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
-                                >
-                                  <div className="flex items-center space-x-3">
-                                    <div
-                                      className="w-4 h-4 rounded-full flex-shrink-0"
-                                      style={{ backgroundColor: sub.fill }}
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Pie Chart */}
+                        <div>
+                          <ResponsiveContainer width="100%" height={350}>
+                            <PieChart>
+                              <Pie
+                                data={categoryData.subCategories}
+                                cx="50%"
+                                cy="50%"
+                                labelLine={false}
+                                label={({ subCategory, amount }) => {
+                                  const percentage =
+                                    (amount / totalCategoryAmount) * 100;
+                                  return percentage > 5
+                                    ? `${subCategory} ${percentage.toFixed(0)}%`
+                                    : "";
+                                }}
+                                outerRadius={120}
+                                fill="#8884d8"
+                                dataKey="amount"
+                              >
+                                {categoryData.subCategories.map(
+                                  (entry, index) => (
+                                    <Cell
+                                      key={`cell-${index}`}
+                                      fill={entry.fill}
                                     />
-                                    <div className="min-w-0">
-                                      <div className="font-medium text-slate-800 text-sm truncate">
-                                        {sub.subCategory}
+                                  ),
+                                )}
+                              </Pie>
+                              <Tooltip
+                                formatter={(value: number, name: string) => [
+                                  formatCurrency(value),
+                                  "Amount",
+                                ]}
+                                labelFormatter={(label) => `${label}`}
+                                contentStyle={{
+                                  backgroundColor: "white",
+                                  border: "1px solid #ccc",
+                                  borderRadius: "8px",
+                                  boxShadow:
+                                    "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                                }}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+
+                        {/* Legend and Details */}
+                        <div className="space-y-3">
+                          <h5 className="font-medium text-slate-700 text-sm uppercase tracking-wider">
+                            Sub-Category Breakdown
+                          </h5>
+                          <div className="space-y-2 max-h-80 overflow-y-auto">
+                            {categoryData.subCategories
+                              .sort((a, b) => b.amount - a.amount)
+                              .map((sub, index) => {
+                                const percentage =
+                                  (sub.amount / totalCategoryAmount) * 100;
+                                return (
+                                  <div
+                                    key={sub.subCategory}
+                                    className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors"
+                                  >
+                                    <div className="flex items-center space-x-3">
+                                      <div
+                                        className="w-4 h-4 rounded-full flex-shrink-0"
+                                        style={{ backgroundColor: sub.fill }}
+                                      />
+                                      <div className="min-w-0">
+                                        <div className="font-medium text-slate-800 text-sm truncate">
+                                          {sub.subCategory}
+                                        </div>
+                                        <div className="text-xs text-slate-600">
+                                          {sub.count} transaction
+                                          {sub.count !== 1 ? "s" : ""}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="text-right">
+                                      <div className="font-semibold text-slate-800 text-sm">
+                                        {formatCurrency(sub.amount)}
                                       </div>
                                       <div className="text-xs text-slate-600">
-                                        {sub.count} transaction{sub.count !== 1 ? 's' : ''}
+                                        {percentage.toFixed(1)}%
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="text-right">
-                                    <div className="font-semibold text-slate-800 text-sm">
-                                      {formatCurrency(sub.amount)}
-                                    </div>
-                                    <div className="text-xs text-slate-600">
-                                      {percentage.toFixed(1)}%
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
+                                );
+                              })}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })()}
+                  );
+                })()}
 
               {!selectedCategory && (
                 <div className="text-center py-12 text-slate-500">
-                  <div className="text-lg font-medium mb-2">No category selected</div>
+                  <div className="text-lg font-medium mb-2">
+                    No category selected
+                  </div>
                   <div className="text-sm">
-                    Choose a category from the dropdown above to view its breakdown
+                    Choose a category from the dropdown above to view its
+                    breakdown
                   </div>
                 </div>
               )}
@@ -493,7 +511,6 @@ export function ExpenseCharts({ expenses }: ExpenseChartsProps) {
           </CardContent>
         </Card>
       )}
-
 
       {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
