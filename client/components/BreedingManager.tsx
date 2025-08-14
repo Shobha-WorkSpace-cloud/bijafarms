@@ -365,7 +365,7 @@ export default function BreedingManager({
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button className="bg-pink-600 hover:bg-pink-700">
-          <Baby className="h-4 w-4 mr-2" />
+          <Baby className="h-3 w-3 mr-2" />
           Add Kids
         </Button>
       </DialogTrigger>
