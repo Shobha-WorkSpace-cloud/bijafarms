@@ -42,6 +42,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -654,6 +655,9 @@ export default function AnimalTracker() {
         {viewingAnimal && (
           <Dialog open={true} onOpenChange={() => setViewingAnimal(null)}>
             <DialogContent className="max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+              <VisuallyHidden>
+                <DialogTitle>View Animal - {viewingAnimal.name}</DialogTitle>
+              </VisuallyHidden>
               <AnimalView
                 animal={viewingAnimal}
                 onEdit={() => {
