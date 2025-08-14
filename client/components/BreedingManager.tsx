@@ -384,7 +384,7 @@ export default function BreedingManager({
           {/* Breeding History */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Breeding History</h3>
-            <ScrollArea className="h-96 border rounded-md p-3">
+            <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px] border rounded-md p-3">
               {loading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin h-6 w-6 border-2 border-pink-600 border-t-transparent rounded-full mx-auto mb-2"></div>
