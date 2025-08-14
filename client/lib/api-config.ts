@@ -22,12 +22,12 @@ const getApiBaseUrl = (): string => {
   if (typeof window !== "undefined") {
     const hostname = window.location.hostname;
     if (hostname === "localhost" || hostname === "127.0.0.1") {
-      return "__MOCK_MODE__"; // Enable demo mode for development
+      return "__MOCK_MODE__";       // Enable demo mode for development
     }
   }
 
   // Use production API for GitHub Pages
-  return "__MOCK_MODE__";
+  return "https://bijafarms-api.onrender.com/api";
 };
 
 // API Configuration
