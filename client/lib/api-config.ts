@@ -116,22 +116,19 @@ export const apiCall = async (
     return response;
   } catch (error) {
     if (error instanceof DOMException && error.name === "TimeoutError") {
-      throw new ApiError(
-        "Request timeout",
-        408,
-        "The request took too long to complete",
-      );
+      // Auto-fallback to mock mode on timeout
+      console.warn("⚠️ Request timeout, falling back to mock mode");
+      enableDemoMode();
+      return getMockResponse(endpoint, options);
     }
     if (error instanceof ApiError) {
       throw error;
     }
 
-    console.error(`❌ Network Error for ${finalUrl}:`, error);
-    throw new ApiError(
-      "Network error",
-      0,
-      error instanceof Error ? error.message : "Unknown error",
-    );
+    // Auto-fallback to mock mode on network errors
+    console.warn("⚠️ Network error detected, falling back to mock mode:", error);
+    enableDemoMode();
+    return getMockResponse(endpoint, options);
   }
 };
 
