@@ -572,39 +572,13 @@ export default function Index() {
                     onCategoriesUpdate={handleCategoriesUpdate}
                   />
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 sm:flex-none"
-                      >
-                        <Download className="h-4 w-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Export</span>
-                        <ChevronDown className="h-4 w-4 sm:ml-2" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <ExportDropdown
-                        data={filteredExpenses}
-                        config={createExpenseExportConfig()}
-                        variant="dropdown"
-                        disabled={filteredExpenses.length === 0}
-                      />
-                      <DropdownMenuItem onClick={exportToCSV}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Export as CSV (Legacy)
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={exportToExcel}>
-                        <FileSpreadsheet className="mr-2 h-4 w-4" />
-                        Export as Excel
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={exportToJSON}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Export as JSON
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ExportDropdown
+                    data={filteredExpenses}
+                    config={createExpenseExportConfig()}
+                    disabled={filteredExpenses.length === 0}
+                    size="sm"
+                    className="flex-1 sm:flex-none"
+                  />
                 </div>
 
                 <Dialog
