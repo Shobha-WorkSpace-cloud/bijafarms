@@ -449,6 +449,10 @@ export default function BreedingManager({
               <Plus className="h-5 w-5 text-green-600" />
               Add New Birth Record
             </h3>
+            <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+              💡 <strong>Tip:</strong> Use this form to record new births and offspring.
+              You can add multiple kids per birth and choose to automatically create animal records for living offspring.
+            </p>
             <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px]">
               <form onSubmit={handleSubmit} className="space-y-4 pr-3">
                 {/* Breeding Details */}
