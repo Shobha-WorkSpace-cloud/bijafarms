@@ -99,11 +99,11 @@ export default function BreedingHistory() {
   const [stats, setStats] = useState<BreedingStats | null>(null);
   const [filters, setFilters] = useState<BreedingFilters>({
     search: "",
-    motherId: "",
-    fatherId: "",
-    method: "",
-    status: "",
-    year: "",
+    motherId: "all",
+    fatherId: "all",
+    method: "all",
+    status: "all",
+    year: "all",
     dateFrom: "",
     dateTo: "",
   });
@@ -161,25 +161,25 @@ export default function BreedingHistory() {
       });
     }
 
-    if (filters.motherId) {
+    if (filters.motherId && filters.motherId !== "all") {
       filtered = filtered.filter(
         (record) => record.motherId === filters.motherId,
       );
     }
 
-    if (filters.fatherId) {
+    if (filters.fatherId && filters.fatherId !== "all") {
       filtered = filtered.filter(
         (record) => record.fatherId === filters.fatherId,
       );
     }
 
-    if (filters.method) {
+    if (filters.method && filters.method !== "all") {
       filtered = filtered.filter(
         (record) => record.breedingMethod === filters.method,
       );
     }
 
-    if (filters.year) {
+    if (filters.year && filters.year !== "all") {
       filtered = filtered.filter((record) => {
         const year = new Date(
           record.actualDeliveryDate || record.breedingDate,
@@ -593,7 +593,7 @@ export default function BreedingHistory() {
                       <SelectValue placeholder="All mothers" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All mothers</SelectItem>
+                      <SelectItem value="all">All mothers</SelectItem>
                       {animals
                         .filter((a) => a.gender === "female")
                         .map((animal) => (
@@ -617,7 +617,7 @@ export default function BreedingHistory() {
                       <SelectValue placeholder="All fathers" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All fathers</SelectItem>
+                      <SelectItem value="all">All fathers</SelectItem>
                       {animals
                         .filter((a) => a.gender === "male")
                         .map((animal) => (
@@ -641,7 +641,7 @@ export default function BreedingHistory() {
                       <SelectValue placeholder="All methods" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All methods</SelectItem>
+                      <SelectItem value="all">All methods</SelectItem>
                       <SelectItem value="natural">Natural</SelectItem>
                       <SelectItem value="artificial_insemination">
                         AI
@@ -662,7 +662,7 @@ export default function BreedingHistory() {
                       <SelectValue placeholder="All years" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All years</SelectItem>
+                      <SelectItem value="all">All years</SelectItem>
                       {uniqueYears.map((year) => (
                         <SelectItem key={year} value={year.toString()}>
                           {year}
@@ -706,11 +706,11 @@ export default function BreedingHistory() {
                     onClick={() =>
                       setFilters({
                         search: "",
-                        motherId: "",
-                        fatherId: "",
-                        method: "",
-                        status: "",
-                        year: "",
+                        motherId: "all",
+                        fatherId: "all",
+                        method: "all",
+                        status: "all",
+                        year: "all",
                         dateFrom: "",
                         dateTo: "",
                       })
