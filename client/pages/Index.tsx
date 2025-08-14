@@ -585,9 +585,15 @@ export default function Index() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                      <ExportDropdown
+                        data={filteredExpenses}
+                        config={createExpenseExportConfig()}
+                        variant="dropdown"
+                        disabled={filteredExpenses.length === 0}
+                      />
                       <DropdownMenuItem onClick={exportToCSV}>
                         <FileText className="mr-2 h-4 w-4" />
-                        Export as CSV
+                        Export as CSV (Legacy)
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={exportToExcel}>
                         <FileSpreadsheet className="mr-2 h-4 w-4" />
