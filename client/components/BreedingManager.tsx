@@ -220,7 +220,8 @@ export default function BreedingManager({
     if (formData.kids.length === 0) {
       toast({
         title: "No Kids Added",
-        description: "Please click 'Add Kid' to add at least one offspring. For multiple births, click 'Add Kid' multiple times.",
+        description:
+          "Please click 'Add Kid' to add at least one offspring. For multiple births, click 'Add Kid' multiple times.",
         variant: "destructive",
       });
       return;
@@ -260,7 +261,9 @@ export default function BreedingManager({
         if (kid.createAnimalRecord && kid.status === "alive") {
           try {
             // Generate default name if none provided
-            const kidName = kid.name || `${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate).getFullYear()}`;
+            const kidName =
+              kid.name ||
+              `${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate).getFullYear()}`;
 
             const newAnimal = await animalApi.createAnimal({
               name: kidName,
@@ -515,18 +518,23 @@ export default function BreedingManager({
                   </p>
                   <ul className="text-sm space-y-1 text-gray-600">
                     <li>• Fill in the birth date (required)</li>
-                    <li><strong>• Click "Add Kid" button for EACH offspring born</strong></li>
-                    <li>• Names are optional - system will auto-generate if empty</li>
+                    <li>
+                      <strong>
+                        • Click "Add Kid" button for EACH offspring born
+                      </strong>
+                    </li>
+                    <li>
+                      • Names are optional - system will auto-generate if empty
+                    </li>
                     <li>
                       • Check "Create animal record" to automatically add live
                       kids to your livestock
                     </li>
                     <li>
-                      • You can add as many kids as needed - twins, triplets, etc.
+                      • You can add as many kids as needed - twins, triplets,
+                      etc.
                     </li>
-                    <li>
-                      • Use the red trash icon to remove any kid entries
-                    </li>
+                    <li>• Use the red trash icon to remove any kid entries</li>
                   </ul>
                 </div>
               </div>
@@ -629,7 +637,16 @@ export default function BreedingManager({
                     <h4 className="font-medium text-gray-900 flex items-center gap-2">
                       <Baby className="h-4 w-4 text-pink-600" />
                       Kids Information
-                      <Badge variant={formData.kids.length > 1 ? "default" : "secondary"} className={formData.kids.length > 1 ? "bg-green-100 text-green-800 text-xs" : "text-xs"}>
+                      <Badge
+                        variant={
+                          formData.kids.length > 1 ? "default" : "secondary"
+                        }
+                        className={
+                          formData.kids.length > 1
+                            ? "bg-green-100 text-green-800 text-xs"
+                            : "text-xs"
+                        }
+                      >
                         {formData.kids.length} Kid
                         {formData.kids.length !== 1 ? "s" : ""}
                         {formData.kids.length > 1 && " (Multiple Birth)"}
@@ -659,7 +676,8 @@ export default function BreedingManager({
                             Click "Add Kid" to record offspring details
                           </p>
                           <p className="text-pink-400 text-xs">
-                            💡 For multiple births (twins, triplets, etc.), click "Add Kid" multiple times
+                            💡 For multiple births (twins, triplets, etc.),
+                            click "Add Kid" multiple times
                           </p>
                         </div>
                       ) : (

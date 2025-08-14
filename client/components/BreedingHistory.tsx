@@ -115,10 +115,14 @@ export default function BreedingHistory() {
     dateFrom: "",
     dateTo: "",
   });
-  const [selectedRecord, setSelectedRecord] = useState<BreedingRecord | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<BreedingRecord | null>(
+    null,
+  );
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<BreedingRecord | null>(null);
+  const [editingRecord, setEditingRecord] = useState<BreedingRecord | null>(
+    null,
+  );
   const { toast } = useToast();
 
   useEffect(() => {
@@ -1136,23 +1140,40 @@ export default function BreedingHistory() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label className="text-sm font-medium">Mother</Label>
-                    <p className="mt-1">{getAnimalName(selectedRecord.motherId)}</p>
+                    <p className="mt-1">
+                      {getAnimalName(selectedRecord.motherId)}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Father</Label>
-                    <p className="mt-1">{getAnimalName(selectedRecord.fatherId)}</p>
+                    <p className="mt-1">
+                      {getAnimalName(selectedRecord.fatherId)}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Breeding Date</Label>
-                    <p className="mt-1">{selectedRecord.breedingDate ? formatDate(selectedRecord.breedingDate) : "Not recorded"}</p>
+                    <p className="mt-1">
+                      {selectedRecord.breedingDate
+                        ? formatDate(selectedRecord.breedingDate)
+                        : "Not recorded"}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Delivery Date</Label>
-                    <p className="mt-1">{selectedRecord.actualDeliveryDate ? formatDate(selectedRecord.actualDeliveryDate) : "Not delivered"}</p>
+                    <p className="mt-1">
+                      {selectedRecord.actualDeliveryDate
+                        ? formatDate(selectedRecord.actualDeliveryDate)
+                        : "Not delivered"}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Method</Label>
-                    <p className="mt-1">{selectedRecord.breedingMethod === "artificial_insemination" ? "Artificial Insemination" : "Natural"}</p>
+                    <p className="mt-1">
+                      {selectedRecord.breedingMethod ===
+                      "artificial_insemination"
+                        ? "Artificial Insemination"
+                        : "Natural"}
+                    </p>
                   </div>
                   <div>
                     <Label className="text-sm font-medium">Total Kids</Label>
@@ -1178,7 +1199,9 @@ export default function BreedingHistory() {
                 {selectedRecord.complications && (
                   <div>
                     <Label className="text-sm font-medium">Complications</Label>
-                    <p className="mt-1 text-red-600">{selectedRecord.complications}</p>
+                    <p className="mt-1 text-red-600">
+                      {selectedRecord.complications}
+                    </p>
                   </div>
                 )}
 
@@ -1189,23 +1212,39 @@ export default function BreedingHistory() {
                   </div>
                 )}
 
-                {selectedRecord.kidDetails && selectedRecord.kidDetails.length > 0 && (
-                  <div>
-                    <Label className="text-sm font-medium">Kid Details</Label>
-                    <div className="mt-2 space-y-2">
-                      {selectedRecord.kidDetails.map((kid, index) => (
-                        <div key={index} className="border rounded p-3 bg-gray-50">
-                          <div className="grid grid-cols-2 gap-2 text-sm">
-                            <div><strong>Name:</strong> {kid.name || `Kid ${index + 1}`}</div>
-                            <div><strong>Gender:</strong> {kid.gender}</div>
-                            <div><strong>Weight:</strong> {kid.weight ? `${kid.weight} kg` : "Not recorded"}</div>
-                            <div><strong>Status:</strong> {kid.status}</div>
+                {selectedRecord.kidDetails &&
+                  selectedRecord.kidDetails.length > 0 && (
+                    <div>
+                      <Label className="text-sm font-medium">Kid Details</Label>
+                      <div className="mt-2 space-y-2">
+                        {selectedRecord.kidDetails.map((kid, index) => (
+                          <div
+                            key={index}
+                            className="border rounded p-3 bg-gray-50"
+                          >
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <strong>Name:</strong>{" "}
+                                {kid.name || `Kid ${index + 1}`}
+                              </div>
+                              <div>
+                                <strong>Gender:</strong> {kid.gender}
+                              </div>
+                              <div>
+                                <strong>Weight:</strong>{" "}
+                                {kid.weight
+                                  ? `${kid.weight} kg`
+                                  : "Not recorded"}
+                              </div>
+                              <div>
+                                <strong>Status:</strong> {kid.status}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
               </div>
             )}
           </DialogContent>
@@ -1228,7 +1267,9 @@ export default function BreedingHistory() {
                     <Select
                       value={editingRecord.motherId}
                       onValueChange={(value) =>
-                        setEditingRecord(prev => prev ? { ...prev, motherId: value } : null)
+                        setEditingRecord((prev) =>
+                          prev ? { ...prev, motherId: value } : null,
+                        )
                       }
                     >
                       <SelectTrigger>
@@ -1251,17 +1292,24 @@ export default function BreedingHistory() {
                     <Select
                       value={editingRecord.fatherId || "unknown"}
                       onValueChange={(value) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          fatherId: value === "unknown" ? undefined : value
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                fatherId:
+                                  value === "unknown" ? undefined : value,
+                              }
+                            : null,
+                        )
                       }
                     >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="unknown">Unknown/No Record</SelectItem>
+                        <SelectItem value="unknown">
+                          Unknown/No Record
+                        </SelectItem>
                         {animals
                           .filter((a) => a.gender === "male")
                           .map((animal) => (
@@ -1279,7 +1327,11 @@ export default function BreedingHistory() {
                       type="date"
                       value={editingRecord.breedingDate}
                       onChange={(e) =>
-                        setEditingRecord(prev => prev ? { ...prev, breedingDate: e.target.value } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? { ...prev, breedingDate: e.target.value }
+                            : null,
+                        )
                       }
                     />
                   </div>
@@ -1290,10 +1342,15 @@ export default function BreedingHistory() {
                       type="date"
                       value={editingRecord.expectedDeliveryDate || ""}
                       onChange={(e) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          expectedDeliveryDate: e.target.value || undefined
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                expectedDeliveryDate:
+                                  e.target.value || undefined,
+                              }
+                            : null,
+                        )
                       }
                     />
                   </div>
@@ -1304,10 +1361,14 @@ export default function BreedingHistory() {
                       type="date"
                       value={editingRecord.actualDeliveryDate || ""}
                       onChange={(e) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          actualDeliveryDate: e.target.value || undefined
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                actualDeliveryDate: e.target.value || undefined,
+                              }
+                            : null,
+                        )
                       }
                     />
                   </div>
@@ -1317,10 +1378,16 @@ export default function BreedingHistory() {
                     <Select
                       value={editingRecord.breedingMethod || "natural"}
                       onValueChange={(value) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          breedingMethod: value as "natural" | "artificial_insemination"
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                breedingMethod: value as
+                                  | "natural"
+                                  | "artificial_insemination",
+                              }
+                            : null,
+                        )
                       }
                     >
                       <SelectTrigger>
@@ -1328,7 +1395,9 @@ export default function BreedingHistory() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="natural">Natural</SelectItem>
-                        <SelectItem value="artificial_insemination">Artificial Insemination</SelectItem>
+                        <SelectItem value="artificial_insemination">
+                          Artificial Insemination
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1340,10 +1409,16 @@ export default function BreedingHistory() {
                       min="0"
                       value={editingRecord.totalKids || ""}
                       onChange={(e) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          totalKids: e.target.value ? parseInt(e.target.value) : undefined
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                totalKids: e.target.value
+                                  ? parseInt(e.target.value)
+                                  : undefined,
+                              }
+                            : null,
+                        )
                       }
                     />
                   </div>
@@ -1355,10 +1430,16 @@ export default function BreedingHistory() {
                       min="0"
                       value={editingRecord.maleKids || ""}
                       onChange={(e) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          maleKids: e.target.value ? parseInt(e.target.value) : undefined
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                maleKids: e.target.value
+                                  ? parseInt(e.target.value)
+                                  : undefined,
+                              }
+                            : null,
+                        )
                       }
                     />
                   </div>
@@ -1370,10 +1451,16 @@ export default function BreedingHistory() {
                       min="0"
                       value={editingRecord.femaleKids || ""}
                       onChange={(e) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          femaleKids: e.target.value ? parseInt(e.target.value) : undefined
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                femaleKids: e.target.value
+                                  ? parseInt(e.target.value)
+                                  : undefined,
+                              }
+                            : null,
+                        )
                       }
                     />
                   </div>
@@ -1383,10 +1470,14 @@ export default function BreedingHistory() {
                     <Input
                       value={editingRecord.veterinarianName || ""}
                       onChange={(e) =>
-                        setEditingRecord(prev => prev ? {
-                          ...prev,
-                          veterinarianName: e.target.value || undefined
-                        } : null)
+                        setEditingRecord((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                veterinarianName: e.target.value || undefined,
+                              }
+                            : null,
+                        )
                       }
                       placeholder="Veterinarian name"
                     />
@@ -1398,10 +1489,14 @@ export default function BreedingHistory() {
                   <Textarea
                     value={editingRecord.complications || ""}
                     onChange={(e) =>
-                      setEditingRecord(prev => prev ? {
-                        ...prev,
-                        complications: e.target.value || undefined
-                      } : null)
+                      setEditingRecord((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              complications: e.target.value || undefined,
+                            }
+                          : null,
+                      )
                     }
                     placeholder="Any complications during breeding or delivery"
                     rows={3}
@@ -1413,10 +1508,14 @@ export default function BreedingHistory() {
                   <Textarea
                     value={editingRecord.notes || ""}
                     onChange={(e) =>
-                      setEditingRecord(prev => prev ? {
-                        ...prev,
-                        notes: e.target.value || undefined
-                      } : null)
+                      setEditingRecord((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              notes: e.target.value || undefined,
+                            }
+                          : null,
+                      )
                     }
                     placeholder="Additional notes"
                     rows={3}
@@ -1431,9 +1530,7 @@ export default function BreedingHistory() {
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleUpdateRecord}>
-                    Update Record
-                  </Button>
+                  <Button onClick={handleUpdateRecord}>Update Record</Button>
                 </div>
               </div>
             )}
