@@ -208,10 +208,19 @@ export default function BreedingManager({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.actualDeliveryDate || formData.kids.length === 0) {
+    if (!formData.actualDeliveryDate) {
       toast({
-        title: "Error",
-        description: "Please fill in delivery date and add at least one kid.",
+        title: "Birth Date Required",
+        description: "Please select the birth date before saving the record.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (formData.kids.length === 0) {
+      toast({
+        title: "No Kids Added",
+        description: "Please click 'Add Kid' to add at least one offspring. For multiple births, click 'Add Kid' multiple times.",
         variant: "destructive",
       });
       return;
