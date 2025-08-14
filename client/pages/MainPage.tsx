@@ -28,16 +28,22 @@ import {
 import { ExpenseRecord } from "@shared/expense-types";
 import * as api from "@/lib/api";
 import { Task, fetchTasks } from "@/lib/task-api";
-import { AnimalRecord, fetchAnimals } from "@/lib/animal-api";
+import {
+  AnimalRecord,
+  fetchAnimals,
+  fetchBreedingRecords,
+} from "@/lib/animal-api";
 import { getApiConfig } from "@/lib/api-config";
 
 export default function MainPage() {
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [animals, setAnimals] = useState<AnimalRecord[]>([]);
+  const [hasBreedingData, setHasBreedingData] = useState(false);
   const [loading, setLoading] = useState(true);
   const [tasksLoading, setTasksLoading] = useState(true);
   const [animalsLoading, setAnimalsLoading] = useState(true);
+  const [breedingLoading, setBreedingLoading] = useState(true);
   const [stats, setStats] = useState({
     totalIncome: 0,
     totalExpenses: 0,
@@ -153,9 +159,22 @@ export default function MainPage() {
       }
     };
 
+    const loadBreedingData = async () => {
+      try {
+        const breedingRecords = await fetchBreedingRecords();
+        setHasBreedingData(breedingRecords.length > 0);
+      } catch (error) {
+        console.error("Error loading breeding data:", error);
+        setHasBreedingData(false);
+      } finally {
+        setBreedingLoading(false);
+      }
+    };
+
     loadStats();
     loadTasks();
     loadAnimals();
+    loadBreedingData();
   }, []);
 
   const formatCurrency = (amount: number) => {
@@ -517,16 +536,18 @@ export default function MainPage() {
                         ? `${animalStats.totalAnimals} active animals (excluding sold/dead)`
                         : "No animals found - add your first livestock!"}
                     </span>
-                    {animalStats.totalAnimals > 0 && (
-                      <div className="mt-2">
-                        <Link
-                          to="/breeding-history"
-                          className="text-xs text-pink-600 hover:text-pink-700 underline font-medium"
-                        >
-                          📋 View Breeding History
-                        </Link>
-                      </div>
-                    )}
+                    {animalStats.totalAnimals > 0 &&
+                      hasBreedingData &&
+                      !breedingLoading && (
+                        <div className="mt-2">
+                          <Link
+                            to="/breeding-history"
+                            className="text-xs text-pink-600 hover:text-pink-700 underline font-medium"
+                          >
+                            📋 View Breeding History
+                          </Link>
+                        </div>
+                      )}
                   </div>
                 </div>
               )}

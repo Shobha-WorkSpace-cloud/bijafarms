@@ -86,6 +86,8 @@ export default function AnimalTracker() {
   const [editingAnimal, setEditingAnimal] = useState<AnimalRecord | null>(null);
   const [viewingAnimal, setViewingAnimal] = useState<AnimalRecord | null>(null);
   const [isHealthSectionExpanded, setIsHealthSectionExpanded] = useState(true);
+  const [hasBreedingData, setHasBreedingData] = useState(false);
+  const [breedingLoading, setBreedingLoading] = useState(true);
   const { toast } = useToast();
 
   // Pagination for filtered animals
@@ -95,13 +97,15 @@ export default function AnimalTracker() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [animalsData, summaryData] = await Promise.all([
+        const [animalsData, summaryData, breedingRecords] = await Promise.all([
           animalApi.fetchAnimals(),
           animalApi.fetchAnimalSummary(),
+          animalApi.fetchBreedingRecords(),
         ]);
         setAnimals(animalsData);
         setFilteredAnimals(animalsData);
         setSummary(summaryData);
+        setHasBreedingData(breedingRecords.length > 0);
       } catch (error) {
         console.error("Error loading animal data:", error);
         toast({
@@ -111,6 +115,7 @@ export default function AnimalTracker() {
         });
       } finally {
         setLoading(false);
+        setBreedingLoading(false);
       }
     };
     loadData();
@@ -503,15 +508,17 @@ export default function AnimalTracker() {
 
                 <BulkHealthRecordsManager animals={animals} />
 
-                <Link to="/breeding-history">
-                  <Button
-                    variant="outline"
-                    className="bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100"
-                  >
-                    <Baby className="h-4 w-4 mr-2" />
-                    Breeding History
-                  </Button>
-                </Link>
+                {hasBreedingData && !breedingLoading && (
+                  <Link to="/breeding-history">
+                    <Button
+                      variant="outline"
+                      className="bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100"
+                    >
+                      <Baby className="h-4 w-4 mr-2" />
+                      Breeding History
+                    </Button>
+                  </Link>
+                )}
 
                 <ExportCSVButton
                   data={filteredAnimals}
