@@ -368,64 +368,6 @@ export default function WorkTracker() {
     }
   };
 
-  const handleExportTasks = () => {
-    try {
-      // Create CSV content
-      const headers = [
-        "Title",
-        "Description",
-        "Category",
-        "Task Type",
-        "Priority",
-        "Status",
-        "Due Date",
-        "Assigned To",
-        "Notes",
-        "Created Date",
-        "Completed Date"
-      ];
-
-      const csvContent = [
-        headers.join(","),
-        ...filteredTasks.map(task => [
-          `"${task.title.replace(/"/g, '""')}"`,
-          `"${(task.description || "").replace(/"/g, '""')}"`,
-          `"${task.category.replace("-", " ")}"`,
-          `"${task.taskType.replace("-", " ")}"`,
-          `"${task.priority}"`,
-          `"${task.status.replace("-", " ")}"`,
-          `"${task.dueDate}"`,
-          `"${task.assignedTo.replace(/"/g, '""')}"`,
-          `"${(task.notes || "").replace(/"/g, '""')}"`,
-          `"${new Date(task.createdAt).toLocaleDateString()}"`,
-          `"${task.completedAt ? new Date(task.completedAt).toLocaleDateString() : ""}"`
-        ].join(","))
-      ].join("\n");
-
-      // Create and download file
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-      const link = document.createElement("a");
-      const url = URL.createObjectURL(blob);
-      link.setAttribute("href", url);
-      link.setAttribute("download", `bija-tasks-${new Date().toISOString().split("T")[0]}.csv`);
-      link.style.visibility = "hidden";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      toast({
-        title: "Export Complete",
-        description: `Exported ${filteredTasks.length} tasks to CSV file`,
-      });
-    } catch (error) {
-      console.error("Error exporting tasks:", error);
-      toast({
-        title: "Export Failed",
-        description: "Failed to export tasks. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   const getTaskIcon = (taskType: Task["taskType"]) => {
     switch (taskType) {
