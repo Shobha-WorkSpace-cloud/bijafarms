@@ -78,6 +78,9 @@ export default function AnimalTracker() {
   const [viewingAnimal, setViewingAnimal] = useState<AnimalRecord | null>(null);
   const { toast } = useToast();
 
+  // Pagination for filtered animals
+  const animalsPagination = usePagination(filteredAnimals, 12);
+
   // Load animals and summary on component mount
   useEffect(() => {
     const loadData = async () => {
