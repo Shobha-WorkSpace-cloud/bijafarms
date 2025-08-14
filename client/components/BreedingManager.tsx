@@ -564,7 +564,14 @@ export default function BreedingManager({
 
                   <ScrollArea className="max-h-96 pr-2">
                     <div className="space-y-3">
-                      {formData.kids.map((kid, index) => (
+                      {formData.kids.length === 0 ? (
+                        <div className="text-center py-8 border-2 border-dashed border-pink-200 rounded-lg bg-pink-50/30">
+                          <Baby className="h-8 w-8 mx-auto mb-2 text-pink-400" />
+                          <p className="text-pink-600 font-medium mb-1">No kids added yet</p>
+                          <p className="text-pink-500 text-sm">Click "Add Kid" to record offspring details</p>
+                        </div>
+                      ) : (
+                        formData.kids.map((kid, index) => (
                         <Card key={index} className="border-pink-200 bg-pink-50/30">
                           <CardHeader className="pb-3">
                             <div className="flex items-center justify-between">
@@ -701,7 +708,8 @@ export default function BreedingManager({
                           )}
                           </CardContent>
                         </Card>
-                      ))}
+                        ))
+                      )}
                     </div>
                   </ScrollArea>
                 </div>
