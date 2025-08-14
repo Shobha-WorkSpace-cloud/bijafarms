@@ -504,6 +504,13 @@ export default function AnimalTracker() {
 
                 <BulkHealthRecordsManager animals={animals} />
 
+                <Link to="/breeding-history">
+                  <Button variant="outline" className="bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100">
+                    <Baby className="h-4 w-4 mr-2" />
+                    Breeding History
+                  </Button>
+                </Link>
+
                 <ExportCSVButton
                   data={filteredAnimals}
                   config={createAnimalExportConfig()}
