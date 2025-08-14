@@ -423,6 +423,26 @@ export default function BreedingManager({
         </DialogHeader>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(90vh-120px)]">
+         {/* Actions */}
+       
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="bg-pink-600 hover:bg-pink-700"
+          >
+            {submitting ? "Creating..." : "Create Birth Record"}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setIsDialogOpen(false)}
+            disabled={submitting}
+          >
+            Cancel
+          </Button>
+        </div>
+         <Separator />
           {/* Breeding History */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -509,36 +529,6 @@ export default function BreedingManager({
               <Plus className="h-5 w-5 text-green-600" />
               Add New Birth Record
             </h3>
-            <div className="text-sm text-gray-700 bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg border border-blue-200">
-              <div className="flex items-start gap-2">
-                <span className="text-lg">🐰</span>
-                <div>
-                  <p className="font-semibold text-blue-800 mb-2">
-                    How to Add Multiple Kids:
-                  </p>
-                  <ul className="text-sm space-y-1 text-gray-600">
-                    <li>• Fill in the birth date (required)</li>
-                    <li>
-                      <strong>
-                        • Click "Add Kid" button for EACH offspring born
-                      </strong>
-                    </li>
-                    <li>
-                      • Names are optional - system will auto-generate if empty
-                    </li>
-                    <li>
-                      • Check "Create animal record" to automatically add live
-                      kids to your livestock
-                    </li>
-                    <li>
-                      • You can add as many kids as needed - twins, triplets,
-                      etc.
-                    </li>
-                    <li>• Use the red trash icon to remove any kid entries</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
             <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px]">
               <form onSubmit={handleSubmit} className="space-y-4 pr-3">
                 {/* Breeding Details */}
@@ -895,25 +885,7 @@ export default function BreedingManager({
           </div>
         </div>
 
-        {/* Actions */}
-        <Separator />
-        <div className="flex gap-2">
-          <Button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="bg-pink-600 hover:bg-pink-700"
-          >
-            {submitting ? "Creating..." : "Create Birth Record"}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setIsDialogOpen(false)}
-            disabled={submitting}
-          >
-            Cancel
-          </Button>
-        </div>
+        
       </DialogContent>
     </Dialog>
   );
