@@ -28,7 +28,9 @@ const App = () => (
           <Route path="/" element={<MainPage />} />
           <Route path="/expense-tracker" element={<Index />} />
           <Route path="/work-tracker" element={<WorkTracker />} />
+          <Route path="/animals" element={<AnimalTracker />} />
           <Route path="/animal-tracker" element={<AnimalTracker />} />
+          <Route path="/breeding-history" element={<BreedingHistory />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
