@@ -617,7 +617,8 @@ export default function WorkTracker() {
                 </Select>
               </div>
 
-              <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+              <div className="flex gap-2">
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
                 <DialogTrigger asChild>
                   <Button className="bg-green-600 hover:bg-green-700">
                     <Plus className="h-4 w-4 mr-2" />
@@ -801,7 +802,17 @@ export default function WorkTracker() {
                     </div>
                   </div>
                 </DialogContent>
-              </Dialog>
+                </Dialog>
+
+                <Button
+                  variant="outline"
+                  onClick={handleExportTasks}
+                  disabled={filteredTasks.length === 0}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
