@@ -21,14 +21,12 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: "dist",
     rollupOptions: {
-      input: {
-        main: "index.html",
-      },
+      input: "index.html"
     },
     assetsInclude: ["**/*.js", "**/*.mjs"],
   },
   plugins: [react()],
-  base: mode === "gh-pages" ? "/bijafarms/" : "/",
+  base: mode === "production" || mode === "gh-pages" ? "/bijafarms/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
