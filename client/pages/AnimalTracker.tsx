@@ -18,6 +18,7 @@ import {
   Users,
   ChevronDown,
   ChevronUp,
+  Baby,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,6 +67,7 @@ import AnimalForm from "@/components/AnimalForm";
 import AnimalView from "@/components/AnimalView";
 import BulkHealthRecordsManager from "@/components/BulkHealthRecordsManager";
 import HealthRecordsOverview from "@/components/HealthRecordsOverview";
+import BreedingManager from "@/components/BreedingManager";
 
 export default function AnimalTracker() {
   const [animals, setAnimals] = useState<AnimalRecord[]>([]);
@@ -624,7 +626,7 @@ export default function AnimalTracker() {
                       )}
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Button
                         size="sm"
                         variant="outline"
@@ -639,6 +641,25 @@ export default function AnimalTracker() {
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
+                      {animal.gender === "female" && animal.status === "active" && (
+                        <BreedingManager
+                          mother={animal}
+                          allAnimals={animals}
+                          onUpdateAnimals={async () => {
+                            try {
+                              const [animalsData, summaryData] = await Promise.all([
+                                animalApi.fetchAnimals(),
+                                animalApi.fetchAnimalSummary(),
+                              ]);
+                              setAnimals(animalsData);
+                              setFilteredAnimals(animalsData);
+                              setSummary(summaryData);
+                            } catch (error) {
+                              console.error("Error refreshing animal data:", error);
+                            }
+                          }}
+                        />
+                      )}
                       <Button
                         size="sm"
                         variant="outline"
