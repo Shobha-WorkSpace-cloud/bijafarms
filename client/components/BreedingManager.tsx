@@ -371,7 +371,12 @@ export default function BreedingManager({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">
+        <Button
+          size="sm"
+          variant="outline"
+          className="bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100"
+          title="Breeding & Birth Records - Click to record new births and view breeding history"
+        >
           <Rabbit className="h-4 w-4" />
         </Button>
       </DialogTrigger>
