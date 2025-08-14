@@ -460,11 +460,20 @@ export default function BreedingManager({
               <Plus className="h-5 w-5 text-green-600" />
               Add New Birth Record
             </h3>
-            <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
-              💡 <strong>Tip:</strong> Use this form to record new births and
-              offspring. You can add multiple kids per birth and choose to
-              automatically create animal records for living offspring.
-            </p>
+            <div className="text-sm text-gray-700 bg-gradient-to-r from-blue-50 to-green-50 p-4 rounded-lg border border-blue-200">
+              <div className="flex items-start gap-2">
+                <span className="text-lg">🐰</span>
+                <div>
+                  <p className="font-semibold text-blue-800 mb-2">How to Add Birth Records:</p>
+                  <ul className="text-sm space-y-1 text-gray-600">
+                    <li>• Fill in the birth date (required)</li>
+                    <li>• Click "Add Kid" for each offspring born</li>
+                    <li>• Check "Create animal record" to automatically add live kids to your livestock</li>
+                    <li>• The breeding history will update immediately after saving</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
             <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px]">
               <form onSubmit={handleSubmit} className="space-y-4 pr-3">
                 {/* Breeding Details */}
