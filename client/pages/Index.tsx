@@ -61,6 +61,8 @@ import { ClearCacheButton } from "@/components/ClearCacheButton";
 import { CategoryManager } from "@/components/CategoryManager";
 
 import { useToast } from "@/hooks/use-toast";
+import { ExportDropdown } from "@/components/ExportButton";
+import { createExpenseExportConfig } from "@/lib/export-configs";
 import * as api from "@/lib/api";
 
 export default function Index() {
@@ -302,49 +304,6 @@ export default function Index() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const exportToCSV = () => {
-    const headers = [
-      "Date",
-      "Type",
-      "Description",
-      "Amount",
-      "Paid By",
-      "Category",
-      "Sub-Category",
-      "Source",
-      "Notes",
-    ];
-    const csvContent = [
-      headers.join(","),
-      ...filteredExpenses.map((expense) =>
-        [
-          expense.date,
-          expense.type,
-          `"${expense.description.replace(/"/g, '""')}"`,
-          expense.amount,
-          `"${expense.paidBy.replace(/"/g, '""')}"`,
-          `"${expense.category.replace(/"/g, '""')}"`,
-          `"${expense.subCategory.replace(/"/g, '""')}"`,
-          `"${expense.source.replace(/"/g, '""')}"`,
-          `"${expense.notes.replace(/"/g, '""')}"`,
-        ].join(","),
-      ),
-    ].join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `expenses_${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
-
-    toast({
-      title: "Export Complete",
-      description: `Successfully exported ${filteredExpenses.length} transactions to CSV`,
-    });
   };
 
   const exportToJSON = () => {
@@ -613,33 +572,13 @@ export default function Index() {
                     onCategoriesUpdate={handleCategoriesUpdate}
                   />
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 sm:flex-none"
-                      >
-                        <Download className="h-4 w-4 sm:mr-2" />
-                        <span className="hidden sm:inline">Export</span>
-                        <ChevronDown className="h-4 w-4 sm:ml-2" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={exportToCSV}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Export as CSV
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={exportToExcel}>
-                        <FileSpreadsheet className="mr-2 h-4 w-4" />
-                        Export as Excel
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={exportToJSON}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        Export as JSON
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ExportDropdown
+                    data={filteredExpenses}
+                    config={createExpenseExportConfig()}
+                    disabled={filteredExpenses.length === 0}
+                    size="sm"
+                    className="flex-1 sm:flex-none"
+                  />
                 </div>
 
                 <Dialog

@@ -45,6 +45,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { usePagination } from "@/hooks/use-pagination";
+import { Pagination } from "@/components/ui/pagination";
+import { ExportCSVButton } from "@/components/ExportButton";
+import { createAnimalExportConfig } from "@/lib/export-configs";
 import {
   AnimalRecord,
   AnimalFilters,
@@ -75,6 +79,9 @@ export default function AnimalTracker() {
   const [editingAnimal, setEditingAnimal] = useState<AnimalRecord | null>(null);
   const [viewingAnimal, setViewingAnimal] = useState<AnimalRecord | null>(null);
   const { toast } = useToast();
+
+  // Pagination for filtered animals
+  const animalsPagination = usePagination(filteredAnimals, 12);
 
   // Load animals and summary on component mount
   useEffect(() => {
@@ -485,102 +492,121 @@ export default function AnimalTracker() {
                     />
                   </DialogContent>
                 </Dialog>
+
+                <ExportCSVButton
+                  data={filteredAnimals}
+                  config={createAnimalExportConfig()}
+                  disabled={filteredAnimals.length === 0}
+                />
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Animals Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredAnimals.length === 0 ? (
-            <Card className="col-span-full">
-              <CardContent className="text-center py-12">
-                <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">No animals found</p>
-                <p className="text-gray-400">
-                  Try adjusting your filters or add a new animal.
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredAnimals.map((animal) => (
-              <Card
-                key={animal.id}
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{animal.name}</CardTitle>
-                      <CardDescription>
-                        {animal.breed} • {animal.type}
-                      </CardDescription>
-                    </div>
-                    <Badge className={getStatusColor(animal.status)}>
-                      {getStatusText(animal.status)}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div>
-                      <span className="text-gray-500">Gender:</span>
-                      <div className="font-medium capitalize">
-                        {animal.gender}
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Weight:</span>
-                      <div className="font-medium">
-                        {animal.currentWeight
-                          ? `${animal.currentWeight} kg`
-                          : "N/A"}
-                      </div>
-                    </div>
-                    {animal.purchasePrice && (
-                      <div>
-                        <span className="text-gray-500">Purchase:</span>
-                        <div className="font-medium">
-                          {formatCurrency(animal.purchasePrice)}
-                        </div>
-                      </div>
-                    )}
-                    {animal.salePrice && (
-                      <div>
-                        <span className="text-gray-500">Sale:</span>
-                        <div className="font-medium">
-                          {formatCurrency(animal.salePrice)}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setViewingAnimal(animal)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setEditingAnimal(animal)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleDeleteAnimal(animal.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredAnimals.length === 0 ? (
+              <Card className="col-span-full">
+                <CardContent className="text-center py-12">
+                  <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-500 text-lg">No animals found</p>
+                  <p className="text-gray-400">
+                    Try adjusting your filters or add a new animal.
+                  </p>
                 </CardContent>
               </Card>
-            ))
+            ) : (
+              animalsPagination.data.map((animal) => (
+                <Card
+                  key={animal.id}
+                  className="hover:shadow-lg transition-shadow"
+                >
+                  <CardHeader className="pb-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <CardTitle className="text-lg">{animal.name}</CardTitle>
+                        <CardDescription>
+                          {animal.breed} • {animal.type}
+                        </CardDescription>
+                      </div>
+                      <Badge className={getStatusColor(animal.status)}>
+                        {getStatusText(animal.status)}
+                      </Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">Gender:</span>
+                        <div className="font-medium capitalize">
+                          {animal.gender}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Weight:</span>
+                        <div className="font-medium">
+                          {animal.currentWeight
+                            ? `${animal.currentWeight} kg`
+                            : "N/A"}
+                        </div>
+                      </div>
+                      {animal.purchasePrice && (
+                        <div>
+                          <span className="text-gray-500">Purchase:</span>
+                          <div className="font-medium">
+                            {formatCurrency(animal.purchasePrice)}
+                          </div>
+                        </div>
+                      )}
+                      {animal.salePrice && (
+                        <div>
+                          <span className="text-gray-500">Sale:</span>
+                          <div className="font-medium">
+                            {formatCurrency(animal.salePrice)}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setViewingAnimal(animal)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditingAnimal(animal)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleDeleteAnimal(animal.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+
+          {filteredAnimals.length > 0 && (
+            <Pagination
+              currentPage={animalsPagination.pagination.page}
+              totalPages={animalsPagination.totalPages}
+              totalItems={animalsPagination.pagination.total}
+              pageSize={animalsPagination.pagination.pageSize}
+              onPageChange={animalsPagination.goToPage}
+              onPageSizeChange={animalsPagination.changePageSize}
+            />
           )}
         </div>
 
