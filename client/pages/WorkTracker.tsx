@@ -748,14 +748,11 @@ export default function WorkTracker() {
                 </DialogContent>
                 </Dialog>
 
-                <Button
-                  variant="outline"
-                  onClick={handleExportTasks}
+                <ExportCSVButton
+                  data={filteredTasks}
+                  config={createTaskExportConfig()}
                   disabled={filteredTasks.length === 0}
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export CSV
-                </Button>
+                />
               </div>
             </div>
           </CardContent>
