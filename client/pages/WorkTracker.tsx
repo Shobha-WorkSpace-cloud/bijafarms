@@ -827,18 +827,19 @@ export default function WorkTracker() {
           </TabsList>
 
           <TabsContent value="all">
-            <div className="grid gap-4">
-              {filteredTasks.length === 0 ? (
-                <Card>
-                  <CardContent className="p-8 text-center">
-                    <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">
-                      No tasks found. Add your first farm task!
-                    </p>
-                  </CardContent>
-                </Card>
-              ) : (
-                filteredTasks.map((task) => (
+            <div className="space-y-4">
+              <div className="grid gap-4">
+                {filteredTasks.length === 0 ? (
+                  <Card>
+                    <CardContent className="p-8 text-center">
+                      <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-600">
+                        No tasks found. Add your first farm task!
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  tasksPagination.data.map((task) => (
                   <Card
                     key={task.id}
                     className="hover:shadow-md transition-shadow"
@@ -941,7 +942,19 @@ export default function WorkTracker() {
                       </div>
                     </CardContent>
                   </Card>
-                ))
+                  ))
+                )}
+              </div>
+
+              {filteredTasks.length > 0 && (
+                <Pagination
+                  currentPage={tasksPagination.pagination.page}
+                  totalPages={tasksPagination.totalPages}
+                  totalItems={tasksPagination.pagination.total}
+                  pageSize={tasksPagination.pagination.pageSize}
+                  onPageChange={tasksPagination.goToPage}
+                  onPageSizeChange={tasksPagination.changePageSize}
+                />
               )}
             </div>
           </TabsContent>
