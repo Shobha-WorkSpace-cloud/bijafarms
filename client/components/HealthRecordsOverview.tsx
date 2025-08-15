@@ -34,6 +34,8 @@ import {
 import { AnimalRecord, HealthRecord } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
 import { useToast } from "@/hooks/use-toast";
+import { usePagination } from "@/hooks/use-pagination";
+import { Pagination } from "@/components/ui/pagination";
 
 interface HealthRecordsOverviewProps {
   animals: AnimalRecord[];
@@ -207,6 +209,19 @@ export default function HealthRecordsOverview({
 
   const stats = getHealthStats();
 
+  // Pagination for health records
+  const {
+    data: paginatedRecords,
+    pagination,
+    hasNextPage,
+    hasPreviousPage,
+    totalPages,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    changePageSize,
+  } = usePagination(filteredRecords, 10);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -368,9 +383,9 @@ export default function HealthRecordsOverview({
               </p>
             </div>
           ) : (
-            <ScrollArea className="h-96">
-              <div className="space-y-4 pr-3">
-                {filteredRecords.map((record) => {
+            <>
+              <div className="space-y-4 mb-6">
+                {paginatedRecords.map((record) => {
                   const typeInfo = getRecordTypeInfo(record.recordType);
                   const TypeIcon = typeInfo.icon;
 
@@ -485,7 +500,20 @@ export default function HealthRecordsOverview({
                   );
                 })}
               </div>
-            </ScrollArea>
+
+              {/* Pagination Controls */}
+              {filteredRecords.length > 0 && (
+                <Pagination
+                  currentPage={pagination.page}
+                  totalPages={totalPages}
+                  totalItems={pagination.total}
+                  pageSize={pagination.pageSize}
+                  onPageChange={goToPage}
+                  onPageSizeChange={changePageSize}
+                  pageSizeOptions={[5, 10, 20, 50]}
+                />
+              )}
+            </>
           )}
         </CardContent>
       </Card>
