@@ -401,6 +401,65 @@ export default function BreedingManager({
     return father ? father.name : "Unknown";
   };
 
+  const toggleRecordExpansion = (recordId: string) => {
+    setExpandedRecords(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(recordId)) {
+        newSet.delete(recordId);
+      } else {
+        newSet.add(recordId);
+      }
+      return newSet;
+    });
+  };
+
+  const startEditingKid = (recordId: string, kidIndex: number, kidData: any) => {
+    setEditingKid({ recordId, kidIndex });
+    setEditKidData({ ...kidData });
+  };
+
+  const cancelEditingKid = () => {
+    setEditingKid(null);
+    setEditKidData(null);
+  };
+
+  const saveKidEdit = async () => {
+    if (!editingKid || !editKidData) return;
+
+    try {
+      // Find the breeding record
+      const record = breedingRecords.find(r => r.id === editingKid.recordId);
+      if (!record || !record.kidDetails) return;
+
+      // Update the kid details
+      const updatedKidDetails = [...record.kidDetails];
+      updatedKidDetails[editingKid.kidIndex] = editKidData;
+
+      // Update the breeding record
+      await animalApi.updateBreedingRecord(editingKid.recordId, {
+        ...record,
+        kidDetails: updatedKidDetails,
+      });
+
+      // Refresh the records
+      await loadBreedingRecords(true);
+
+      toast({
+        title: "Kid Updated Successfully",
+        description: "Kid information has been updated.",
+      });
+
+      cancelEditingKid();
+    } catch (error) {
+      console.error("Error updating kid:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update kid information.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
