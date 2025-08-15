@@ -87,9 +87,7 @@ export default function KidForm({
             <Baby className="h-5 w-5 text-pink-600" />
             Add Kid #{kidNumber}
           </DialogTitle>
-          <DialogDescription>
-            Enter details for the new kid
-          </DialogDescription>
+          <DialogDescription>Enter details for the new kid</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -146,9 +144,9 @@ export default function KidForm({
             <Label htmlFor="status">Status</Label>
             <Select
               value={formData.status}
-              onValueChange={(value: "alive" | "stillborn" | "died_after_birth") =>
-                setFormData((prev) => ({ ...prev, status: value }))
-              }
+              onValueChange={(
+                value: "alive" | "stillborn" | "died_after_birth",
+              ) => setFormData((prev) => ({ ...prev, status: value }))}
             >
               <SelectTrigger>
                 <SelectValue />
@@ -156,7 +154,9 @@ export default function KidForm({
               <SelectContent>
                 <SelectItem value="alive">Alive</SelectItem>
                 <SelectItem value="stillborn">Stillborn</SelectItem>
-                <SelectItem value="died_after_birth">Died After Birth</SelectItem>
+                <SelectItem value="died_after_birth">
+                  Died After Birth
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
