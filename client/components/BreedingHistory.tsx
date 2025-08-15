@@ -36,6 +36,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Pagination } from "@/components/ui/pagination";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   BarChart,
   Bar,
@@ -66,9 +72,12 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { usePagination } from "@/hooks/use-pagination";
 import { ExportCSVButton } from "@/components/ExportButton";
 import {
   AnimalRecord,
