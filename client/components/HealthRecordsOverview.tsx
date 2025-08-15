@@ -16,6 +16,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Collapsible,
@@ -37,6 +46,10 @@ import {
   Heart,
   ChevronDown,
   ChevronRight,
+  Edit,
+  Trash2,
+  Save,
+  X,
 } from "lucide-react";
 import { AnimalRecord, HealthRecord } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
@@ -46,6 +59,19 @@ import { Pagination } from "@/components/ui/pagination";
 
 interface HealthRecordsOverviewProps {
   animals: AnimalRecord[];
+}
+
+interface HealthFormData {
+  recordType: string;
+  date: string;
+  description: string;
+  veterinarianName: string;
+  diagnosis: string;
+  treatment: string;
+  medications: string;
+  cost: string;
+  nextCheckupDate: string;
+  notes: string;
 }
 
 export default function HealthRecordsOverview({
@@ -58,6 +84,20 @@ export default function HealthRecordsOverview({
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [animalFilter, setAnimalFilter] = useState("all");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<(HealthRecord & { animalName: string; animalId: string }) | null>(null);
+  const [editFormData, setEditFormData] = useState<HealthFormData>({
+    recordType: "checkup",
+    date: new Date().toISOString().split("T")[0],
+    description: "",
+    veterinarianName: "",
+    diagnosis: "",
+    treatment: "",
+    medications: "",
+    cost: "",
+    nextCheckupDate: "",
+    notes: "",
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -257,6 +297,98 @@ export default function HealthRecordsOverview({
       }
       return newSet;
     });
+  };
+
+  const handleEditRecord = (record: HealthRecord & { animalName: string; animalId: string }) => {
+    setEditingRecord(record);
+    setEditFormData({
+      recordType: record.recordType,
+      date: record.date,
+      description: record.description,
+      veterinarianName: record.veterinarianName || "",
+      diagnosis: record.diagnosis || "",
+      treatment: record.treatment || "",
+      medications: record.medications || "",
+      cost: record.cost?.toString() || "",
+      nextCheckupDate: record.nextCheckupDate || "",
+      notes: record.notes || "",
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateRecord = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!editingRecord || !editFormData.recordType || !editFormData.date || !editFormData.description) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const updatedRecord = await animalApi.updateHealthRecord(editingRecord.id, {
+        ...editingRecord,
+        recordType: editFormData.recordType as "checkup" | "treatment" | "illness" | "injury" | "other",
+        date: editFormData.date,
+        description: editFormData.description,
+        veterinarianName: editFormData.veterinarianName || undefined,
+        diagnosis: editFormData.diagnosis || undefined,
+        treatment: editFormData.treatment || undefined,
+        medications: editFormData.medications || undefined,
+        cost: editFormData.cost ? parseFloat(editFormData.cost) : undefined,
+        nextCheckupDate: editFormData.nextCheckupDate || undefined,
+        notes: editFormData.notes || undefined,
+      });
+
+      setHealthRecords((prev) =>
+        prev.map((record) =>
+          record.id === editingRecord.id
+            ? { ...updatedRecord, animalName: editingRecord.animalName, animalId: editingRecord.animalId }
+            : record
+        )
+      );
+
+      setIsEditDialogOpen(false);
+      setEditingRecord(null);
+
+      toast({
+        title: "Success",
+        description: "Health record updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error updating health record:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update health record. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteRecord = async (record: HealthRecord & { animalName: string; animalId: string }) => {
+    if (!confirm("Are you sure you want to delete this health record?")) {
+      return;
+    }
+
+    try {
+      await animalApi.deleteHealthRecord(record.id);
+      setHealthRecords((prev) => prev.filter((r) => r.id !== record.id));
+
+      toast({
+        title: "Success",
+        description: "Health record deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting health record:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete health record. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Pagination for grouped records
@@ -519,12 +651,30 @@ export default function HealthRecordsOverview({
                                             </div>
                                           </div>
 
-                                          {record.cost && (
-                                            <div className="flex items-center gap-1 text-sm font-medium text-green-700">
-                                              <IndianRupee className="h-3 w-3" />
-                                              {formatCurrency(record.cost)}
-                                            </div>
-                                          )}
+                                          <div className="flex items-center gap-2">
+                                            {record.cost && (
+                                              <div className="flex items-center gap-1 text-sm font-medium text-green-700">
+                                                <IndianRupee className="h-3 w-3" />
+                                                {formatCurrency(record.cost)}
+                                              </div>
+                                            )}
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() => handleEditRecord(record)}
+                                              className="h-8 w-8 p-0"
+                                            >
+                                              <Edit className="h-3 w-3" />
+                                            </Button>
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() => handleDeleteRecord(record)}
+                                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                          </div>
                                         </div>
 
                                         {/* Details */}
