@@ -72,7 +72,6 @@ interface KidFormData {
   status: "alive" | "stillborn" | "died_after_birth";
   markings: string;
   notes: string;
-  createAnimalRecord: boolean;
 }
 
 interface BreedingFormData {
