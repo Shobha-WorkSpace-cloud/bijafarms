@@ -761,13 +761,15 @@ export default function BreedingManager({
                                                   )}
                                                   <Badge
                                                     variant={
-                                                      kid.status === "alive"
+                                                      kid.status === "active"
                                                         ? "default"
                                                         : "destructive"
                                                     }
                                                     className="text-xs px-1 py-0"
                                                   >
-                                                    {kid.status}
+                                                    {kid.status === "active" ? "alive" :
+                                                     kid.deathCause === "stillborn" ? "stillborn" :
+                                                     kid.deathCause === "died after birth" ? "died after birth" : "dead"}
                                                   </Badge>
                                                 </div>
                                                 <Button
@@ -798,13 +800,23 @@ export default function BreedingManager({
                                                     )
                                                   </span>
                                                 </div>
-                                                {kid.weight && (
+                                                {kid.currentWeight && (
                                                   <div>
                                                     <span className="text-gray-500">
                                                       Weight:
                                                     </span>
                                                     <span className="ml-1">
-                                                      {kid.weight} kg
+                                                      {kid.currentWeight} kg
+                                                    </span>
+                                                  </div>
+                                                )}
+                                                {kid.markings && (
+                                                  <div className="col-span-2">
+                                                    <span className="text-gray-500">
+                                                      Markings:
+                                                    </span>
+                                                    <span className="ml-1">
+                                                      {kid.markings}
                                                     </span>
                                                   </div>
                                                 )}
