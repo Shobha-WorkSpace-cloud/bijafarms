@@ -629,172 +629,188 @@ export default function BreedingHistory() {
         {/* Filters */}
         <Card>
           <CardContent className="p-4 sm:p-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Filter className="h-5 w-5 text-gray-600" />
-                <h3 className="text-lg font-semibold">Filters & Search</h3>
-              </div>
+            <Collapsible
+              open={isFiltersExpanded}
+              onOpenChange={setIsFiltersExpanded}
+            >
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="flex items-center justify-between w-full p-0 h-auto"
+                >
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-5 w-5 text-gray-600" />
+                    <h3 className="text-lg font-semibold">Filters & Search</h3>
+                  </div>
+                  {isFiltersExpanded ? (
+                    <ChevronUp className="h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-4 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="space-y-2">
+                    <Label>Search</Label>
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        placeholder="Search by animal name, vet..."
+                        value={filters.search}
+                        onChange={(e) =>
+                          setFilters((prev) => ({
+                            ...prev,
+                            search: e.target.value,
+                          }))
+                        }
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="space-y-2">
-                  <Label>Search</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <div className="space-y-2">
+                    <Label>Mother</Label>
+                    <Select
+                      value={filters.motherId}
+                      onValueChange={(value) =>
+                        setFilters((prev) => ({ ...prev, motherId: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All mothers" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All mothers</SelectItem>
+                        {animals
+                          .filter((a) => a.gender === "female")
+                          .map((animal) => (
+                            <SelectItem key={animal.id} value={animal.id}>
+                              {animal.name} ({animal.breed})
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Father</Label>
+                    <Select
+                      value={filters.fatherId}
+                      onValueChange={(value) =>
+                        setFilters((prev) => ({ ...prev, fatherId: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All fathers" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All fathers</SelectItem>
+                        {animals
+                          .filter((a) => a.gender === "male")
+                          .map((animal) => (
+                            <SelectItem key={animal.id} value={animal.id}>
+                              {animal.name} ({animal.breed})
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Method</Label>
+                    <Select
+                      value={filters.method}
+                      onValueChange={(value) =>
+                        setFilters((prev) => ({ ...prev, method: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All methods" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All methods</SelectItem>
+                        <SelectItem value="natural">Natural</SelectItem>
+                        <SelectItem value="artificial_insemination">
+                          AI
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Year</Label>
+                    <Select
+                      value={filters.year}
+                      onValueChange={(value) =>
+                        setFilters((prev) => ({ ...prev, year: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="All years" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All years</SelectItem>
+                        {uniqueYears.map((year) => (
+                          <SelectItem key={year} value={year.toString()}>
+                            {year}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Date From</Label>
                     <Input
-                      placeholder="Search by animal name, vet..."
-                      value={filters.search}
+                      type="date"
+                      value={filters.dateFrom}
                       onChange={(e) =>
                         setFilters((prev) => ({
                           ...prev,
-                          search: e.target.value,
+                          dateFrom: e.target.value,
                         }))
                       }
-                      className="pl-10"
                     />
                   </div>
-                </div>
 
-                <div className="space-y-2">
-                  <Label>Mother</Label>
-                  <Select
-                    value={filters.motherId}
-                    onValueChange={(value) =>
-                      setFilters((prev) => ({ ...prev, motherId: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All mothers" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All mothers</SelectItem>
-                      {animals
-                        .filter((a) => a.gender === "female")
-                        .map((animal) => (
-                          <SelectItem key={animal.id} value={animal.id}>
-                            {animal.name} ({animal.breed})
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div className="space-y-2">
+                    <Label>Date To</Label>
+                    <Input
+                      type="date"
+                      value={filters.dateTo}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          dateTo: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label>Father</Label>
-                  <Select
-                    value={filters.fatherId}
-                    onValueChange={(value) =>
-                      setFilters((prev) => ({ ...prev, fatherId: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All fathers" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All fathers</SelectItem>
-                      {animals
-                        .filter((a) => a.gender === "male")
-                        .map((animal) => (
-                          <SelectItem key={animal.id} value={animal.id}>
-                            {animal.name} ({animal.breed})
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-end">
+                    <Button
+                      variant="outline"
+                      onClick={() =>
+                        setFilters({
+                          search: "",
+                          motherId: "all",
+                          fatherId: "all",
+                          method: "all",
+                          status: "all",
+                          year: "all",
+                          dateFrom: "",
+                          dateTo: "",
+                        })
+                      }
+                      className="w-full"
+                    >
+                      Clear Filters
+                    </Button>
+                  </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Method</Label>
-                  <Select
-                    value={filters.method}
-                    onValueChange={(value) =>
-                      setFilters((prev) => ({ ...prev, method: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All methods" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All methods</SelectItem>
-                      <SelectItem value="natural">Natural</SelectItem>
-                      <SelectItem value="artificial_insemination">
-                        AI
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Year</Label>
-                  <Select
-                    value={filters.year}
-                    onValueChange={(value) =>
-                      setFilters((prev) => ({ ...prev, year: value }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="All years" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All years</SelectItem>
-                      {uniqueYears.map((year) => (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Date From</Label>
-                  <Input
-                    type="date"
-                    value={filters.dateFrom}
-                    onChange={(e) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        dateFrom: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Date To</Label>
-                  <Input
-                    type="date"
-                    value={filters.dateTo}
-                    onChange={(e) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        dateTo: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-
-                <div className="flex items-end">
-                  <Button
-                    variant="outline"
-                    onClick={() =>
-                      setFilters({
-                        search: "",
-                        motherId: "all",
-                        fatherId: "all",
-                        method: "all",
-                        status: "all",
-                        year: "all",
-                        dateFrom: "",
-                        dateTo: "",
-                      })
-                    }
-                    className="w-full"
-                  >
-                    Clear Filters
-                  </Button>
-                </div>
-              </div>
-            </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </Card>
 
