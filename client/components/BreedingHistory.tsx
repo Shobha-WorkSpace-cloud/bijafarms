@@ -1280,7 +1280,8 @@ export default function BreedingHistory() {
                               <div className="grid grid-cols-2 gap-2 text-sm">
                                 <div>
                                   <strong>Name:</strong>{" "}
-                                  {kidAnimal?.name || `Kid ${index + 1} (${kidId})`}
+                                  {kidAnimal?.name ||
+                                    `Kid ${index + 1} (${kidId})`}
                                 </div>
                                 <div>
                                   <strong>Gender:</strong>{" "}
