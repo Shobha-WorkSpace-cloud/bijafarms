@@ -54,6 +54,7 @@ import {
   AnimalRecord,
   BreedingRecord,
   AnimalGender,
+  AnimalStatus,
 } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
 import { useToast } from "@/hooks/use-toast";
