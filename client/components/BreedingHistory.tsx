@@ -1270,31 +1270,47 @@ export default function BreedingHistory() {
                     <div>
                       <Label className="text-sm font-medium">Kid Details</Label>
                       <div className="mt-2 space-y-2">
-                        {selectedRecord.kidDetails.map((kid, index) => (
-                          <div
-                            key={index}
-                            className="border rounded p-3 bg-gray-50"
-                          >
-                            <div className="grid grid-cols-2 gap-2 text-sm">
-                              <div>
-                                <strong>Name:</strong>{" "}
-                                {kid.name || `Kid ${index + 1}`}
-                              </div>
-                              <div>
-                                <strong>Gender:</strong> {kid.gender}
-                              </div>
-                              <div>
-                                <strong>Weight:</strong>{" "}
-                                {kid.weight
-                                  ? `${kid.weight} kg`
-                                  : "Not recorded"}
-                              </div>
-                              <div>
-                                <strong>Status:</strong> {kid.status}
+                        {selectedRecord.kidDetails.map((kidId, index) => {
+                          const kidAnimal = getAnimalById(kidId);
+                          return (
+                            <div
+                              key={index}
+                              className="border rounded p-3 bg-gray-50"
+                            >
+                              <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                  <strong>Name:</strong>{" "}
+                                  {kidAnimal?.name || `Kid ${index + 1} (${kidId})`}
+                                </div>
+                                <div>
+                                  <strong>Gender:</strong>{" "}
+                                  {kidAnimal?.gender || "Unknown"}
+                                </div>
+                                <div>
+                                  <strong>Current Weight:</strong>{" "}
+                                  {kidAnimal?.currentWeight
+                                    ? `${kidAnimal.currentWeight} kg`
+                                    : "Not recorded"}
+                                </div>
+                                <div>
+                                  <strong>Status:</strong>{" "}
+                                  {kidAnimal?.status || "Unknown"}
+                                </div>
+                                {kidAnimal?.breed && (
+                                  <div>
+                                    <strong>Breed:</strong> {kidAnimal.breed}
+                                  </div>
+                                )}
+                                {kidAnimal?.dateOfBirth && (
+                                  <div>
+                                    <strong>Date of Birth:</strong>{" "}
+                                    {formatDate(kidAnimal.dateOfBirth)}
+                                  </div>
+                                )}
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
