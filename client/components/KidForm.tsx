@@ -53,7 +53,6 @@ export default function KidForm({
     status: "alive",
     markings: "",
     notes: "",
-    createAnimalRecord: true,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
