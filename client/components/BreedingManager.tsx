@@ -735,16 +735,13 @@ export default function BreedingManager({
                                                     type="number"
                                                     step="0.1"
                                                     value={
-                                                      editKidData.weight || ""
+                                                      editKidData.currentWeight || ""
                                                     }
                                                     onChange={(e) =>
                                                       setEditKidData(
                                                         (prev) => ({
                                                           ...prev,
-                                                          weight:
-                                                            parseFloat(
-                                                              e.target.value,
-                                                            ) || 0,
+                                                          currentWeight: e.target.value,
                                                         }),
                                                       )
                                                     }
@@ -756,7 +753,11 @@ export default function BreedingManager({
                                                     Status
                                                   </Label>
                                                   <Select
-                                                    value={editKidData.status}
+                                                    value={
+                                                      editKidData.status === "active" ? "alive" :
+                                                      editKidData.deathCause === "stillborn" ? "stillborn" :
+                                                      editKidData.deathCause === "died after birth" ? "died_after_birth" : "alive"
+                                                    }
                                                     onValueChange={(value) =>
                                                       setEditKidData(
                                                         (prev) => ({
