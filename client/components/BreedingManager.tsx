@@ -44,8 +44,6 @@ import {
   Trash2,
   Edit,
   Users,
-  MaleIcon,
-  Female,
   Rabbit,
   ChevronDown,
   ChevronRight,
@@ -616,7 +614,6 @@ export default function BreedingManager({
                                                     Name
                                                   </Label>
                                                   <Input
-                                                    size="sm"
                                                     value={
                                                       editKidData.name || ""
                                                     }
@@ -664,7 +661,6 @@ export default function BreedingManager({
                                                     Weight (kg)
                                                   </Label>
                                                   <Input
-                                                    size="sm"
                                                     type="number"
                                                     step="0.1"
                                                     value={
