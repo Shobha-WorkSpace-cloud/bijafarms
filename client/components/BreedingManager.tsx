@@ -537,8 +537,7 @@ export default function BreedingManager({
                                 {record.maleKids !== undefined &&
                                   record.femaleKids !== undefined && (
                                     <p>
-                                      <strong>Gender:</strong> {record.maleKids}♂ /{" "}
-                                      {record.femaleKids}♀
+                                      <strong>Gender:</strong> {record.maleKids}M / {record.femaleKids}F
                                     </p>
                                   )}
                                 {record.breedingMethod && (
