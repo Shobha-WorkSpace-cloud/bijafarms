@@ -121,8 +121,8 @@ export default function KidForm({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="female">Female ♀</SelectItem>
-                  <SelectItem value="male">Male ♂</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="male">Male</SelectItem>
                 </SelectContent>
               </Select>
             </div>
