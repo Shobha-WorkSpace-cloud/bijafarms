@@ -70,7 +70,6 @@ export default function KidForm({
       status: "alive",
       markings: "",
       notes: "",
-      createAnimalRecord: true,
     });
     onClose();
   };
