@@ -207,6 +207,71 @@ export default function BreedingManager({
     }));
   };
 
+  const getFatherName = (fatherId?: string) => {
+    if (!fatherId) return "Unknown";
+    const father = allAnimals.find((a) => a.id === fatherId);
+    return father ? father.name : "Unknown";
+  };
+
+  const toggleRecordExpansion = (recordId: string) => {
+    setExpandedRecords(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(recordId)) {
+        newSet.delete(recordId);
+      } else {
+        newSet.add(recordId);
+      }
+      return newSet;
+    });
+  };
+
+  const startEditingKid = (recordId: string, kidIndex: number, kidData: any) => {
+    setEditingKid({ recordId, kidIndex });
+    setEditKidData({ ...kidData });
+  };
+
+  const cancelEditingKid = () => {
+    setEditingKid(null);
+    setEditKidData(null);
+  };
+
+  const saveKidEdit = async () => {
+    if (!editingKid || !editKidData) return;
+
+    try {
+      // Find the breeding record
+      const record = breedingRecords.find(r => r.id === editingKid.recordId);
+      if (!record || !record.kidDetails) return;
+
+      // Update the kid details
+      const updatedKidDetails = [...record.kidDetails];
+      updatedKidDetails[editingKid.kidIndex] = editKidData;
+
+      // Update the breeding record
+      await animalApi.updateBreedingRecord(editingKid.recordId, {
+        ...record,
+        kidDetails: updatedKidDetails,
+      });
+
+      // Refresh the records
+      await loadBreedingRecords(true);
+      
+      toast({
+        title: "Kid Updated Successfully",
+        description: "Kid information has been updated.",
+      });
+      
+      cancelEditingKid();
+    } catch (error) {
+      console.error("Error updating kid:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update kid information.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -395,71 +460,6 @@ export default function BreedingManager({
     });
   };
 
-  const getFatherName = (fatherId?: string) => {
-    if (!fatherId) return "Unknown";
-    const father = allAnimals.find((a) => a.id === fatherId);
-    return father ? father.name : "Unknown";
-  };
-
-  const toggleRecordExpansion = (recordId: string) => {
-    setExpandedRecords(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(recordId)) {
-        newSet.delete(recordId);
-      } else {
-        newSet.add(recordId);
-      }
-      return newSet;
-    });
-  };
-
-  const startEditingKid = (recordId: string, kidIndex: number, kidData: any) => {
-    setEditingKid({ recordId, kidIndex });
-    setEditKidData({ ...kidData });
-  };
-
-  const cancelEditingKid = () => {
-    setEditingKid(null);
-    setEditKidData(null);
-  };
-
-  const saveKidEdit = async () => {
-    if (!editingKid || !editKidData) return;
-
-    try {
-      // Find the breeding record
-      const record = breedingRecords.find(r => r.id === editingKid.recordId);
-      if (!record || !record.kidDetails) return;
-
-      // Update the kid details
-      const updatedKidDetails = [...record.kidDetails];
-      updatedKidDetails[editingKid.kidIndex] = editKidData;
-
-      // Update the breeding record
-      await animalApi.updateBreedingRecord(editingKid.recordId, {
-        ...record,
-        kidDetails: updatedKidDetails,
-      });
-
-      // Refresh the records
-      await loadBreedingRecords(true);
-
-      toast({
-        title: "Kid Updated Successfully",
-        description: "Kid information has been updated.",
-      });
-
-      cancelEditingKid();
-    } catch (error) {
-      console.error("Error updating kid:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update kid information.",
-        variant: "destructive",
-      });
-    }
-  };
-
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
@@ -542,41 +542,201 @@ export default function BreedingManager({
                 <div className="space-y-3">
                   {breedingRecords.map((record) => (
                     <Card key={record.id} className="border-pink-200">
-                      <CardContent className="p-4">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Badge className="bg-pink-100 text-pink-800">
-                              {record.totalKids} Kid
-                              {record.totalKids !== 1 ? "s" : ""}
-                            </Badge>
-                            <span className="text-sm text-gray-600">
-                              {formatDate(
-                                record.actualDeliveryDate ||
-                                  record.breedingDate,
-                              )}
-                            </span>
-                          </div>
-                          <div className="text-sm space-y-1">
-                            <p>
-                              <strong>Father:</strong>{" "}
-                              {getFatherName(record.fatherId)}
-                            </p>
-                            {record.maleKids !== undefined &&
-                              record.femaleKids !== undefined && (
+                      <Collapsible
+                        open={expandedRecords.has(record.id)}
+                        onOpenChange={() => toggleRecordExpansion(record.id)}
+                      >
+                        <CollapsibleTrigger asChild>
+                          <CardHeader className="p-4 pb-2 cursor-pointer hover:bg-pink-50/50">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                {expandedRecords.has(record.id) ? (
+                                  <ChevronDown className="h-4 w-4 text-pink-600" />
+                                ) : (
+                                  <ChevronRight className="h-4 w-4 text-pink-600" />
+                                )}
+                                <Badge className="bg-pink-100 text-pink-800">
+                                  {record.totalKids} Kid
+                                  {record.totalKids !== 1 ? "s" : ""}
+                                </Badge>
+                                <span className="text-sm text-gray-600">
+                                  {formatDate(
+                                    record.actualDeliveryDate ||
+                                      record.breedingDate,
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-sm space-y-1 text-left">
+                              <p>
+                                <strong>Father:</strong>{" "}
+                                {getFatherName(record.fatherId)}
+                              </p>
+                              {record.maleKids !== undefined &&
+                                record.femaleKids !== undefined && (
+                                  <p>
+                                    <strong>Gender:</strong> {record.maleKids}♂ /{" "}
+                                    {record.femaleKids}♀
+                                  </p>
+                                )}
+                              {record.breedingMethod && (
                                 <p>
-                                  <strong>Gender:</strong> {record.maleKids}�� /{" "}
-                                  {record.femaleKids}♀
+                                  <strong>Method:</strong>{" "}
+                                  {record.breedingMethod.replace("_", " ")}
                                 </p>
                               )}
-                            {record.breedingMethod && (
-                              <p>
-                                <strong>Method:</strong>{" "}
-                                {record.breedingMethod.replace("_", " ")}
-                              </p>
+                            </div>
+                          </CardHeader>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <CardContent className="p-4 pt-0">
+                            {record.kidDetails && record.kidDetails.length > 0 ? (
+                              <div className="space-y-3">
+                                <div className="flex items-center gap-2 mb-3">
+                                  <Baby className="h-4 w-4 text-pink-600" />
+                                  <span className="text-sm font-medium text-gray-700">
+                                    Individual Kids:
+                                  </span>
+                                </div>
+                                {record.kidDetails.map((kid, kidIndex) => {
+                                  const isEditing = editingKid?.recordId === record.id && editingKid?.kidIndex === kidIndex;
+                                  
+                                  return (
+                                    <Card key={kidIndex} className="border-blue-200 bg-blue-50/30">
+                                      <CardContent className="p-3">
+                                        {isEditing ? (
+                                          <div className="space-y-3">
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className="text-sm font-medium text-blue-700">
+                                                Editing Kid #{kidIndex + 1}
+                                              </span>
+                                              <div className="flex gap-1">
+                                                <Button
+                                                  size="sm"
+                                                  onClick={saveKidEdit}
+                                                  className="h-7 px-2 bg-green-600 hover:bg-green-700"
+                                                >
+                                                  <Save className="h-3 w-3" />
+                                                </Button>
+                                                <Button
+                                                  size="sm"
+                                                  variant="outline"
+                                                  onClick={cancelEditingKid}
+                                                  className="h-7 px-2"
+                                                >
+                                                  <X className="h-3 w-3" />
+                                                </Button>
+                                              </div>
+                                            </div>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                              <div className="space-y-1">
+                                                <Label className="text-xs">Name</Label>
+                                                <Input
+                                                  size="sm"
+                                                  value={editKidData.name || ''}
+                                                  onChange={(e) => setEditKidData(prev => ({ ...prev, name: e.target.value }))}
+                                                  placeholder="Kid name"
+                                                />
+                                              </div>
+                                              <div className="space-y-1">
+                                                <Label className="text-xs">Gender</Label>
+                                                <Select
+                                                  value={editKidData.gender}
+                                                  onValueChange={(value) => setEditKidData(prev => ({ ...prev, gender: value }))}
+                                                >
+                                                  <SelectTrigger className="h-8">
+                                                    <SelectValue />
+                                                  </SelectTrigger>
+                                                  <SelectContent>
+                                                    <SelectItem value="female">Female</SelectItem>
+                                                    <SelectItem value="male">Male</SelectItem>
+                                                  </SelectContent>
+                                                </Select>
+                                              </div>
+                                              <div className="space-y-1">
+                                                <Label className="text-xs">Weight (kg)</Label>
+                                                <Input
+                                                  size="sm"
+                                                  type="number"
+                                                  step="0.1"
+                                                  value={editKidData.weight || ''}
+                                                  onChange={(e) => setEditKidData(prev => ({ ...prev, weight: parseFloat(e.target.value) || 0 }))}
+                                                  placeholder="Weight"
+                                                />
+                                              </div>
+                                              <div className="space-y-1">
+                                                <Label className="text-xs">Status</Label>
+                                                <Select
+                                                  value={editKidData.status}
+                                                  onValueChange={(value) => setEditKidData(prev => ({ ...prev, status: value }))}
+                                                >
+                                                  <SelectTrigger className="h-8">
+                                                    <SelectValue />
+                                                  </SelectTrigger>
+                                                  <SelectContent>
+                                                    <SelectItem value="alive">Alive</SelectItem>
+                                                    <SelectItem value="stillborn">Stillborn</SelectItem>
+                                                    <SelectItem value="died_after_birth">Died After Birth</SelectItem>
+                                                  </SelectContent>
+                                                </Select>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                              <div className="flex items-center gap-2">
+                                                <Baby className="h-3 w-3 text-blue-600" />
+                                                <span className="text-sm font-medium text-blue-700">
+                                                  Kid #{kidIndex + 1}
+                                                </span>
+                                                {kid.name && (
+                                                  <span className="text-sm text-blue-600">- {kid.name}</span>
+                                                )}
+                                                <Badge 
+                                                  variant={kid.status === 'alive' ? 'default' : 'destructive'}
+                                                  className="text-xs px-1 py-0"
+                                                >
+                                                  {kid.status}
+                                                </Badge>
+                                              </div>
+                                              <Button
+                                                size="sm"
+                                                variant="outline"
+                                                onClick={() => startEditingKid(record.id, kidIndex, kid)}
+                                                className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                              >
+                                                <Edit className="h-3 w-3" />
+                                              </Button>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                                              <div>
+                                                <span className="text-gray-500">Gender:</span>
+                                                <span className="ml-1 capitalize">{kid.gender} {kid.gender === 'male' ? '♂' : '♀'}</span>
+                                              </div>
+                                              {kid.weight && (
+                                                <div>
+                                                  <span className="text-gray-500">Weight:</span>
+                                                  <span className="ml-1">{kid.weight} kg</span>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </CardContent>
+                                    </Card>
+                                  );
+                                })}
+                              </div>
+                            ) : (
+                              <div className="text-center py-4 text-sm text-gray-500">
+                                <Baby className="h-6 w-6 mx-auto mb-1 text-gray-400" />
+                                No individual kid details recorded
+                              </div>
                             )}
-                          </div>
-                        </div>
-                      </CardContent>
+                          </CardContent>
+                        </CollapsibleContent>
+                      </Collapsible>
                     </Card>
                   ))}
                 </div>
