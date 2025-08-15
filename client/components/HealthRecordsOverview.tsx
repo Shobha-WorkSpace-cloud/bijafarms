@@ -85,7 +85,9 @@ export default function HealthRecordsOverview({
   const [typeFilter, setTypeFilter] = useState("all");
   const [animalFilter, setAnimalFilter] = useState("all");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingRecord, setEditingRecord] = useState<(HealthRecord & { animalName: string; animalId: string }) | null>(null);
+  const [editingRecord, setEditingRecord] = useState<
+    (HealthRecord & { animalName: string; animalId: string }) | null
+  >(null);
   const [editFormData, setEditFormData] = useState<HealthFormData>({
     recordType: "checkup",
     date: new Date().toISOString().split("T")[0],
@@ -170,22 +172,31 @@ export default function HealthRecordsOverview({
   });
 
   // Group records by date first, then by description within each date
-  const groupedRecords = filteredRecords.reduce((groups, record) => {
-    const dateKey = record.date;
-    const descriptionKey = record.description;
+  const groupedRecords = filteredRecords.reduce(
+    (groups, record) => {
+      const dateKey = record.date;
+      const descriptionKey = record.description;
 
-    if (!groups[dateKey]) {
-      groups[dateKey] = {};
-    }
+      if (!groups[dateKey]) {
+        groups[dateKey] = {};
+      }
 
-    if (!groups[dateKey][descriptionKey]) {
-      groups[dateKey][descriptionKey] = [];
-    }
+      if (!groups[dateKey][descriptionKey]) {
+        groups[dateKey][descriptionKey] = [];
+      }
 
-    groups[dateKey][descriptionKey].push(record);
+      groups[dateKey][descriptionKey].push(record);
 
-    return groups;
-  }, {} as Record<string, Record<string, (HealthRecord & { animalName: string; animalId: string })[]>>);
+      return groups;
+    },
+    {} as Record<
+      string,
+      Record<
+        string,
+        (HealthRecord & { animalName: string; animalId: string })[]
+      >
+    >,
+  );
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -275,20 +286,24 @@ export default function HealthRecordsOverview({
   const stats = getHealthStats();
 
   // Convert grouped records to a flat array for pagination and add state management
-  const flatGroupedRecords = Object.entries(groupedRecords).map(([date, descriptions]) => ({
-    date,
-    descriptions: Object.entries(descriptions).map(([description, records]) => ({
-      description,
-      records,
-      id: `${date}-${description}`, // Unique ID for each group
-    }))
-  }));
+  const flatGroupedRecords = Object.entries(groupedRecords).map(
+    ([date, descriptions]) => ({
+      date,
+      descriptions: Object.entries(descriptions).map(
+        ([description, records]) => ({
+          description,
+          records,
+          id: `${date}-${description}`, // Unique ID for each group
+        }),
+      ),
+    }),
+  );
 
   // State for managing collapsed/expanded groups
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
 
   const toggleGroup = (groupId: string) => {
-    setExpandedGroups(prev => {
+    setExpandedGroups((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(groupId)) {
         newSet.delete(groupId);
@@ -299,7 +314,9 @@ export default function HealthRecordsOverview({
     });
   };
 
-  const handleEditRecord = (record: HealthRecord & { animalName: string; animalId: string }) => {
+  const handleEditRecord = (
+    record: HealthRecord & { animalName: string; animalId: string },
+  ) => {
     setEditingRecord(record);
     setEditFormData({
       recordType: record.recordType,
@@ -319,7 +336,12 @@ export default function HealthRecordsOverview({
   const handleUpdateRecord = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!editingRecord || !editFormData.recordType || !editFormData.date || !editFormData.description) {
+    if (
+      !editingRecord ||
+      !editFormData.recordType ||
+      !editFormData.date ||
+      !editFormData.description
+    ) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -329,26 +351,38 @@ export default function HealthRecordsOverview({
     }
 
     try {
-      const updatedRecord = await animalApi.updateHealthRecord(editingRecord.id, {
-        ...editingRecord,
-        recordType: editFormData.recordType as "checkup" | "treatment" | "illness" | "injury" | "other",
-        date: editFormData.date,
-        description: editFormData.description,
-        veterinarianName: editFormData.veterinarianName || undefined,
-        diagnosis: editFormData.diagnosis || undefined,
-        treatment: editFormData.treatment || undefined,
-        medications: editFormData.medications || undefined,
-        cost: editFormData.cost ? parseFloat(editFormData.cost) : undefined,
-        nextCheckupDate: editFormData.nextCheckupDate || undefined,
-        notes: editFormData.notes || undefined,
-      });
+      const updatedRecord = await animalApi.updateHealthRecord(
+        editingRecord.id,
+        {
+          ...editingRecord,
+          recordType: editFormData.recordType as
+            | "checkup"
+            | "treatment"
+            | "illness"
+            | "injury"
+            | "other",
+          date: editFormData.date,
+          description: editFormData.description,
+          veterinarianName: editFormData.veterinarianName || undefined,
+          diagnosis: editFormData.diagnosis || undefined,
+          treatment: editFormData.treatment || undefined,
+          medications: editFormData.medications || undefined,
+          cost: editFormData.cost ? parseFloat(editFormData.cost) : undefined,
+          nextCheckupDate: editFormData.nextCheckupDate || undefined,
+          notes: editFormData.notes || undefined,
+        },
+      );
 
       setHealthRecords((prev) =>
         prev.map((record) =>
           record.id === editingRecord.id
-            ? { ...updatedRecord, animalName: editingRecord.animalName, animalId: editingRecord.animalId }
-            : record
-        )
+            ? {
+                ...updatedRecord,
+                animalName: editingRecord.animalName,
+                animalId: editingRecord.animalId,
+              }
+            : record,
+        ),
       );
 
       setIsEditDialogOpen(false);
@@ -368,7 +402,9 @@ export default function HealthRecordsOverview({
     }
   };
 
-  const handleDeleteRecord = async (record: HealthRecord & { animalName: string; animalId: string }) => {
+  const handleDeleteRecord = async (
+    record: HealthRecord & { animalName: string; animalId: string },
+  ) => {
     if (!confirm("Are you sure you want to delete this health record?")) {
       return;
     }
@@ -568,7 +604,10 @@ export default function HealthRecordsOverview({
             <>
               <div className="space-y-4 mb-6">
                 {paginatedGroupedRecords.map((dateGroup) => (
-                  <div key={dateGroup.date} className="border rounded-lg overflow-hidden">
+                  <div
+                    key={dateGroup.date}
+                    className="border rounded-lg overflow-hidden"
+                  >
                     {/* Date Header */}
                     <div className="bg-gray-100 px-4 py-3 border-b">
                       <div className="flex items-center gap-2">
@@ -577,7 +616,12 @@ export default function HealthRecordsOverview({
                           {formatDate(dateGroup.date)}
                         </h3>
                         <span className="text-sm text-gray-600 ml-2">
-                          ({dateGroup.descriptions.reduce((sum, desc) => sum + desc.records.length, 0)} records)
+                          (
+                          {dateGroup.descriptions.reduce(
+                            (sum, desc) => sum + desc.records.length,
+                            0,
+                          )}{" "}
+                          records)
                         </span>
                       </div>
                     </div>
@@ -585,14 +629,18 @@ export default function HealthRecordsOverview({
                     {/* Descriptions within this date - Collapsible */}
                     <div className="divide-y">
                       {dateGroup.descriptions.map((descriptionGroup) => {
-                        const isExpanded = expandedGroups.has(descriptionGroup.id);
+                        const isExpanded = expandedGroups.has(
+                          descriptionGroup.id,
+                        );
 
                         // Get unique veterinarians for this group
-                        const vets = [...new Set(
-                          descriptionGroup.records
-                            .map(r => r.veterinarianName)
-                            .filter(Boolean)
-                        )];
+                        const vets = [
+                          ...new Set(
+                            descriptionGroup.records
+                              .map((r) => r.veterinarianName)
+                              .filter(Boolean),
+                          ),
+                        ];
 
                         return (
                           <Collapsible key={descriptionGroup.id}>
@@ -621,7 +669,10 @@ export default function HealthRecordsOverview({
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="text-sm text-gray-500">
-                                    {descriptionGroup.records.length} animal{descriptionGroup.records.length !== 1 ? 's' : ''}
+                                    {descriptionGroup.records.length} animal
+                                    {descriptionGroup.records.length !== 1
+                                      ? "s"
+                                      : ""}
                                   </span>
                                 </div>
                               </div>
@@ -630,7 +681,9 @@ export default function HealthRecordsOverview({
                             <CollapsibleContent>
                               <div className="px-4 pb-4 space-y-3">
                                 {descriptionGroup.records.map((record) => {
-                                  const typeInfo = getRecordTypeInfo(record.recordType);
+                                  const typeInfo = getRecordTypeInfo(
+                                    record.recordType,
+                                  );
                                   const TypeIcon = typeInfo.icon;
 
                                   return (
@@ -661,7 +714,9 @@ export default function HealthRecordsOverview({
                                             <Button
                                               variant="outline"
                                               size="sm"
-                                              onClick={() => handleEditRecord(record)}
+                                              onClick={() =>
+                                                handleEditRecord(record)
+                                              }
                                               className="h-8 w-8 p-0"
                                             >
                                               <Edit className="h-3 w-3" />
@@ -669,7 +724,9 @@ export default function HealthRecordsOverview({
                                             <Button
                                               variant="outline"
                                               size="sm"
-                                              onClick={() => handleDeleteRecord(record)}
+                                              onClick={() =>
+                                                handleDeleteRecord(record)
+                                              }
                                               className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
                                             >
                                               <Trash2 className="h-3 w-3" />
@@ -685,7 +742,9 @@ export default function HealthRecordsOverview({
                                               <span className="font-medium">
                                                 Next checkup:
                                               </span>{" "}
-                                              {formatDate(record.nextCheckupDate)}
+                                              {formatDate(
+                                                record.nextCheckupDate,
+                                              )}
                                             </div>
                                           )}
                                         </div>
@@ -735,8 +794,12 @@ export default function HealthRecordsOverview({
                                           <div className="flex items-start gap-1 text-sm text-gray-700 bg-blue-50 p-3 rounded">
                                             <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />
                                             <div>
-                                              <span className="font-medium">Notes:</span>
-                                              <p className="mt-1">{record.notes}</p>
+                                              <span className="font-medium">
+                                                Notes:
+                                              </span>
+                                              <p className="mt-1">
+                                                {record.notes}
+                                              </p>
                                             </div>
                                           </div>
                                         )}
@@ -810,7 +873,10 @@ export default function HealthRecordsOverview({
                   type="date"
                   value={editFormData.date}
                   onChange={(e) =>
-                    setEditFormData((prev) => ({ ...prev, date: e.target.value }))
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      date: e.target.value,
+                    }))
                   }
                   required
                 />
@@ -908,7 +974,10 @@ export default function HealthRecordsOverview({
                   placeholder="0.00"
                   value={editFormData.cost}
                   onChange={(e) =>
-                    setEditFormData((prev) => ({ ...prev, cost: e.target.value }))
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      cost: e.target.value,
+                    }))
                   }
                 />
               </div>
@@ -936,7 +1005,10 @@ export default function HealthRecordsOverview({
                 placeholder="Any additional notes or observations"
                 value={editFormData.notes}
                 onChange={(e) =>
-                  setEditFormData((prev) => ({ ...prev, notes: e.target.value }))
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
                 }
                 rows={3}
               />
