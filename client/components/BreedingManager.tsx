@@ -25,6 +25,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -42,6 +47,10 @@ import {
   MaleIcon,
   Female,
   Rabbit,
+  ChevronDown,
+  ChevronRight,
+  Save,
+  X,
 } from "lucide-react";
 import {
   AnimalRecord,
