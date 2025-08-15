@@ -383,9 +383,9 @@ export default function HealthRecordsOverview({
               </p>
             </div>
           ) : (
-            <ScrollArea className="h-96">
-              <div className="space-y-4 pr-3">
-                {filteredRecords.map((record) => {
+            <>
+              <div className="space-y-4 mb-6">
+                {paginatedRecords.map((record) => {
                   const typeInfo = getRecordTypeInfo(record.recordType);
                   const TypeIcon = typeInfo.icon;
 
@@ -500,7 +500,20 @@ export default function HealthRecordsOverview({
                   );
                 })}
               </div>
-            </ScrollArea>
+
+              {/* Pagination Controls */}
+              {filteredRecords.length > 0 && (
+                <Pagination
+                  currentPage={pagination.page}
+                  totalPages={totalPages}
+                  totalItems={pagination.total}
+                  pageSize={pagination.pageSize}
+                  onPageChange={goToPage}
+                  onPageSizeChange={changePageSize}
+                  pageSizeOptions={[5, 10, 20, 50]}
+                />
+              )}
+            </>
           )}
         </CardContent>
       </Card>
