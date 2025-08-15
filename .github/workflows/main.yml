@@ -48,6 +48,8 @@ jobs:
         with:
           # Upload dist folder
           path: './dist'
+          name: github-pages
+          retention-days: 1
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
