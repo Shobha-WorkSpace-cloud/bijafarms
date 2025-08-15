@@ -209,6 +209,19 @@ export default function HealthRecordsOverview({
 
   const stats = getHealthStats();
 
+  // Pagination for health records
+  const {
+    data: paginatedRecords,
+    pagination,
+    hasNextPage,
+    hasPreviousPage,
+    totalPages,
+    goToPage,
+    goToNextPage,
+    goToPreviousPage,
+    changePageSize,
+  } = usePagination(filteredRecords, 10);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
