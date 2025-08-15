@@ -122,6 +122,24 @@ export default function HealthRecordsOverview({
     return matchesSearch && matchesType && matchesAnimal;
   });
 
+  // Group records by date first, then by description within each date
+  const groupedRecords = filteredRecords.reduce((groups, record) => {
+    const dateKey = record.date;
+    const descriptionKey = record.description;
+
+    if (!groups[dateKey]) {
+      groups[dateKey] = {};
+    }
+
+    if (!groups[dateKey][descriptionKey]) {
+      groups[dateKey][descriptionKey] = [];
+    }
+
+    groups[dateKey][descriptionKey].push(record);
+
+    return groups;
+  }, {} as Record<string, Record<string, (HealthRecord & { animalName: string; animalId: string })[]>>);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
       year: "numeric",
