@@ -34,6 +34,8 @@ import {
 import { AnimalRecord, HealthRecord } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
 import { useToast } from "@/hooks/use-toast";
+import { usePagination } from "@/hooks/use-pagination";
+import { Pagination } from "@/components/ui/pagination";
 
 interface HealthRecordsOverviewProps {
   animals: AnimalRecord[];
