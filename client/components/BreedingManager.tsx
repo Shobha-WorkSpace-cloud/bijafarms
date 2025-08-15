@@ -59,7 +59,7 @@ import {
 } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
 import { useToast } from "@/hooks/use-toast";
-import AnimalForm from "./AnimalForm";
+import KidForm from "./KidForm";
 
 interface BreedingManagerProps {
   mother: AnimalRecord;
@@ -102,6 +102,8 @@ export default function BreedingManager({
   const [editingKid, setEditingKid] = useState<{recordId: string, kidIndex: number} | null>(null);
   const [editKidData, setEditKidData] = useState<any>(null);
   const [expandedRecords, setExpandedRecords] = useState<Set<string>>(new Set());
+  const [isKidFormOpen, setIsKidFormOpen] = useState(false);
+  const [editingKidIndex, setEditingKidIndex] = useState<number | null>(null);
   const [formData, setFormData] = useState<BreedingFormData>({
     fatherId: "unknown",
     breedingDate: "",
@@ -151,21 +153,10 @@ export default function BreedingManager({
     }
   };
 
-  const addKid = () => {
+  const addKidFromForm = (kidData: KidFormData) => {
     setFormData((prev) => ({
       ...prev,
-      kids: [
-        ...prev.kids,
-        {
-          name: "",
-          gender: "female",
-          weight: "",
-          status: "alive",
-          markings: "",
-          notes: "",
-          createAnimalRecord: true,
-        },
-      ],
+      kids: [...prev.kids, kidData],
     }));
   };
 
@@ -176,17 +167,17 @@ export default function BreedingManager({
     }));
   };
 
-  const updateKid = (
-    index: number,
-    field: keyof KidFormData,
-    value: string | boolean,
-  ) => {
+  const updateKid = (index: number, kidData: KidFormData) => {
     setFormData((prev) => ({
       ...prev,
-      kids: prev.kids.map((kid, i) =>
-        i === index ? { ...kid, [field]: value } : kid,
-      ),
+      kids: prev.kids.map((kid, i) => (i === index ? kidData : kid)),
     }));
+    setEditingKidIndex(null);
+  };
+
+  const startEditingKid = (index: number) => {
+    setEditingKidIndex(index);
+    setIsKidFormOpen(true);
   };
 
   const calculateExpectedDelivery = (breedingDate: string) => {
@@ -225,12 +216,12 @@ export default function BreedingManager({
     });
   };
 
-  const startEditingKid = (recordId: string, kidIndex: number, kidData: any) => {
+  const startEditingHistoryKid = (recordId: string, kidIndex: number, kidData: any) => {
     setEditingKid({ recordId, kidIndex });
     setEditKidData({ ...kidData });
   };
 
-  const cancelEditingKid = () => {
+  const cancelEditingHistoryKid = () => {
     setEditingKid(null);
     setEditKidData(null);
   };
@@ -261,7 +252,7 @@ export default function BreedingManager({
         description: "Kid information has been updated.",
       });
       
-      cancelEditingKid();
+      cancelEditingHistoryKid();
     } catch (error) {
       console.error("Error updating kid:", error);
       toast({
@@ -438,17 +429,7 @@ export default function BreedingManager({
       veterinarianName: "",
       complications: "",
       notes: "",
-      kids: [
-        {
-          name: "",
-          gender: "female",
-          weight: "",
-          status: "alive",
-          markings: "",
-          notes: "",
-          createAnimalRecord: true,
-        },
-      ],
+      kids: [],
     });
   };
 
@@ -461,653 +442,588 @@ export default function BreedingManager({
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
-        <Button
-          size="sm"
-          variant="outline"
-          className="bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100"
-          title="Breeding & Birth Records - Click to record new births and view breeding history"
-        >
-          <Rabbit className="h-4 w-4" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Baby className="h-5 w-5" />
-            Breeding & Offspring Management - {mother.name}
-          </DialogTitle>
-          <DialogDescription>
-            Record births and manage offspring for {mother.name}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(90vh-120px)]">
-         {/* Actions */}
-       
-        <div className="flex gap-2">
+    <>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
           <Button
-            onClick={handleSubmit}
-            disabled={submitting}
-            className="bg-pink-600 hover:bg-pink-700"
-          >
-            {submitting ? "Creating..." : "Create Birth Record"}
-          </Button>
-          <Button
-            type="button"
+            size="sm"
             variant="outline"
-            onClick={() => setIsDialogOpen(false)}
-            disabled={submitting}
+            className="bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100"
+            title="Breeding & Birth Records - Click to record new births and view breeding history"
           >
-            Cancel
+            <Rabbit className="h-4 w-4" />
           </Button>
-        </div>
-         <Separator />
-          {/* Breeding History */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-pink-600" />
-                Breeding History
-              </h3>
-              {breedingRecords.length > 0 && (
-                <Badge className="bg-pink-100 text-pink-800">
-                  {breedingRecords.length} record
-                  {breedingRecords.length !== 1 ? "s" : ""}
-                </Badge>
-              )}
-            </div>
-            <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px] border rounded-md p-3">
-              {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin h-6 w-6 border-2 border-pink-600 border-t-transparent rounded-full mx-auto mb-2"></div>
-                  <p className="text-sm text-gray-600">
-                    Loading breeding records...
-                  </p>
-                </div>
-              ) : refreshingHistory ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin h-6 w-6 border-2 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div>
-                  <p className="text-sm text-green-600">
-                    Updating breeding history...
-                  </p>
-                </div>
-              ) : breedingRecords.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <Baby className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p>No breeding records found</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {breedingRecords.map((record) => (
-                    <Card key={record.id} className="border-pink-200">
-                      <Collapsible
-                        open={expandedRecords.has(record.id)}
-                        onOpenChange={() => toggleRecordExpansion(record.id)}
-                      >
-                        <CollapsibleTrigger asChild>
-                          <CardHeader className="p-4 pb-2 cursor-pointer hover:bg-pink-50/50">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                {expandedRecords.has(record.id) ? (
-                                  <ChevronDown className="h-4 w-4 text-pink-600" />
-                                ) : (
-                                  <ChevronRight className="h-4 w-4 text-pink-600" />
-                                )}
-                                <Badge className="bg-pink-100 text-pink-800">
-                                  {record.totalKids} Kid
-                                  {record.totalKids !== 1 ? "s" : ""}
-                                </Badge>
-                                <span className="text-sm text-gray-600">
-                                  {formatDate(
-                                    record.actualDeliveryDate ||
-                                      record.breedingDate,
+        </DialogTrigger>
+        <DialogContent className="max-w-6xl max-h-[95vh] overflow-hidden">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Baby className="h-5 w-5" />
+              Breeding & Offspring Management - {mother.name}
+            </DialogTitle>
+            <DialogDescription>
+              Record births and manage offspring for {mother.name}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(95vh-120px)]">
+            {/* Breeding History */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-pink-600" />
+                  Breeding History
+                </h3>
+                {breedingRecords.length > 0 && (
+                  <Badge className="bg-pink-100 text-pink-800">
+                    {breedingRecords.length} record
+                    {breedingRecords.length !== 1 ? "s" : ""}
+                  </Badge>
+                )}
+              </div>
+              <ScrollArea className="h-[calc(95vh-300px)] min-h-[400px] border rounded-md p-3">
+                {loading ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin h-6 w-6 border-2 border-pink-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+                    <p className="text-sm text-gray-600">
+                      Loading breeding records...
+                    </p>
+                  </div>
+                ) : refreshingHistory ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin h-6 w-6 border-2 border-green-600 border-t-transparent rounded-full mx-auto mb-2"></div>
+                    <p className="text-sm text-green-600">
+                      Updating breeding history...
+                    </p>
+                  </div>
+                ) : breedingRecords.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <Baby className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                    <p>No breeding records found</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {breedingRecords.map((record) => (
+                      <Card key={record.id} className="border-pink-200">
+                        <Collapsible
+                          open={expandedRecords.has(record.id)}
+                          onOpenChange={() => toggleRecordExpansion(record.id)}
+                        >
+                          <CollapsibleTrigger asChild>
+                            <CardHeader className="p-4 pb-2 cursor-pointer hover:bg-pink-50/50">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  {expandedRecords.has(record.id) ? (
+                                    <ChevronDown className="h-4 w-4 text-pink-600" />
+                                  ) : (
+                                    <ChevronRight className="h-4 w-4 text-pink-600" />
                                   )}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="text-sm space-y-1 text-left">
-                              <p>
-                                <strong>Father:</strong>{" "}
-                                {getFatherName(record.fatherId)}
-                              </p>
-                              {record.maleKids !== undefined &&
-                                record.femaleKids !== undefined && (
-                                  <p>
-                                    <strong>Gender:</strong> {record.maleKids}♂ /{" "}
-                                    {record.femaleKids}♀
-                                  </p>
-                                )}
-                              {record.breedingMethod && (
-                                <p>
-                                  <strong>Method:</strong>{" "}
-                                  {record.breedingMethod.replace("_", " ")}
-                                </p>
-                              )}
-                            </div>
-                          </CardHeader>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent>
-                          <CardContent className="p-4 pt-0">
-                            {record.kidDetails && record.kidDetails.length > 0 ? (
-                              <div className="space-y-3">
-                                <div className="flex items-center gap-2 mb-3">
-                                  <Baby className="h-4 w-4 text-pink-600" />
-                                  <span className="text-sm font-medium text-gray-700">
-                                    Individual Kids:
+                                  <Badge className="bg-pink-100 text-pink-800">
+                                    {record.totalKids} Kid
+                                    {record.totalKids !== 1 ? "s" : ""}
+                                  </Badge>
+                                  <span className="text-sm text-gray-600">
+                                    {formatDate(
+                                      record.actualDeliveryDate ||
+                                        record.breedingDate,
+                                    )}
                                   </span>
                                 </div>
-                                {record.kidDetails.map((kid, kidIndex) => {
-                                  const isEditing = editingKid?.recordId === record.id && editingKid?.kidIndex === kidIndex;
-                                  
-                                  return (
-                                    <Card key={kidIndex} className="border-blue-200 bg-blue-50/30">
-                                      <CardContent className="p-3">
-                                        {isEditing ? (
-                                          <div className="space-y-3">
-                                            <div className="flex items-center justify-between mb-2">
-                                              <span className="text-sm font-medium text-blue-700">
-                                                Editing Kid #{kidIndex + 1}
-                                              </span>
-                                              <div className="flex gap-1">
-                                                <Button
-                                                  size="sm"
-                                                  onClick={saveKidEdit}
-                                                  className="h-7 px-2 bg-green-600 hover:bg-green-700"
-                                                >
-                                                  <Save className="h-3 w-3" />
-                                                </Button>
+                              </div>
+                              <div className="text-sm space-y-1 text-left">
+                                <p>
+                                  <strong>Father:</strong>{" "}
+                                  {getFatherName(record.fatherId)}
+                                </p>
+                                {record.maleKids !== undefined &&
+                                  record.femaleKids !== undefined && (
+                                    <p>
+                                      <strong>Gender:</strong> {record.maleKids}♂ /{" "}
+                                      {record.femaleKids}♀
+                                    </p>
+                                  )}
+                                {record.breedingMethod && (
+                                  <p>
+                                    <strong>Method:</strong>{" "}
+                                    {record.breedingMethod.replace("_", " ")}
+                                  </p>
+                                )}
+                              </div>
+                            </CardHeader>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent>
+                            <CardContent className="p-4 pt-0">
+                              {record.kidDetails && record.kidDetails.length > 0 ? (
+                                <div className="space-y-3">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <Baby className="h-4 w-4 text-pink-600" />
+                                    <span className="text-sm font-medium text-gray-700">
+                                      Individual Kids:
+                                    </span>
+                                  </div>
+                                  {record.kidDetails.map((kid, kidIndex) => {
+                                    const isEditing = editingKid?.recordId === record.id && editingKid?.kidIndex === kidIndex;
+                                    
+                                    return (
+                                      <Card key={kidIndex} className="border-blue-200 bg-blue-50/30">
+                                        <CardContent className="p-3">
+                                          {isEditing ? (
+                                            <div className="space-y-3">
+                                              <div className="flex items-center justify-between mb-2">
+                                                <span className="text-sm font-medium text-blue-700">
+                                                  Editing Kid #{kidIndex + 1}
+                                                </span>
+                                                <div className="flex gap-1">
+                                                  <Button
+                                                    size="sm"
+                                                    onClick={saveKidEdit}
+                                                    className="h-7 px-2 bg-green-600 hover:bg-green-700"
+                                                  >
+                                                    <Save className="h-3 w-3" />
+                                                  </Button>
+                                                  <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={cancelEditingHistoryKid}
+                                                    className="h-7 px-2"
+                                                  >
+                                                    <X className="h-3 w-3" />
+                                                  </Button>
+                                                </div>
+                                              </div>
+                                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                <div className="space-y-1">
+                                                  <Label className="text-xs">Name</Label>
+                                                  <Input
+                                                    size="sm"
+                                                    value={editKidData.name || ''}
+                                                    onChange={(e) => setEditKidData(prev => ({ ...prev, name: e.target.value }))}
+                                                    placeholder="Kid name"
+                                                  />
+                                                </div>
+                                                <div className="space-y-1">
+                                                  <Label className="text-xs">Gender</Label>
+                                                  <Select
+                                                    value={editKidData.gender}
+                                                    onValueChange={(value) => setEditKidData(prev => ({ ...prev, gender: value }))}
+                                                  >
+                                                    <SelectTrigger className="h-8">
+                                                      <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                      <SelectItem value="female">Female</SelectItem>
+                                                      <SelectItem value="male">Male</SelectItem>
+                                                    </SelectContent>
+                                                  </Select>
+                                                </div>
+                                                <div className="space-y-1">
+                                                  <Label className="text-xs">Weight (kg)</Label>
+                                                  <Input
+                                                    size="sm"
+                                                    type="number"
+                                                    step="0.1"
+                                                    value={editKidData.weight || ''}
+                                                    onChange={(e) => setEditKidData(prev => ({ ...prev, weight: parseFloat(e.target.value) || 0 }))}
+                                                    placeholder="Weight"
+                                                  />
+                                                </div>
+                                                <div className="space-y-1">
+                                                  <Label className="text-xs">Status</Label>
+                                                  <Select
+                                                    value={editKidData.status}
+                                                    onValueChange={(value) => setEditKidData(prev => ({ ...prev, status: value }))}
+                                                  >
+                                                    <SelectTrigger className="h-8">
+                                                      <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                      <SelectItem value="alive">Alive</SelectItem>
+                                                      <SelectItem value="stillborn">Stillborn</SelectItem>
+                                                      <SelectItem value="died_after_birth">Died After Birth</SelectItem>
+                                                    </SelectContent>
+                                                  </Select>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <div className="space-y-2">
+                                              <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                  <Baby className="h-3 w-3 text-blue-600" />
+                                                  <span className="text-sm font-medium text-blue-700">
+                                                    Kid #{kidIndex + 1}
+                                                  </span>
+                                                  {kid.name && (
+                                                    <span className="text-sm text-blue-600">- {kid.name}</span>
+                                                  )}
+                                                  <Badge 
+                                                    variant={kid.status === 'alive' ? 'default' : 'destructive'}
+                                                    className="text-xs px-1 py-0"
+                                                  >
+                                                    {kid.status}
+                                                  </Badge>
+                                                </div>
                                                 <Button
                                                   size="sm"
                                                   variant="outline"
-                                                  onClick={cancelEditingKid}
-                                                  className="h-7 px-2"
+                                                  onClick={() => startEditingHistoryKid(record.id, kidIndex, kid)}
+                                                  className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                                 >
-                                                  <X className="h-3 w-3" />
+                                                  <Edit className="h-3 w-3" />
                                                 </Button>
                                               </div>
-                                            </div>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                              <div className="space-y-1">
-                                                <Label className="text-xs">Name</Label>
-                                                <Input
-                                                  size="sm"
-                                                  value={editKidData.name || ''}
-                                                  onChange={(e) => setEditKidData(prev => ({ ...prev, name: e.target.value }))}
-                                                  placeholder="Kid name"
-                                                />
-                                              </div>
-                                              <div className="space-y-1">
-                                                <Label className="text-xs">Gender</Label>
-                                                <Select
-                                                  value={editKidData.gender}
-                                                  onValueChange={(value) => setEditKidData(prev => ({ ...prev, gender: value }))}
-                                                >
-                                                  <SelectTrigger className="h-8">
-                                                    <SelectValue />
-                                                  </SelectTrigger>
-                                                  <SelectContent>
-                                                    <SelectItem value="female">Female</SelectItem>
-                                                    <SelectItem value="male">Male</SelectItem>
-                                                  </SelectContent>
-                                                </Select>
-                                              </div>
-                                              <div className="space-y-1">
-                                                <Label className="text-xs">Weight (kg)</Label>
-                                                <Input
-                                                  size="sm"
-                                                  type="number"
-                                                  step="0.1"
-                                                  value={editKidData.weight || ''}
-                                                  onChange={(e) => setEditKidData(prev => ({ ...prev, weight: parseFloat(e.target.value) || 0 }))}
-                                                  placeholder="Weight"
-                                                />
-                                              </div>
-                                              <div className="space-y-1">
-                                                <Label className="text-xs">Status</Label>
-                                                <Select
-                                                  value={editKidData.status}
-                                                  onValueChange={(value) => setEditKidData(prev => ({ ...prev, status: value }))}
-                                                >
-                                                  <SelectTrigger className="h-8">
-                                                    <SelectValue />
-                                                  </SelectTrigger>
-                                                  <SelectContent>
-                                                    <SelectItem value="alive">Alive</SelectItem>
-                                                    <SelectItem value="stillborn">Stillborn</SelectItem>
-                                                    <SelectItem value="died_after_birth">Died After Birth</SelectItem>
-                                                  </SelectContent>
-                                                </Select>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        ) : (
-                                          <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                              <div className="flex items-center gap-2">
-                                                <Baby className="h-3 w-3 text-blue-600" />
-                                                <span className="text-sm font-medium text-blue-700">
-                                                  Kid #{kidIndex + 1}
-                                                </span>
-                                                {kid.name && (
-                                                  <span className="text-sm text-blue-600">- {kid.name}</span>
-                                                )}
-                                                <Badge 
-                                                  variant={kid.status === 'alive' ? 'default' : 'destructive'}
-                                                  className="text-xs px-1 py-0"
-                                                >
-                                                  {kid.status}
-                                                </Badge>
-                                              </div>
-                                              <Button
-                                                size="sm"
-                                                variant="outline"
-                                                onClick={() => startEditingKid(record.id, kidIndex, kid)}
-                                                className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                              >
-                                                <Edit className="h-3 w-3" />
-                                              </Button>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                                              <div>
-                                                <span className="text-gray-500">Gender:</span>
-                                                <span className="ml-1 capitalize">{kid.gender} {kid.gender === 'male' ? '♂' : '♀'}</span>
-                                              </div>
-                                              {kid.weight && (
+                                              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                                                 <div>
-                                                  <span className="text-gray-500">Weight:</span>
-                                                  <span className="ml-1">{kid.weight} kg</span>
+                                                  <span className="text-gray-500">Gender:</span>
+                                                  <span className="ml-1 capitalize">{kid.gender} {kid.gender === 'male' ? '♂' : '♀'}</span>
                                                 </div>
-                                              )}
+                                                {kid.weight && (
+                                                  <div>
+                                                    <span className="text-gray-500">Weight:</span>
+                                                    <span className="ml-1">{kid.weight} kg</span>
+                                                  </div>
+                                                )}
+                                              </div>
                                             </div>
-                                          </div>
-                                        )}
-                                      </CardContent>
-                                    </Card>
-                                  );
-                                })}
-                              </div>
-                            ) : (
-                              <div className="text-center py-4 text-sm text-gray-500">
-                                <Baby className="h-6 w-6 mx-auto mb-1 text-gray-400" />
-                                No individual kid details recorded
-                              </div>
-                            )}
-                          </CardContent>
-                        </CollapsibleContent>
-                      </Collapsible>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </ScrollArea>
-          </div>
-
-          {/* New Breeding Record Form */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Plus className="h-5 w-5 text-green-600" />
-              Add New Birth Record
-            </h3>
-            <ScrollArea className="h-[calc(90vh-300px)] min-h-[400px]">
-              <form onSubmit={handleSubmit} className="space-y-4 pr-3">
-                {/* Breeding Details */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">
-                    Breeding Information
-                  </h4>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="fatherId">Father (Optional)</Label>
-                      <Select
-                        value={formData.fatherId}
-                        onValueChange={(value) =>
-                          setFormData((prev) => ({ ...prev, fatherId: value }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select father" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unknown">
-                            Unknown/No Record
-                          </SelectItem>
-                          {maleAnimals.map((male) => (
-                            <SelectItem key={male.id} value={male.id}>
-                              {male.name} ({male.breed})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="breedingDate">
-                        Breeding Date (Optional)
-                      </Label>
-                      <Input
-                        id="breedingDate"
-                        type="date"
-                        value={formData.breedingDate}
-                        onChange={(e) =>
-                          handleBreedingDateChange(e.target.value)
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="actualDeliveryDate">Birth Date *</Label>
-                      <Input
-                        id="actualDeliveryDate"
-                        type="date"
-                        value={formData.actualDeliveryDate}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            actualDeliveryDate: e.target.value,
-                          }))
-                        }
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="breedingMethod">Breeding Method</Label>
-                      <Select
-                        value={formData.breedingMethod}
-                        onValueChange={(value) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            breedingMethod: value as
-                              | "natural"
-                              | "artificial_insemination",
-                          }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="natural">Natural</SelectItem>
-                          <SelectItem value="artificial_insemination">
-                            Artificial Insemination
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                                          )}
+                                        </CardContent>
+                                      </Card>
+                                    );
+                                  })}
+                                </div>
+                              ) : (
+                                <div className="text-center py-4 text-sm text-gray-500">
+                                  <Baby className="h-6 w-6 mx-auto mb-1 text-gray-400" />
+                                  No individual kid details recorded
+                                </div>
+                              )}
+                            </CardContent>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </Card>
+                    ))}
                   </div>
-                </div>
+                )}
+              </ScrollArea>
+            </div>
 
-                <Separator />
-
-                {/* Kids Information */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-gray-900 flex items-center gap-2">
-                      <Baby className="h-4 w-4 text-pink-600" />
-                      Kids Information
-                      <Badge
-                        variant={
-                          formData.kids.length > 1 ? "default" : "secondary"
-                        }
-                        className={
-                          formData.kids.length > 1
-                            ? "bg-green-100 text-green-800 text-xs"
-                            : "text-xs"
-                        }
-                      >
-                        {formData.kids.length} Kid
-                        {formData.kids.length !== 1 ? "s" : ""}
-                        {formData.kids.length > 1 && " (Multiple Birth)"}
-                      </Badge>
+            {/* New Breeding Record Form */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Plus className="h-5 w-5 text-green-600" />
+                Add New Birth Record
+              </h3>
+              <ScrollArea className="h-[calc(95vh-300px)] min-h-[400px]">
+                <form onSubmit={handleSubmit} className="space-y-4 pr-3">
+                  {/* Breeding Details */}
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-gray-900">
+                      Breeding Information
                     </h4>
-                    <Button
-                      type="button"
-                      onClick={addKid}
-                      size="sm"
-                      className="bg-pink-600 hover:bg-pink-700 text-white pulse-on-hover"
-                      title="Click to add another kid - you can add as many as needed!"
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Add Kid
-                    </Button>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="fatherId">Father (Optional)</Label>
+                        <Select
+                          value={formData.fatherId}
+                          onValueChange={(value) =>
+                            setFormData((prev) => ({ ...prev, fatherId: value }))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select father" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="unknown">
+                              Unknown/No Record
+                            </SelectItem>
+                            {maleAnimals.map((male) => (
+                              <SelectItem key={male.id} value={male.id}>
+                                {male.name} ({male.breed})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="breedingDate">
+                          Breeding Date (Optional)
+                        </Label>
+                        <Input
+                          id="breedingDate"
+                          type="date"
+                          value={formData.breedingDate}
+                          onChange={(e) =>
+                            handleBreedingDateChange(e.target.value)
+                          }
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="actualDeliveryDate">Birth Date *</Label>
+                        <Input
+                          id="actualDeliveryDate"
+                          type="date"
+                          value={formData.actualDeliveryDate}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              actualDeliveryDate: e.target.value,
+                            }))
+                          }
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="breedingMethod">Breeding Method</Label>
+                        <Select
+                          value={formData.breedingMethod}
+                          onValueChange={(value) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              breedingMethod: value as
+                                | "natural"
+                                | "artificial_insemination",
+                            }))
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="natural">Natural</SelectItem>
+                            <SelectItem value="artificial_insemination">
+                              Artificial Insemination
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
                   </div>
 
-                  <ScrollArea className="max-h-96 pr-2">
-                    <div className="space-y-3">
-                      {formData.kids.length === 0 ? (
-                        <div className="text-center py-8 border-2 border-dashed border-pink-200 rounded-lg bg-pink-50/30">
-                          <Baby className="h-8 w-8 mx-auto mb-2 text-pink-400" />
-                          <p className="text-pink-600 font-medium mb-1">
-                            No kids added yet
-                          </p>
-                          <p className="text-pink-500 text-sm mb-2">
-                            Click "Add Kid" to record offspring details
-                          </p>
-                          <p className="text-pink-400 text-xs">
-                            💡 For multiple births (twins, triplets, etc.),
-                            click "Add Kid" multiple times
-                          </p>
-                        </div>
-                      ) : (
-                        formData.kids.map((kid, index) => (
+                  <Separator />
+
+                  {/* Kids Information */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                        <Baby className="h-4 w-4 text-pink-600" />
+                        Kids Information
+                        <Badge
+                          variant={
+                            formData.kids.length > 1 ? "default" : "secondary"
+                          }
+                          className={
+                            formData.kids.length > 1
+                              ? "bg-green-100 text-green-800 text-xs"
+                              : "text-xs"
+                          }
+                        >
+                          {formData.kids.length} Kid
+                          {formData.kids.length !== 1 ? "s" : ""}
+                          {formData.kids.length > 1 && " (Multiple Birth)"}
+                        </Badge>
+                      </h4>
+                      <Button
+                        type="button"
+                        onClick={() => setIsKidFormOpen(true)}
+                        size="sm"
+                        className="bg-pink-600 hover:bg-pink-700 text-white"
+                        title="Click to add a new kid"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add Kid
+                      </Button>
+                    </div>
+
+                    {/* Kids Grid */}
+                    {formData.kids.length === 0 ? (
+                      <div className="text-center py-8 border-2 border-dashed border-pink-200 rounded-lg bg-pink-50/30">
+                        <Baby className="h-8 w-8 mx-auto mb-2 text-pink-400" />
+                        <p className="text-pink-600 font-medium mb-1">
+                          No kids added yet
+                        </p>
+                        <p className="text-pink-500 text-sm mb-2">
+                          Click "Add Kid" to record offspring details
+                        </p>
+                        <p className="text-pink-400 text-xs">
+                          💡 For multiple births (twins, triplets, etc.),
+                          click "Add Kid" multiple times
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto">
+                        {formData.kids.map((kid, index) => (
                           <Card
                             key={index}
                             className="border-pink-200 bg-pink-50/30"
                           >
-                            <CardHeader className="pb-3">
-                              <div className="flex items-center justify-between">
-                                <CardTitle className="text-sm flex items-center gap-2">
-                                  <Baby className="h-4 w-4 text-pink-600" />
-                                  Kid #{index + 1}
-                                  {kid.name && (
-                                    <span className="text-pink-600 font-normal">
-                                      - {kid.name}
-                                    </span>
-                                  )}
-                                </CardTitle>
-                                {formData.kids.length > 1 && (
-                                  <Button
-                                    type="button"
-                                    onClick={() => removeKid(index)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </div>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <div className="space-y-2">
-                                  <Label>Name (Optional)</Label>
-                                  <Input
-                                    value={kid.name}
-                                    onChange={(e) =>
-                                      updateKid(index, "name", e.target.value)
-                                    }
-                                    placeholder={`Auto: ${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate || new Date()).getFullYear()}`}
-                                  />
-                                </div>
-
-                                <div className="space-y-2">
-                                  <Label>Gender</Label>
-                                  <Select
-                                    value={kid.gender}
-                                    onValueChange={(value) =>
-                                      updateKid(
-                                        index,
-                                        "gender",
-                                        value as AnimalGender,
-                                      )
-                                    }
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="female">
-                                        Female
-                                      </SelectItem>
-                                      <SelectItem value="male">Male</SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-
-                                <div className="space-y-2">
-                                  <Label>Birth Weight (kg)</Label>
-                                  <Input
-                                    type="number"
-                                    step="0.1"
-                                    value={kid.weight}
-                                    onChange={(e) =>
-                                      updateKid(index, "weight", e.target.value)
-                                    }
-                                    placeholder="Weight at birth"
-                                  />
-                                </div>
-
-                                <div className="space-y-2">
-                                  <Label>Status</Label>
-                                  <Select
-                                    value={kid.status}
-                                    onValueChange={(value) =>
-                                      updateKid(
-                                        index,
-                                        "status",
-                                        value as
-                                          | "alive"
-                                          | "stillborn"
-                                          | "died_after_birth",
-                                      )
-                                    }
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="alive">
-                                        Alive
-                                      </SelectItem>
-                                      <SelectItem value="stillborn">
-                                        Stillborn
-                                      </SelectItem>
-                                      <SelectItem value="died_after_birth">
-                                        Died After Birth
-                                      </SelectItem>
-                                    </SelectContent>
-                                  </Select>
-                                </div>
-                              </div>
-
+                            <CardContent className="p-3">
                               <div className="space-y-2">
-                                <Label>Markings</Label>
-                                <Input
-                                  value={kid.markings}
-                                  onChange={(e) =>
-                                    updateKid(index, "markings", e.target.value)
-                                  }
-                                  placeholder="Physical markings"
-                                />
-                              </div>
-
-                              {kid.status === "alive" && (
-                                <div className="flex items-center space-x-2">
-                                  <Checkbox
-                                    id={`create-record-${index}`}
-                                    checked={kid.createAnimalRecord}
-                                    onCheckedChange={(checked) =>
-                                      updateKid(
-                                        index,
-                                        "createAnimalRecord",
-                                        checked as boolean,
-                                      )
-                                    }
-                                  />
-                                  <Label
-                                    htmlFor={`create-record-${index}`}
-                                    className="text-sm font-normal"
-                                  >
-                                    Create animal record for this kid
-                                  </Label>
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Baby className="h-4 w-4 text-pink-600" />
+                                    <span className="text-sm font-medium text-pink-700">
+                                      Kid #{index + 1}
+                                    </span>
+                                    {kid.name && (
+                                      <span className="text-sm text-pink-600">- {kid.name}</span>
+                                    )}
+                                    <Badge 
+                                      variant={kid.status === 'alive' ? 'default' : 'destructive'}
+                                      className="text-xs px-1 py-0"
+                                    >
+                                      {kid.status}
+                                    </Badge>
+                                  </div>
+                                  <div className="flex gap-1">
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => startEditingKid(index)}
+                                      className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                    >
+                                      <Edit className="h-3 w-3" />
+                                    </Button>
+                                    <Button
+                                      type="button"
+                                      size="sm"
+                                      variant="outline"
+                                      onClick={() => removeKid(index)}
+                                      className="h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
+                                  </div>
                                 </div>
-                              )}
+                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                                  <div>
+                                    <span className="text-gray-500">Gender:</span>
+                                    <span className="ml-1 capitalize">{kid.gender} {kid.gender === 'male' ? '♂' : '♀'}</span>
+                                  </div>
+                                  {kid.weight && (
+                                    <div>
+                                      <span className="text-gray-500">Weight:</span>
+                                      <span className="ml-1">{kid.weight} kg</span>
+                                    </div>
+                                  )}
+                                  {kid.markings && (
+                                    <div className="col-span-2">
+                                      <span className="text-gray-500">Markings:</span>
+                                      <span className="ml-1">{kid.markings}</span>
+                                    </div>
+                                  )}
+                                  {kid.createAnimalRecord && kid.status === 'alive' && (
+                                    <div className="col-span-2">
+                                      <span className="text-green-600 text-xs">✓ Will create animal record</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
                             </CardContent>
                           </Card>
-                        ))
-                      )}
-                    </div>
-                  </ScrollArea>
-                </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-                <Separator />
+                  <Separator />
 
-                {/* Additional Information */}
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">
-                    Additional Information
-                  </h4>
+                  {/* Additional Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-medium text-gray-900">
+                      Additional Information
+                    </h4>
 
-                  <div className="space-y-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="veterinarianName">Veterinarian</Label>
-                      <Input
-                        id="veterinarianName"
-                        value={formData.veterinarianName}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            veterinarianName: e.target.value,
-                          }))
-                        }
-                        placeholder="Attending veterinarian"
-                      />
-                    </div>
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="veterinarianName">Veterinarian</Label>
+                        <Input
+                          id="veterinarianName"
+                          value={formData.veterinarianName}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              veterinarianName: e.target.value,
+                            }))
+                          }
+                          placeholder="Attending veterinarian"
+                        />
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="complications">Complications</Label>
-                      <Textarea
-                        id="complications"
-                        value={formData.complications}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            complications: e.target.value,
-                          }))
-                        }
-                        placeholder="Any birth complications"
-                        rows={2}
-                      />
-                    </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="complications">Complications</Label>
+                        <Textarea
+                          id="complications"
+                          value={formData.complications}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              complications: e.target.value,
+                            }))
+                          }
+                          placeholder="Any birth complications"
+                          rows={2}
+                        />
+                      </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="notes">Notes</Label>
-                      <Textarea
-                        id="notes"
-                        value={formData.notes}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            notes: e.target.value,
-                          }))
-                        }
-                        placeholder="Additional notes"
-                        rows={2}
-                      />
+                      <div className="space-y-2">
+                        <Label htmlFor="notes">Notes</Label>
+                        <Textarea
+                          id="notes"
+                          value={formData.notes}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              notes: e.target.value,
+                            }))
+                          }
+                          placeholder="Additional notes"
+                          rows={2}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </form>
-            </ScrollArea>
-          </div>
-        </div>
 
-        
-      </DialogContent>
-    </Dialog>
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-4">
+                    <Button
+                      type="submit"
+                      disabled={submitting}
+                      className="bg-pink-600 hover:bg-pink-700"
+                    >
+                      {submitting ? "Creating..." : "Create Birth Record"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsDialogOpen(false)}
+                      disabled={submitting}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              </ScrollArea>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Kid Form Dialog */}
+      <KidForm
+        isOpen={isKidFormOpen}
+        onClose={() => {
+          setIsKidFormOpen(false);
+          setEditingKidIndex(null);
+        }}
+        onAdd={editingKidIndex !== null ? (kidData) => updateKid(editingKidIndex, kidData) : addKidFromForm}
+        motherName={mother.name}
+        birthDate={formData.actualDeliveryDate}
+        kidNumber={editingKidIndex !== null ? editingKidIndex + 1 : formData.kids.length + 1}
+      />
+    </>
   );
 }
