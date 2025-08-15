@@ -770,6 +770,195 @@ export default function HealthRecordsOverview({
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Health Record Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Health Record</DialogTitle>
+            <DialogDescription>
+              Update the health record details for {editingRecord?.animalName}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdateRecord} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="recordType">Record Type *</Label>
+                <Select
+                  value={editFormData.recordType}
+                  onValueChange={(value) =>
+                    setEditFormData((prev) => ({ ...prev, recordType: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select record type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="checkup">Checkup</SelectItem>
+                    <SelectItem value="treatment">Treatment</SelectItem>
+                    <SelectItem value="illness">Illness</SelectItem>
+                    <SelectItem value="injury">Injury</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="date">Date *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={editFormData.date}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({ ...prev, date: e.target.value }))
+                  }
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Input
+                id="description"
+                placeholder="Brief description of the health record"
+                value={editFormData.description}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="veterinarianName">Veterinarian Name</Label>
+              <Input
+                id="veterinarianName"
+                placeholder="Name of the veterinarian"
+                value={editFormData.veterinarianName}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    veterinarianName: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="diagnosis">Diagnosis</Label>
+                <Textarea
+                  id="diagnosis"
+                  placeholder="Diagnosis details"
+                  value={editFormData.diagnosis}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      diagnosis: e.target.value,
+                    }))
+                  }
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="treatment">Treatment</Label>
+                <Textarea
+                  id="treatment"
+                  placeholder="Treatment provided"
+                  value={editFormData.treatment}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      treatment: e.target.value,
+                    }))
+                  }
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="medications">Medications</Label>
+              <Textarea
+                id="medications"
+                placeholder="Medications prescribed or administered"
+                value={editFormData.medications}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    medications: e.target.value,
+                  }))
+                }
+                rows={2}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="cost">Cost (₹)</Label>
+                <Input
+                  id="cost"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={editFormData.cost}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({ ...prev, cost: e.target.value }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="nextCheckupDate">Next Checkup Date</Label>
+                <Input
+                  id="nextCheckupDate"
+                  type="date"
+                  value={editFormData.nextCheckupDate}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      nextCheckupDate: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Additional Notes</Label>
+              <Textarea
+                id="notes"
+                placeholder="Any additional notes or observations"
+                value={editFormData.notes}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({ ...prev, notes: e.target.value }))
+                }
+                rows={3}
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button type="submit">
+                <Save className="h-4 w-4 mr-2" />
+                Update Record
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
