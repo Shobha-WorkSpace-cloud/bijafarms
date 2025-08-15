@@ -227,9 +227,18 @@ export default function HealthRecordsOverview({
 
   const stats = getHealthStats();
 
-  // Pagination for health records
+  // Convert grouped records to a flat array for pagination
+  const flatGroupedRecords = Object.entries(groupedRecords).map(([date, descriptions]) => ({
+    date,
+    descriptions: Object.entries(descriptions).map(([description, records]) => ({
+      description,
+      records
+    }))
+  }));
+
+  // Pagination for grouped records
   const {
-    data: paginatedRecords,
+    data: paginatedGroupedRecords,
     pagination,
     hasNextPage,
     hasPreviousPage,
@@ -238,7 +247,7 @@ export default function HealthRecordsOverview({
     goToNextPage,
     goToPreviousPage,
     changePageSize,
-  } = usePagination(filteredRecords, 10);
+  } = usePagination(flatGroupedRecords, 5); // Reduce page size since we're showing groups
 
   if (loading) {
     return (
