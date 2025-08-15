@@ -244,18 +244,56 @@ export default function BreedingManager({
       const record = breedingRecords.find((r) => r.id === editingKid.recordId);
       if (!record || !record.kidDetails) return;
 
-      // Update the kid details
-      const updatedKidDetails = [...record.kidDetails];
-      updatedKidDetails[editingKid.kidIndex] = editKidData;
+      // Get the animal ID
+      const animalId = record.kidDetails[editingKid.kidIndex];
+      if (!animalId) return;
 
-      // Update the breeding record
-      await animalApi.updateBreedingRecord(editingKid.recordId, {
-        ...record,
-        kidDetails: updatedKidDetails,
-      });
+      // Find the current animal record
+      const currentAnimal = allAnimals.find(a => a.id === animalId);
+      if (!currentAnimal) return;
 
-      // Refresh the records
+      // Determine new status based on editKidData.status
+      let newStatus: AnimalStatus;
+      let deathDate: string | undefined;
+      let deathCause: string | undefined;
+
+      switch (editKidData.status) {
+        case "alive":
+          newStatus = "active";
+          deathDate = undefined;
+          deathCause = undefined;
+          break;
+        case "stillborn":
+          newStatus = "dead";
+          deathDate = currentAnimal.dateOfBirth;
+          deathCause = "stillborn";
+          break;
+        case "died_after_birth":
+          newStatus = "dead";
+          deathDate = currentAnimal.dateOfBirth;
+          deathCause = "died after birth";
+          break;
+        default:
+          newStatus = currentAnimal.status;
+      }
+
+      // Update the animal record
+      const updatedAnimal = {
+        ...currentAnimal,
+        name: editKidData.name || currentAnimal.name,
+        gender: editKidData.gender,
+        currentWeight: editKidData.weight ? parseFloat(String(editKidData.weight)) : currentAnimal.currentWeight,
+        status: newStatus,
+        deathDate,
+        deathCause,
+        updatedAt: new Date().toISOString(),
+      };
+
+      await animalApi.updateAnimal(animalId, updatedAnimal);
+
+      // Refresh the records and animals
       await loadBreedingRecords(true);
+      onUpdateAnimals(); // This will refresh the allAnimals list
 
       toast({
         title: "Kid Updated Successfully",
