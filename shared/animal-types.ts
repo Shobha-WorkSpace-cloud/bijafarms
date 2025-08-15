@@ -71,13 +71,7 @@ export interface BreedingRecord {
   totalKids?: number;
   maleKids?: number;
   femaleKids?: number;
-  kidDetails?: {
-    name?: string;
-    gender: AnimalGender;
-    weight?: number;
-    status: "alive" | "stillborn" | "died_after_birth";
-    animalId?: string; // If the kid is added as a separate animal record
-  }[];
+  kidDetails?: string[]; // Array of animal IDs for all kids (alive, stillborn, died_after_birth)
 
   // Breeding notes
   breedingMethod?: "natural" | "artificial_insemination";

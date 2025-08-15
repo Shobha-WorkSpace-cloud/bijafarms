@@ -16,7 +16,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Baby, Plus } from "lucide-react";
 import { AnimalGender } from "@shared/animal-types";
 
@@ -27,7 +26,6 @@ interface KidFormData {
   status: "alive" | "stillborn" | "died_after_birth";
   markings: string;
   notes: string;
-  createAnimalRecord: boolean;
 }
 
 interface KidFormProps {
@@ -54,7 +52,6 @@ export default function KidForm({
     status: "alive",
     markings: "",
     notes: "",
-    createAnimalRecord: true,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -72,7 +69,6 @@ export default function KidForm({
       status: "alive",
       markings: "",
       notes: "",
-      createAnimalRecord: true,
     });
     onClose();
   };
@@ -184,24 +180,6 @@ export default function KidForm({
               placeholder="Additional notes about this kid"
             />
           </div>
-
-          {formData.status === "alive" && (
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="create-record"
-                checked={formData.createAnimalRecord}
-                onCheckedChange={(checked) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    createAnimalRecord: checked as boolean,
-                  }))
-                }
-              />
-              <Label htmlFor="create-record" className="text-sm font-normal">
-                Create animal record for this kid
-              </Label>
-            </div>
-          )}
 
           <div className="flex gap-2 pt-4">
             <Button
