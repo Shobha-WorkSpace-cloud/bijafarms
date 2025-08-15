@@ -1059,14 +1059,11 @@ export default function BreedingManager({
                                       </span>
                                     </div>
                                   )}
-                                  {kid.createAnimalRecord &&
-                                    kid.status === "alive" && (
-                                      <div className="col-span-2">
-                                        <span className="text-green-600 text-xs">
-                                          ✓ Will create animal record
-                                        </span>
-                                      </div>
-                                    )}
+                                  <div className="col-span-2">
+                                    <span className="text-green-600 text-xs">
+                                      ✓ Will create animal record
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
                             </CardContent>
