@@ -308,6 +308,10 @@ export default function BreedingHistory() {
     return animal ? animal.name : "Unknown";
   };
 
+  const getAnimalById = (animalId: string): AnimalRecord | undefined => {
+    return animals.find((a) => a.id === animalId);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
       year: "numeric",
