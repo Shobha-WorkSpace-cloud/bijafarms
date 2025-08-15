@@ -282,7 +282,7 @@ export default function BreedingManager({
         ...currentAnimal,
         name: editKidData.name || currentAnimal.name,
         gender: editKidData.gender,
-        currentWeight: editKidData.weight ? parseFloat(String(editKidData.weight)) : currentAnimal.currentWeight,
+        currentWeight: editKidData.currentWeight ? parseFloat(String(editKidData.currentWeight)) : currentAnimal.currentWeight,
         status: newStatus,
         deathDate,
         deathCause,
