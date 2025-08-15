@@ -842,8 +842,8 @@ export default function BreedingHistory() {
                   Detailed breeding history and birth records
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[600px]">
+              <CardContent className="space-y-4">
+                <div className="rounded-md border">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -857,7 +857,7 @@ export default function BreedingHistory() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredRecords.map((record) => {
+                      {paginatedRecords.map((record) => {
                         const breedingStatus = getBreedingStatus(record);
                         return (
                           <TableRow key={record.id}>
@@ -928,7 +928,19 @@ export default function BreedingHistory() {
                       })}
                     </TableBody>
                   </Table>
-                </ScrollArea>
+                </div>
+
+                {filteredRecords.length > 0 && (
+                  <Pagination
+                    currentPage={pagination.page}
+                    totalPages={totalPages}
+                    totalItems={pagination.total}
+                    pageSize={pagination.pageSize}
+                    onPageChange={goToPage}
+                    onPageSizeChange={changePageSize}
+                    pageSizeOptions={[5, 10, 20, 50]}
+                  />
+                )}
               </CardContent>
             </Card>
           </TabsContent>
