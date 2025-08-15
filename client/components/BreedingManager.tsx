@@ -900,7 +900,7 @@ export default function BreedingManager({
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                                   <div>
                                     <span className="text-gray-500">Gender:</span>
-                                    <span className="ml-1 capitalize">{kid.gender} {kid.gender === 'male' ? '♂' : '♀'}</span>
+                                    <span className="ml-1 capitalize">{kid.gender} ({kid.gender === 'male' ? 'M' : 'F'})</span>
                                   </div>
                                   {kid.weight && (
                                     <div>
