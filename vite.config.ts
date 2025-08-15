@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
     assetsInclude: ["**/*.js", "**/*.mjs"],
   },
   plugins: [react()],
-  base: mode != "development" ? "/bijafarms/" : "/",
+  base: mode !== "development" ? "/bijafarms/" : "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
