@@ -132,7 +132,19 @@ export default function BreedingHistory() {
   const [editingRecord, setEditingRecord] = useState<BreedingRecord | null>(
     null,
   );
+  const [isFiltersExpanded, setIsFiltersExpanded] = useState(false);
   const { toast } = useToast();
+
+  // Pagination for breeding records
+  const {
+    data: paginatedRecords,
+    pagination,
+    hasNextPage,
+    hasPreviousPage,
+    totalPages,
+    goToPage,
+    changePageSize,
+  } = usePagination(filteredRecords, 10);
 
   useEffect(() => {
     loadData();
