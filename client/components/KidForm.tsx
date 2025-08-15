@@ -182,23 +182,6 @@ export default function KidForm({
             />
           </div>
 
-          {formData.status === "alive" && (
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="create-record"
-                checked={formData.createAnimalRecord}
-                onCheckedChange={(checked) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    createAnimalRecord: checked as boolean,
-                  }))
-                }
-              />
-              <Label htmlFor="create-record" className="text-sm font-normal">
-                Create animal record for this kid
-              </Label>
-            </div>
-          )}
 
           <div className="flex gap-2 pt-4">
             <Button
