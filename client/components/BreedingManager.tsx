@@ -600,7 +600,11 @@ export default function BreedingManager({
                                       Individual Kids:
                                     </span>
                                   </div>
-                                  {record.kidDetails.map((kid, kidIndex) => {
+                                  {record.kidDetails.map((animalId, kidIndex) => {
+                                    // Find the animal by ID from allAnimals
+                                    const kid = allAnimals.find(a => a.id === animalId);
+                                    if (!kid) return null;
+
                                     const isEditing =
                                       editingKid?.recordId === record.id &&
                                       editingKid?.kidIndex === kidIndex;
