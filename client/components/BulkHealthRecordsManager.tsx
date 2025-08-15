@@ -223,7 +223,27 @@ export default function BulkHealthRecordsManager({
             Add health records to multiple animals at once
           </DialogDescription>
         </DialogHeader>
-
+{/* Actions */}
+        <Separator />
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || selectedAnimals.length === 0}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            {isSubmitting
+              ? "Adding..."
+              : `Add Records (${selectedAnimals.length})`}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setIsDialogOpen(false)}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(90vh-120px)]">
           {/* Animal Selection Panel */}
           <div className="space-y-4">
@@ -504,28 +524,6 @@ export default function BulkHealthRecordsManager({
               </form>
             </ScrollArea>
           </div>
-        </div>
-
-        {/* Actions */}
-        <Separator />
-        <div className="flex gap-2">
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting || selectedAnimals.length === 0}
-            className="bg-green-600 hover:bg-green-700"
-          >
-            {isSubmitting
-              ? "Adding..."
-              : `Add Records (${selectedAnimals.length})`}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => setIsDialogOpen(false)}
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
         </div>
       </DialogContent>
     </Dialog>
