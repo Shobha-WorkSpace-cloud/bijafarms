@@ -249,7 +249,7 @@ export default function BreedingManager({
       if (!animalId) return;
 
       // Find the current animal record
-      const currentAnimal = allAnimals.find(a => a.id === animalId);
+      const currentAnimal = allAnimals.find((a) => a.id === animalId);
       if (!currentAnimal) return;
 
       // Determine new status based on editKidData.status
@@ -282,7 +282,9 @@ export default function BreedingManager({
         ...currentAnimal,
         name: editKidData.name || currentAnimal.name,
         gender: editKidData.gender,
-        currentWeight: editKidData.currentWeight ? parseFloat(String(editKidData.currentWeight)) : currentAnimal.currentWeight,
+        currentWeight: editKidData.currentWeight
+          ? parseFloat(String(editKidData.currentWeight))
+          : currentAnimal.currentWeight,
         status: newStatus,
         deathDate,
         deathCause,
@@ -377,9 +379,14 @@ export default function BreedingManager({
             insured: false,
             notes: kid.notes || undefined,
             // Add death details for non-alive kids
-            deathDate: kid.status !== "alive" ? formData.actualDeliveryDate : undefined,
-            deathCause: kid.status === "stillborn" ? "stillborn" :
-                       kid.status === "died_after_birth" ? "died after birth" : undefined,
+            deathDate:
+              kid.status !== "alive" ? formData.actualDeliveryDate : undefined,
+            deathCause:
+              kid.status === "stillborn"
+                ? "stillborn"
+                : kid.status === "died_after_birth"
+                  ? "died after birth"
+                  : undefined,
           });
           newAnimalIds.push(newAnimal.id);
         } catch (error) {
@@ -419,9 +426,9 @@ export default function BreedingManager({
       // Update breeding record ID in all created animals
       for (const animalId of newAnimalIds) {
         try {
-          const animal = await animalApi.fetchAnimals().then(animals =>
-            animals.find(a => a.id === animalId)
-          );
+          const animal = await animalApi
+            .fetchAnimals()
+            .then((animals) => animals.find((a) => a.id === animalId));
           if (animal) {
             await animalApi.updateAnimal(animalId, {
               ...animal,
@@ -430,7 +437,10 @@ export default function BreedingManager({
             });
           }
         } catch (error) {
-          console.error(`Error updating breeding record ID for animal ${animalId}:`, error);
+          console.error(
+            `Error updating breeding record ID for animal ${animalId}:`,
+            error,
+          );
         }
       }
 
@@ -638,234 +648,254 @@ export default function BreedingManager({
                                       Individual Kids:
                                     </span>
                                   </div>
-                                  {record.kidDetails.map((animalId, kidIndex) => {
-                                    // Find the animal by ID from allAnimals
-                                    const kid = allAnimals.find(a => a.id === animalId);
-                                    if (!kid) return null;
+                                  {record.kidDetails.map(
+                                    (animalId, kidIndex) => {
+                                      // Find the animal by ID from allAnimals
+                                      const kid = allAnimals.find(
+                                        (a) => a.id === animalId,
+                                      );
+                                      if (!kid) return null;
 
-                                    const isEditing =
-                                      editingKid?.recordId === record.id &&
-                                      editingKid?.kidIndex === kidIndex;
+                                      const isEditing =
+                                        editingKid?.recordId === record.id &&
+                                        editingKid?.kidIndex === kidIndex;
 
-                                    return (
-                                      <Card
-                                        key={kidIndex}
-                                        className="border-blue-200 bg-blue-50/30"
-                                      >
-                                        <CardContent className="p-3">
-                                          {isEditing ? (
-                                            <div className="space-y-3">
-                                              <div className="flex items-center justify-between mb-2">
-                                                <span className="text-sm font-medium text-blue-700">
-                                                  Editing Kid #{kidIndex + 1}
-                                                </span>
-                                                <div className="flex gap-1">
-                                                  <Button
-                                                    size="sm"
-                                                    onClick={saveKidEdit}
-                                                    className="h-7 px-2 bg-green-600 hover:bg-green-700"
-                                                  >
-                                                    <Save className="h-3 w-3" />
-                                                  </Button>
+                                      return (
+                                        <Card
+                                          key={kidIndex}
+                                          className="border-blue-200 bg-blue-50/30"
+                                        >
+                                          <CardContent className="p-3">
+                                            {isEditing ? (
+                                              <div className="space-y-3">
+                                                <div className="flex items-center justify-between mb-2">
+                                                  <span className="text-sm font-medium text-blue-700">
+                                                    Editing Kid #{kidIndex + 1}
+                                                  </span>
+                                                  <div className="flex gap-1">
+                                                    <Button
+                                                      size="sm"
+                                                      onClick={saveKidEdit}
+                                                      className="h-7 px-2 bg-green-600 hover:bg-green-700"
+                                                    >
+                                                      <Save className="h-3 w-3" />
+                                                    </Button>
+                                                    <Button
+                                                      size="sm"
+                                                      variant="outline"
+                                                      onClick={
+                                                        cancelEditingHistoryKid
+                                                      }
+                                                      className="h-7 px-2"
+                                                    >
+                                                      <X className="h-3 w-3" />
+                                                    </Button>
+                                                  </div>
+                                                </div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                  <div className="space-y-1">
+                                                    <Label className="text-xs">
+                                                      Name
+                                                    </Label>
+                                                    <Input
+                                                      value={
+                                                        editKidData.name || ""
+                                                      }
+                                                      onChange={(e) =>
+                                                        setEditKidData(
+                                                          (prev) => ({
+                                                            ...prev,
+                                                            name: e.target
+                                                              .value,
+                                                          }),
+                                                        )
+                                                      }
+                                                      placeholder="Kid name"
+                                                    />
+                                                  </div>
+                                                  <div className="space-y-1">
+                                                    <Label className="text-xs">
+                                                      Gender
+                                                    </Label>
+                                                    <Select
+                                                      value={editKidData.gender}
+                                                      onValueChange={(value) =>
+                                                        setEditKidData(
+                                                          (prev) => ({
+                                                            ...prev,
+                                                            gender: value,
+                                                          }),
+                                                        )
+                                                      }
+                                                    >
+                                                      <SelectTrigger className="h-8">
+                                                        <SelectValue />
+                                                      </SelectTrigger>
+                                                      <SelectContent>
+                                                        <SelectItem value="female">
+                                                          Female
+                                                        </SelectItem>
+                                                        <SelectItem value="male">
+                                                          Male
+                                                        </SelectItem>
+                                                      </SelectContent>
+                                                    </Select>
+                                                  </div>
+                                                  <div className="space-y-1">
+                                                    <Label className="text-xs">
+                                                      Weight (kg)
+                                                    </Label>
+                                                    <Input
+                                                      type="number"
+                                                      step="0.1"
+                                                      value={
+                                                        editKidData.currentWeight ||
+                                                        ""
+                                                      }
+                                                      onChange={(e) =>
+                                                        setEditKidData(
+                                                          (prev) => ({
+                                                            ...prev,
+                                                            currentWeight:
+                                                              e.target.value,
+                                                          }),
+                                                        )
+                                                      }
+                                                      placeholder="Weight"
+                                                    />
+                                                  </div>
+                                                  <div className="space-y-1">
+                                                    <Label className="text-xs">
+                                                      Status
+                                                    </Label>
+                                                    <Select
+                                                      value={
+                                                        editKidData.status ===
+                                                        "active"
+                                                          ? "alive"
+                                                          : editKidData.deathCause ===
+                                                              "stillborn"
+                                                            ? "stillborn"
+                                                            : editKidData.deathCause ===
+                                                                "died after birth"
+                                                              ? "died_after_birth"
+                                                              : "alive"
+                                                      }
+                                                      onValueChange={(value) =>
+                                                        setEditKidData(
+                                                          (prev) => ({
+                                                            ...prev,
+                                                            status: value,
+                                                          }),
+                                                        )
+                                                      }
+                                                    >
+                                                      <SelectTrigger className="h-8">
+                                                        <SelectValue />
+                                                      </SelectTrigger>
+                                                      <SelectContent>
+                                                        <SelectItem value="alive">
+                                                          Alive
+                                                        </SelectItem>
+                                                        <SelectItem value="stillborn">
+                                                          Stillborn
+                                                        </SelectItem>
+                                                        <SelectItem value="died_after_birth">
+                                                          Died After Birth
+                                                        </SelectItem>
+                                                      </SelectContent>
+                                                    </Select>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            ) : (
+                                              <div className="space-y-2">
+                                                <div className="flex items-center justify-between">
+                                                  <div className="flex items-center gap-2">
+                                                    <Baby className="h-3 w-3 text-blue-600" />
+                                                    <span className="text-sm font-medium text-blue-700">
+                                                      Kid #{kidIndex + 1}
+                                                    </span>
+                                                    {kid.name && (
+                                                      <span className="text-sm text-blue-600">
+                                                        - {kid.name}
+                                                      </span>
+                                                    )}
+                                                    <Badge
+                                                      variant={
+                                                        kid.status === "active"
+                                                          ? "default"
+                                                          : "destructive"
+                                                      }
+                                                      className="text-xs px-1 py-0"
+                                                    >
+                                                      {kid.status === "active"
+                                                        ? "alive"
+                                                        : kid.deathCause ===
+                                                            "stillborn"
+                                                          ? "stillborn"
+                                                          : kid.deathCause ===
+                                                              "died after birth"
+                                                            ? "died after birth"
+                                                            : "dead"}
+                                                    </Badge>
+                                                  </div>
                                                   <Button
                                                     size="sm"
                                                     variant="outline"
-                                                    onClick={
-                                                      cancelEditingHistoryKid
+                                                    onClick={() =>
+                                                      startEditingHistoryKid(
+                                                        record.id,
+                                                        kidIndex,
+                                                        kid,
+                                                      )
                                                     }
-                                                    className="h-7 px-2"
+                                                    className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                                                   >
-                                                    <X className="h-3 w-3" />
+                                                    <Edit className="h-3 w-3" />
                                                   </Button>
                                                 </div>
-                                              </div>
-                                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                <div className="space-y-1">
-                                                  <Label className="text-xs">
-                                                    Name
-                                                  </Label>
-                                                  <Input
-                                                    value={
-                                                      editKidData.name || ""
-                                                    }
-                                                    onChange={(e) =>
-                                                      setEditKidData(
-                                                        (prev) => ({
-                                                          ...prev,
-                                                          name: e.target.value,
-                                                        }),
-                                                      )
-                                                    }
-                                                    placeholder="Kid name"
-                                                  />
-                                                </div>
-                                                <div className="space-y-1">
-                                                  <Label className="text-xs">
-                                                    Gender
-                                                  </Label>
-                                                  <Select
-                                                    value={editKidData.gender}
-                                                    onValueChange={(value) =>
-                                                      setEditKidData(
-                                                        (prev) => ({
-                                                          ...prev,
-                                                          gender: value,
-                                                        }),
-                                                      )
-                                                    }
-                                                  >
-                                                    <SelectTrigger className="h-8">
-                                                      <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                      <SelectItem value="female">
-                                                        Female
-                                                      </SelectItem>
-                                                      <SelectItem value="male">
-                                                        Male
-                                                      </SelectItem>
-                                                    </SelectContent>
-                                                  </Select>
-                                                </div>
-                                                <div className="space-y-1">
-                                                  <Label className="text-xs">
-                                                    Weight (kg)
-                                                  </Label>
-                                                  <Input
-                                                    type="number"
-                                                    step="0.1"
-                                                    value={
-                                                      editKidData.currentWeight || ""
-                                                    }
-                                                    onChange={(e) =>
-                                                      setEditKidData(
-                                                        (prev) => ({
-                                                          ...prev,
-                                                          currentWeight: e.target.value,
-                                                        }),
-                                                      )
-                                                    }
-                                                    placeholder="Weight"
-                                                  />
-                                                </div>
-                                                <div className="space-y-1">
-                                                  <Label className="text-xs">
-                                                    Status
-                                                  </Label>
-                                                  <Select
-                                                    value={
-                                                      editKidData.status === "active" ? "alive" :
-                                                      editKidData.deathCause === "stillborn" ? "stillborn" :
-                                                      editKidData.deathCause === "died after birth" ? "died_after_birth" : "alive"
-                                                    }
-                                                    onValueChange={(value) =>
-                                                      setEditKidData(
-                                                        (prev) => ({
-                                                          ...prev,
-                                                          status: value,
-                                                        }),
-                                                      )
-                                                    }
-                                                  >
-                                                    <SelectTrigger className="h-8">
-                                                      <SelectValue />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                      <SelectItem value="alive">
-                                                        Alive
-                                                      </SelectItem>
-                                                      <SelectItem value="stillborn">
-                                                        Stillborn
-                                                      </SelectItem>
-                                                      <SelectItem value="died_after_birth">
-                                                        Died After Birth
-                                                      </SelectItem>
-                                                    </SelectContent>
-                                                  </Select>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          ) : (
-                                            <div className="space-y-2">
-                                              <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2">
-                                                  <Baby className="h-3 w-3 text-blue-600" />
-                                                  <span className="text-sm font-medium text-blue-700">
-                                                    Kid #{kidIndex + 1}
-                                                  </span>
-                                                  {kid.name && (
-                                                    <span className="text-sm text-blue-600">
-                                                      - {kid.name}
-                                                    </span>
-                                                  )}
-                                                  <Badge
-                                                    variant={
-                                                      kid.status === "active"
-                                                        ? "default"
-                                                        : "destructive"
-                                                    }
-                                                    className="text-xs px-1 py-0"
-                                                  >
-                                                    {kid.status === "active" ? "alive" :
-                                                     kid.deathCause === "stillborn" ? "stillborn" :
-                                                     kid.deathCause === "died after birth" ? "died after birth" : "dead"}
-                                                  </Badge>
-                                                </div>
-                                                <Button
-                                                  size="sm"
-                                                  variant="outline"
-                                                  onClick={() =>
-                                                    startEditingHistoryKid(
-                                                      record.id,
-                                                      kidIndex,
-                                                      kid,
-                                                    )
-                                                  }
-                                                  className="h-6 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                                                >
-                                                  <Edit className="h-3 w-3" />
-                                                </Button>
-                                              </div>
-                                              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                                                <div>
-                                                  <span className="text-gray-500">
-                                                    Gender:
-                                                  </span>
-                                                  <span className="ml-1 capitalize">
-                                                    {kid.gender} (
-                                                    {kid.gender === "male"
-                                                      ? "M"
-                                                      : "F"}
-                                                    )
-                                                  </span>
-                                                </div>
-                                                {kid.currentWeight && (
+                                                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
                                                   <div>
                                                     <span className="text-gray-500">
-                                                      Weight:
+                                                      Gender:
                                                     </span>
-                                                    <span className="ml-1">
-                                                      {kid.currentWeight} kg
-                                                    </span>
-                                                  </div>
-                                                )}
-                                                {kid.markings && (
-                                                  <div className="col-span-2">
-                                                    <span className="text-gray-500">
-                                                      Markings:
-                                                    </span>
-                                                    <span className="ml-1">
-                                                      {kid.markings}
+                                                    <span className="ml-1 capitalize">
+                                                      {kid.gender} (
+                                                      {kid.gender === "male"
+                                                        ? "M"
+                                                        : "F"}
+                                                      )
                                                     </span>
                                                   </div>
-                                                )}
+                                                  {kid.currentWeight && (
+                                                    <div>
+                                                      <span className="text-gray-500">
+                                                        Weight:
+                                                      </span>
+                                                      <span className="ml-1">
+                                                        {kid.currentWeight} kg
+                                                      </span>
+                                                    </div>
+                                                  )}
+                                                  {kid.markings && (
+                                                    <div className="col-span-2">
+                                                      <span className="text-gray-500">
+                                                        Markings:
+                                                      </span>
+                                                      <span className="ml-1">
+                                                        {kid.markings}
+                                                      </span>
+                                                    </div>
+                                                  )}
+                                                </div>
                                               </div>
-                                            </div>
-                                          )}
-                                        </CardContent>
-                                      </Card>
-                                    );
-                                  })}
+                                            )}
+                                          </CardContent>
+                                        </Card>
+                                      );
+                                    },
+                                  )}
                                 </div>
                               ) : (
                                 <div className="text-center py-4 text-sm text-gray-500">
