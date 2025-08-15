@@ -16,7 +16,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   Stethoscope,
   Calendar,
@@ -30,6 +44,12 @@ import {
   Search,
   TrendingUp,
   Heart,
+  ChevronDown,
+  ChevronRight,
+  Edit,
+  Trash2,
+  Save,
+  X,
 } from "lucide-react";
 import { AnimalRecord, HealthRecord } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
@@ -39,6 +59,19 @@ import { Pagination } from "@/components/ui/pagination";
 
 interface HealthRecordsOverviewProps {
   animals: AnimalRecord[];
+}
+
+interface HealthFormData {
+  recordType: string;
+  date: string;
+  description: string;
+  veterinarianName: string;
+  diagnosis: string;
+  treatment: string;
+  medications: string;
+  cost: string;
+  nextCheckupDate: string;
+  notes: string;
 }
 
 export default function HealthRecordsOverview({
@@ -51,6 +84,22 @@ export default function HealthRecordsOverview({
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [animalFilter, setAnimalFilter] = useState("all");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<
+    (HealthRecord & { animalName: string; animalId: string }) | null
+  >(null);
+  const [editFormData, setEditFormData] = useState<HealthFormData>({
+    recordType: "checkup",
+    date: new Date().toISOString().split("T")[0],
+    description: "",
+    veterinarianName: "",
+    diagnosis: "",
+    treatment: "",
+    medications: "",
+    cost: "",
+    nextCheckupDate: "",
+    notes: "",
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -121,6 +170,33 @@ export default function HealthRecordsOverview({
 
     return matchesSearch && matchesType && matchesAnimal;
   });
+
+  // Group records by date first, then by description within each date
+  const groupedRecords = filteredRecords.reduce(
+    (groups, record) => {
+      const dateKey = record.date;
+      const descriptionKey = record.description;
+
+      if (!groups[dateKey]) {
+        groups[dateKey] = {};
+      }
+
+      if (!groups[dateKey][descriptionKey]) {
+        groups[dateKey][descriptionKey] = [];
+      }
+
+      groups[dateKey][descriptionKey].push(record);
+
+      return groups;
+    },
+    {} as Record<
+      string,
+      Record<
+        string,
+        (HealthRecord & { animalName: string; animalId: string })[]
+      >
+    >,
+  );
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -209,9 +285,151 @@ export default function HealthRecordsOverview({
 
   const stats = getHealthStats();
 
-  // Pagination for health records
+  // Convert grouped records to a flat array for pagination and add state management
+  const flatGroupedRecords = Object.entries(groupedRecords).map(
+    ([date, descriptions]) => ({
+      date,
+      descriptions: Object.entries(descriptions).map(
+        ([description, records]) => ({
+          description,
+          records,
+          id: `${date}-${description}`, // Unique ID for each group
+        }),
+      ),
+    }),
+  );
+
+  // State for managing collapsed/expanded groups
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(groupId)) {
+        newSet.delete(groupId);
+      } else {
+        newSet.add(groupId);
+      }
+      return newSet;
+    });
+  };
+
+  const handleEditRecord = (
+    record: HealthRecord & { animalName: string; animalId: string },
+  ) => {
+    setEditingRecord(record);
+    setEditFormData({
+      recordType: record.recordType,
+      date: record.date,
+      description: record.description,
+      veterinarianName: record.veterinarianName || "",
+      diagnosis: record.diagnosis || "",
+      treatment: record.treatment || "",
+      medications: record.medications || "",
+      cost: record.cost?.toString() || "",
+      nextCheckupDate: record.nextCheckupDate || "",
+      notes: record.notes || "",
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateRecord = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !editingRecord ||
+      !editFormData.recordType ||
+      !editFormData.date ||
+      !editFormData.description
+    ) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const updatedRecord = await animalApi.updateHealthRecord(
+        editingRecord.id,
+        {
+          ...editingRecord,
+          recordType: editFormData.recordType as
+            | "checkup"
+            | "treatment"
+            | "illness"
+            | "injury"
+            | "other",
+          date: editFormData.date,
+          description: editFormData.description,
+          veterinarianName: editFormData.veterinarianName || undefined,
+          diagnosis: editFormData.diagnosis || undefined,
+          treatment: editFormData.treatment || undefined,
+          medications: editFormData.medications || undefined,
+          cost: editFormData.cost ? parseFloat(editFormData.cost) : undefined,
+          nextCheckupDate: editFormData.nextCheckupDate || undefined,
+          notes: editFormData.notes || undefined,
+        },
+      );
+
+      setHealthRecords((prev) =>
+        prev.map((record) =>
+          record.id === editingRecord.id
+            ? {
+                ...updatedRecord,
+                animalName: editingRecord.animalName,
+                animalId: editingRecord.animalId,
+              }
+            : record,
+        ),
+      );
+
+      setIsEditDialogOpen(false);
+      setEditingRecord(null);
+
+      toast({
+        title: "Success",
+        description: "Health record updated successfully.",
+      });
+    } catch (error) {
+      console.error("Error updating health record:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update health record. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteRecord = async (
+    record: HealthRecord & { animalName: string; animalId: string },
+  ) => {
+    if (!confirm("Are you sure you want to delete this health record?")) {
+      return;
+    }
+
+    try {
+      await animalApi.deleteHealthRecord(record.id);
+      setHealthRecords((prev) => prev.filter((r) => r.id !== record.id));
+
+      toast({
+        title: "Success",
+        description: "Health record deleted successfully.",
+      });
+    } catch (error) {
+      console.error("Error deleting health record:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete health record. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Pagination for grouped records
   const {
-    data: paginatedRecords,
+    data: paginatedGroupedRecords,
     pagination,
     hasNextPage,
     hasPreviousPage,
@@ -220,7 +438,7 @@ export default function HealthRecordsOverview({
     goToNextPage,
     goToPreviousPage,
     changePageSize,
-  } = usePagination(filteredRecords, 10);
+  } = usePagination(flatGroupedRecords, 5); // Reduce page size since we're showing groups
 
   if (loading) {
     return (
@@ -385,120 +603,218 @@ export default function HealthRecordsOverview({
           ) : (
             <>
               <div className="space-y-4 mb-6">
-                {paginatedRecords.map((record) => {
-                  const typeInfo = getRecordTypeInfo(record.recordType);
-                  const TypeIcon = typeInfo.icon;
-
-                  return (
-                    <div
-                      key={`${record.animalId}-${record.id}`}
-                      className="border rounded-lg p-4 hover:bg-gray-50"
-                    >
-                      <div className="space-y-3">
-                        {/* Header */}
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
-                            <Badge className={typeInfo.color}>
-                              <TypeIcon className="h-3 w-3 mr-1" />
-                              {typeInfo.label}
-                            </Badge>
-                            <div className="flex items-center gap-1 text-sm text-gray-600">
-                              <Calendar className="h-3 w-3" />
-                              {formatDate(record.date)}
-                            </div>
-                            <Badge variant="outline">{record.animalName}</Badge>
-                          </div>
-
-                          {record.cost && (
-                            <div className="flex items-center gap-1 text-sm font-medium text-green-700">
-                              <IndianRupee className="h-3 w-3" />
-                              {formatCurrency(record.cost)}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Description */}
-                        <div>
-                          <h4 className="font-medium text-gray-900">
-                            {record.description}
-                          </h4>
-                        </div>
-
-                        {/* Details */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          {record.veterinarianName && (
-                            <div className="flex items-center gap-1 text-gray-600">
-                              <User className="h-3 w-3" />
-                              <span className="font-medium">Vet:</span>{" "}
-                              {record.veterinarianName}
-                            </div>
-                          )}
-
-                          {record.nextCheckupDate && (
-                            <div className="flex items-center gap-1 text-gray-600">
-                              <Clock className="h-3 w-3" />
-                              <span className="font-medium">
-                                Next checkup:
-                              </span>{" "}
-                              {formatDate(record.nextCheckupDate)}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Clinical Information */}
-                        {(record.diagnosis ||
-                          record.treatment ||
-                          record.medications) && (
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm bg-gray-50 p-3 rounded">
-                            {record.diagnosis && (
-                              <div>
-                                <span className="font-medium text-gray-700">
-                                  Diagnosis:
-                                </span>
-                                <p className="text-gray-600 mt-1">
-                                  {record.diagnosis}
-                                </p>
-                              </div>
-                            )}
-
-                            {record.treatment && (
-                              <div>
-                                <span className="font-medium text-gray-700">
-                                  Treatment:
-                                </span>
-                                <p className="text-gray-600 mt-1">
-                                  {record.treatment}
-                                </p>
-                              </div>
-                            )}
-
-                            {record.medications && (
-                              <div>
-                                <span className="font-medium text-gray-700">
-                                  Medications:
-                                </span>
-                                <p className="text-gray-600 mt-1">
-                                  {record.medications}
-                                </p>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Notes */}
-                        {record.notes && (
-                          <div className="flex items-start gap-1 text-sm text-gray-700 bg-blue-50 p-3 rounded">
-                            <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <span className="font-medium">Notes:</span>
-                              <p className="mt-1">{record.notes}</p>
-                            </div>
-                          </div>
-                        )}
+                {paginatedGroupedRecords.map((dateGroup) => (
+                  <div
+                    key={dateGroup.date}
+                    className="border rounded-lg overflow-hidden"
+                  >
+                    {/* Date Header */}
+                    <div className="bg-gray-100 px-4 py-3 border-b">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-blue-600" />
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {formatDate(dateGroup.date)}
+                        </h3>
+                        <span className="text-sm text-gray-600 ml-2">
+                          (
+                          {dateGroup.descriptions.reduce(
+                            (sum, desc) => sum + desc.records.length,
+                            0,
+                          )}{" "}
+                          records)
+                        </span>
                       </div>
                     </div>
-                  );
-                })}
+
+                    {/* Descriptions within this date - Collapsible */}
+                    <div className="divide-y">
+                      {dateGroup.descriptions.map((descriptionGroup) => {
+                        const isExpanded = expandedGroups.has(
+                          descriptionGroup.id,
+                        );
+
+                        // Get unique veterinarians for this group
+                        const vets = [
+                          ...new Set(
+                            descriptionGroup.records
+                              .map((r) => r.veterinarianName)
+                              .filter(Boolean),
+                          ),
+                        ];
+
+                        return (
+                          <Collapsible key={descriptionGroup.id}>
+                            <CollapsibleTrigger
+                              onClick={() => toggleGroup(descriptionGroup.id)}
+                              className="w-full p-4 hover:bg-gray-50 transition-colors"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3 text-left">
+                                  {isExpanded ? (
+                                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                                  ) : (
+                                    <ChevronRight className="h-4 w-4 text-gray-500" />
+                                  )}
+                                  <div>
+                                    <h4 className="text-md font-medium text-gray-800">
+                                      {descriptionGroup.description}
+                                    </h4>
+                                    {vets.length > 0 && (
+                                      <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                                        <User className="h-3 w-3" />
+                                        <span>Vet: {vets.join(", ")}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-500">
+                                    {descriptionGroup.records.length} animal
+                                    {descriptionGroup.records.length !== 1
+                                      ? "s"
+                                      : ""}
+                                  </span>
+                                </div>
+                              </div>
+                            </CollapsibleTrigger>
+
+                            <CollapsibleContent>
+                              <div className="px-4 pb-4 space-y-3">
+                                {descriptionGroup.records.map((record) => {
+                                  const typeInfo = getRecordTypeInfo(
+                                    record.recordType,
+                                  );
+                                  const TypeIcon = typeInfo.icon;
+
+                                  return (
+                                    <div
+                                      key={`${record.animalId}-${record.id}`}
+                                      className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors ml-6"
+                                    >
+                                      <div className="space-y-3">
+                                        {/* Animal Info - Prominent Display */}
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-3">
+                                            <Badge className={typeInfo.color}>
+                                              <TypeIcon className="h-3 w-3 mr-1" />
+                                              {typeInfo.label}
+                                            </Badge>
+                                            <div className="text-lg font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full">
+                                              {record.animalName}
+                                            </div>
+                                          </div>
+
+                                          <div className="flex items-center gap-2">
+                                            {record.cost && (
+                                              <div className="flex items-center gap-1 text-sm font-medium text-green-700">
+                                                <IndianRupee className="h-3 w-3" />
+                                                {formatCurrency(record.cost)}
+                                              </div>
+                                            )}
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() =>
+                                                handleEditRecord(record)
+                                              }
+                                              className="h-8 w-8 p-0"
+                                            >
+                                              <Edit className="h-3 w-3" />
+                                            </Button>
+                                            <Button
+                                              variant="outline"
+                                              size="sm"
+                                              onClick={() =>
+                                                handleDeleteRecord(record)
+                                              }
+                                              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                            >
+                                              <Trash2 className="h-3 w-3" />
+                                            </Button>
+                                          </div>
+                                        </div>
+
+                                        {/* Details */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                          {record.nextCheckupDate && (
+                                            <div className="flex items-center gap-1 text-gray-600">
+                                              <Clock className="h-3 w-3" />
+                                              <span className="font-medium">
+                                                Next checkup:
+                                              </span>{" "}
+                                              {formatDate(
+                                                record.nextCheckupDate,
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        {/* Clinical Information */}
+                                        {(record.diagnosis ||
+                                          record.treatment ||
+                                          record.medications) && (
+                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm bg-white p-3 rounded border">
+                                            {record.diagnosis && (
+                                              <div>
+                                                <span className="font-medium text-gray-700">
+                                                  Diagnosis:
+                                                </span>
+                                                <p className="text-gray-600 mt-1">
+                                                  {record.diagnosis}
+                                                </p>
+                                              </div>
+                                            )}
+
+                                            {record.treatment && (
+                                              <div>
+                                                <span className="font-medium text-gray-700">
+                                                  Treatment:
+                                                </span>
+                                                <p className="text-gray-600 mt-1">
+                                                  {record.treatment}
+                                                </p>
+                                              </div>
+                                            )}
+
+                                            {record.medications && (
+                                              <div>
+                                                <span className="font-medium text-gray-700">
+                                                  Medications:
+                                                </span>
+                                                <p className="text-gray-600 mt-1">
+                                                  {record.medications}
+                                                </p>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+
+                                        {/* Notes */}
+                                        {record.notes && (
+                                          <div className="flex items-start gap-1 text-sm text-gray-700 bg-blue-50 p-3 rounded">
+                                            <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                                            <div>
+                                              <span className="font-medium">
+                                                Notes:
+                                              </span>
+                                              <p className="mt-1">
+                                                {record.notes}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
               </div>
 
               {/* Pagination Controls */}
@@ -510,13 +826,211 @@ export default function HealthRecordsOverview({
                   pageSize={pagination.pageSize}
                   onPageChange={goToPage}
                   onPageSizeChange={changePageSize}
-                  pageSizeOptions={[5, 10, 20, 50]}
+                  pageSizeOptions={[3, 5, 10, 15]}
                 />
               )}
             </>
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Health Record Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Health Record</DialogTitle>
+            <DialogDescription>
+              Update the health record details for {editingRecord?.animalName}
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdateRecord} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="recordType">Record Type *</Label>
+                <Select
+                  value={editFormData.recordType}
+                  onValueChange={(value) =>
+                    setEditFormData((prev) => ({ ...prev, recordType: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select record type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="checkup">Checkup</SelectItem>
+                    <SelectItem value="treatment">Treatment</SelectItem>
+                    <SelectItem value="illness">Illness</SelectItem>
+                    <SelectItem value="injury">Injury</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="date">Date *</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  value={editFormData.date}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      date: e.target.value,
+                    }))
+                  }
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description *</Label>
+              <Input
+                id="description"
+                placeholder="Brief description of the health record"
+                value={editFormData.description}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="veterinarianName">Veterinarian Name</Label>
+              <Input
+                id="veterinarianName"
+                placeholder="Name of the veterinarian"
+                value={editFormData.veterinarianName}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    veterinarianName: e.target.value,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="diagnosis">Diagnosis</Label>
+                <Textarea
+                  id="diagnosis"
+                  placeholder="Diagnosis details"
+                  value={editFormData.diagnosis}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      diagnosis: e.target.value,
+                    }))
+                  }
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="treatment">Treatment</Label>
+                <Textarea
+                  id="treatment"
+                  placeholder="Treatment provided"
+                  value={editFormData.treatment}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      treatment: e.target.value,
+                    }))
+                  }
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="medications">Medications</Label>
+              <Textarea
+                id="medications"
+                placeholder="Medications prescribed or administered"
+                value={editFormData.medications}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    medications: e.target.value,
+                  }))
+                }
+                rows={2}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="cost">Cost (₹)</Label>
+                <Input
+                  id="cost"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={editFormData.cost}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      cost: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="nextCheckupDate">Next Checkup Date</Label>
+                <Input
+                  id="nextCheckupDate"
+                  type="date"
+                  value={editFormData.nextCheckupDate}
+                  onChange={(e) =>
+                    setEditFormData((prev) => ({
+                      ...prev,
+                      nextCheckupDate: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Additional Notes</Label>
+              <Textarea
+                id="notes"
+                placeholder="Any additional notes or observations"
+                value={editFormData.notes}
+                onChange={(e) =>
+                  setEditFormData((prev) => ({
+                    ...prev,
+                    notes: e.target.value,
+                  }))
+                }
+                rows={3}
+              />
+            </div>
+
+            <div className="flex justify-end gap-2 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+              <Button type="submit">
+                <Save className="h-4 w-4 mr-2" />
+                Update Record
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

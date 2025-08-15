@@ -105,6 +105,17 @@ export const createHealthRecord = async (
   return apiPost("/health-records", record);
 };
 
+export const updateHealthRecord = async (
+  id: string,
+  record: HealthRecord,
+): Promise<HealthRecord> => {
+  return apiPut(`/health-records/${id}`, record);
+};
+
+export const deleteHealthRecord = async (id: string): Promise<void> => {
+  return apiDelete(`/health-records/${id}`);
+};
+
 // Dashboard summary
 export const fetchAnimalSummary = async (): Promise<AnimalSummary> => {
   return apiGet("/animals/summary");
