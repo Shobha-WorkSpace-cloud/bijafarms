@@ -394,17 +394,17 @@ export default function BreedingHistory() {
 
   const breedingExportConfig = {
     filename: "breeding-history",
-    headers: [
-      { label: "Date", key: "date" },
-      { label: "Mother", key: "mother" },
-      { label: "Father", key: "father" },
-      { label: "Method", key: "method" },
-      { label: "Total Kids", key: "totalKids" },
-      { label: "Male Kids", key: "maleKids" },
-      { label: "Female Kids", key: "femaleKids" },
-      { label: "Status", key: "status" },
-      { label: "Veterinarian", key: "veterinarian" },
-      { label: "Complications", key: "complications" },
+    columns: [
+      { header: "Date", key: "date" },
+      { header: "Mother", key: "mother" },
+      { header: "Father", key: "father" },
+      { header: "Method", key: "method" },
+      { header: "Total Kids", key: "totalKids" },
+      { header: "Male Kids", key: "maleKids" },
+      { header: "Female Kids", key: "femaleKids" },
+      { header: "Status", key: "status" },
+      { header: "Veterinarian", key: "veterinarian" },
+      { header: "Complications", key: "complications" },
     ],
   };
 
