@@ -18,6 +18,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   Stethoscope,
   Calendar,
   User,
@@ -30,6 +35,8 @@ import {
   Search,
   TrendingUp,
   Heart,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 import { AnimalRecord, HealthRecord } from "@shared/animal-types";
 import * as animalApi from "@/lib/animal-api";
@@ -227,14 +234,30 @@ export default function HealthRecordsOverview({
 
   const stats = getHealthStats();
 
-  // Convert grouped records to a flat array for pagination
+  // Convert grouped records to a flat array for pagination and add state management
   const flatGroupedRecords = Object.entries(groupedRecords).map(([date, descriptions]) => ({
     date,
     descriptions: Object.entries(descriptions).map(([description, records]) => ({
       description,
-      records
+      records,
+      id: `${date}-${description}`, // Unique ID for each group
     }))
   }));
+
+  // State for managing collapsed/expanded groups
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+  const toggleGroup = (groupId: string) => {
+    setExpandedGroups(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(groupId)) {
+        newSet.delete(groupId);
+      } else {
+        newSet.add(groupId);
+      }
+      return newSet;
+    });
+  };
 
   // Pagination for grouped records
   const {
@@ -411,7 +434,7 @@ export default function HealthRecordsOverview({
             </div>
           ) : (
             <>
-              <div className="space-y-6 mb-6">
+              <div className="space-y-4 mb-6">
                 {paginatedGroupedRecords.map((dateGroup) => (
                   <div key={dateGroup.date} className="border rounded-lg overflow-hidden">
                     {/* Date Header */}
@@ -421,130 +444,161 @@ export default function HealthRecordsOverview({
                         <h3 className="text-lg font-semibold text-gray-900">
                           {formatDate(dateGroup.date)}
                         </h3>
+                        <span className="text-sm text-gray-600 ml-2">
+                          ({dateGroup.descriptions.reduce((sum, desc) => sum + desc.records.length, 0)} records)
+                        </span>
                       </div>
                     </div>
 
-                    {/* Descriptions within this date */}
+                    {/* Descriptions within this date - Collapsible */}
                     <div className="divide-y">
-                      {dateGroup.descriptions.map((descriptionGroup) => (
-                        <div key={descriptionGroup.description} className="p-4">
-                          {/* Description Header */}
-                          <div className="mb-4">
-                            <h4 className="text-md font-medium text-gray-800 mb-2">
-                              {descriptionGroup.description}
-                            </h4>
-                          </div>
+                      {dateGroup.descriptions.map((descriptionGroup) => {
+                        const isExpanded = expandedGroups.has(descriptionGroup.id);
 
-                          {/* Records within this description */}
-                          <div className="space-y-3">
-                            {descriptionGroup.records.map((record) => {
-                              const typeInfo = getRecordTypeInfo(record.recordType);
-                              const TypeIcon = typeInfo.icon;
+                        // Get unique veterinarians for this group
+                        const vets = [...new Set(
+                          descriptionGroup.records
+                            .map(r => r.veterinarianName)
+                            .filter(Boolean)
+                        )];
 
-                              return (
-                                <div
-                                  key={`${record.animalId}-${record.id}`}
-                                  className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
-                                >
-                                  <div className="space-y-3">
-                                    {/* Animal Info - Prominent Display */}
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-3">
-                                        <Badge className={typeInfo.color}>
-                                          <TypeIcon className="h-3 w-3 mr-1" />
-                                          {typeInfo.label}
-                                        </Badge>
-                                        <div className="text-lg font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full">
-                                          {record.animalName}
-                                        </div>
-                                      </div>
-
-                                      {record.cost && (
-                                        <div className="flex items-center gap-1 text-sm font-medium text-green-700">
-                                          <IndianRupee className="h-3 w-3" />
-                                          {formatCurrency(record.cost)}
-                                        </div>
-                                      )}
-                                    </div>
-
-                                    {/* Details */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                                      {record.veterinarianName && (
-                                        <div className="flex items-center gap-1 text-gray-600">
-                                          <User className="h-3 w-3" />
-                                          <span className="font-medium">Vet:</span>{" "}
-                                          {record.veterinarianName}
-                                        </div>
-                                      )}
-
-                                      {record.nextCheckupDate && (
-                                        <div className="flex items-center gap-1 text-gray-600">
-                                          <Clock className="h-3 w-3" />
-                                          <span className="font-medium">
-                                            Next checkup:
-                                          </span>{" "}
-                                          {formatDate(record.nextCheckupDate)}
-                                        </div>
-                                      )}
-                                    </div>
-
-                                    {/* Clinical Information */}
-                                    {(record.diagnosis ||
-                                      record.treatment ||
-                                      record.medications) && (
-                                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm bg-white p-3 rounded border">
-                                        {record.diagnosis && (
-                                          <div>
-                                            <span className="font-medium text-gray-700">
-                                              Diagnosis:
-                                            </span>
-                                            <p className="text-gray-600 mt-1">
-                                              {record.diagnosis}
-                                            </p>
-                                          </div>
-                                        )}
-
-                                        {record.treatment && (
-                                          <div>
-                                            <span className="font-medium text-gray-700">
-                                              Treatment:
-                                            </span>
-                                            <p className="text-gray-600 mt-1">
-                                              {record.treatment}
-                                            </p>
-                                          </div>
-                                        )}
-
-                                        {record.medications && (
-                                          <div>
-                                            <span className="font-medium text-gray-700">
-                                              Medications:
-                                            </span>
-                                            <p className="text-gray-600 mt-1">
-                                              {record.medications}
-                                            </p>
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
-
-                                    {/* Notes */}
-                                    {record.notes && (
-                                      <div className="flex items-start gap-1 text-sm text-gray-700 bg-blue-50 p-3 rounded">
-                                        <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />
-                                        <div>
-                                          <span className="font-medium">Notes:</span>
-                                          <p className="mt-1">{record.notes}</p>
-                                        </div>
+                        return (
+                          <Collapsible key={descriptionGroup.id}>
+                            <CollapsibleTrigger
+                              onClick={() => toggleGroup(descriptionGroup.id)}
+                              className="w-full p-4 hover:bg-gray-50 transition-colors"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3 text-left">
+                                  {isExpanded ? (
+                                    <ChevronDown className="h-4 w-4 text-gray-500" />
+                                  ) : (
+                                    <ChevronRight className="h-4 w-4 text-gray-500" />
+                                  )}
+                                  <div>
+                                    <h4 className="text-md font-medium text-gray-800">
+                                      {descriptionGroup.description}
+                                    </h4>
+                                    {vets.length > 0 && (
+                                      <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                                        <User className="h-3 w-3" />
+                                        <span>Vet: {vets.join(", ")}</span>
                                       </div>
                                     )}
                                   </div>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-500">
+                                    {descriptionGroup.records.length} animal{descriptionGroup.records.length !== 1 ? 's' : ''}
+                                  </span>
+                                </div>
+                              </div>
+                            </CollapsibleTrigger>
+
+                            <CollapsibleContent>
+                              <div className="px-4 pb-4 space-y-3">
+                                {descriptionGroup.records.map((record) => {
+                                  const typeInfo = getRecordTypeInfo(record.recordType);
+                                  const TypeIcon = typeInfo.icon;
+
+                                  return (
+                                    <div
+                                      key={`${record.animalId}-${record.id}`}
+                                      className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors ml-6"
+                                    >
+                                      <div className="space-y-3">
+                                        {/* Animal Info - Prominent Display */}
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-3">
+                                            <Badge className={typeInfo.color}>
+                                              <TypeIcon className="h-3 w-3 mr-1" />
+                                              {typeInfo.label}
+                                            </Badge>
+                                            <div className="text-lg font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full">
+                                              {record.animalName}
+                                            </div>
+                                          </div>
+
+                                          {record.cost && (
+                                            <div className="flex items-center gap-1 text-sm font-medium text-green-700">
+                                              <IndianRupee className="h-3 w-3" />
+                                              {formatCurrency(record.cost)}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        {/* Details */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                          {record.nextCheckupDate && (
+                                            <div className="flex items-center gap-1 text-gray-600">
+                                              <Clock className="h-3 w-3" />
+                                              <span className="font-medium">
+                                                Next checkup:
+                                              </span>{" "}
+                                              {formatDate(record.nextCheckupDate)}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        {/* Clinical Information */}
+                                        {(record.diagnosis ||
+                                          record.treatment ||
+                                          record.medications) && (
+                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm bg-white p-3 rounded border">
+                                            {record.diagnosis && (
+                                              <div>
+                                                <span className="font-medium text-gray-700">
+                                                  Diagnosis:
+                                                </span>
+                                                <p className="text-gray-600 mt-1">
+                                                  {record.diagnosis}
+                                                </p>
+                                              </div>
+                                            )}
+
+                                            {record.treatment && (
+                                              <div>
+                                                <span className="font-medium text-gray-700">
+                                                  Treatment:
+                                                </span>
+                                                <p className="text-gray-600 mt-1">
+                                                  {record.treatment}
+                                                </p>
+                                              </div>
+                                            )}
+
+                                            {record.medications && (
+                                              <div>
+                                                <span className="font-medium text-gray-700">
+                                                  Medications:
+                                                </span>
+                                                <p className="text-gray-600 mt-1">
+                                                  {record.medications}
+                                                </p>
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+
+                                        {/* Notes */}
+                                        {record.notes && (
+                                          <div className="flex items-start gap-1 text-sm text-gray-700 bg-blue-50 p-3 rounded">
+                                            <FileText className="h-3 w-3 mt-0.5 flex-shrink-0" />
+                                            <div>
+                                              <span className="font-medium">Notes:</span>
+                                              <p className="mt-1">{record.notes}</p>
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </CollapsibleContent>
+                          </Collapsible>
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
