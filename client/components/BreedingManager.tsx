@@ -99,23 +99,13 @@ export default function BreedingManager({
     veterinarianName: "",
     complications: "",
     notes: "",
-    kids: [
-      {
-        name: "",
-        gender: "female",
-        weight: "",
-        status: "alive",
-        markings: "",
-        notes: "",
-        createAnimalRecord: true,
-      },
-    ],
+    kids: [],
   });
   const { toast } = useToast();
 
   // Get male animals for father selection
   const maleAnimals = allAnimals.filter(
-    (animal) => animal.gender === "male" && animal.status === "active",
+    (animal) => animal.type === mother.type && animal.gender === "male" && animal.status === "active",
   );
 
   useEffect(() => {
