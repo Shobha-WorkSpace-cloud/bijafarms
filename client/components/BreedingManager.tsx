@@ -99,6 +99,9 @@ export default function BreedingManager({
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [refreshingHistory, setRefreshingHistory] = useState(false);
+  const [editingKid, setEditingKid] = useState<{recordId: string, kidIndex: number} | null>(null);
+  const [editKidData, setEditKidData] = useState<any>(null);
+  const [expandedRecords, setExpandedRecords] = useState<Set<string>>(new Set());
   const [formData, setFormData] = useState<BreedingFormData>({
     fatherId: "unknown",
     breedingDate: "",
