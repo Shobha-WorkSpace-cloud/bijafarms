@@ -276,10 +276,10 @@ export default function BreedingHistory() {
       if (record.kidDetails) {
         return (
           sum +
-          record.kidDetails.filter(
-            (kid) =>
-              kid.status === "stillborn" || kid.status === "died_after_birth",
-          ).length
+          record.kidDetails.filter((kidId) => {
+            const kidAnimal = getAnimalById(kidId);
+            return kidAnimal?.status === "dead";
+          }).length
         );
       }
       return sum;
