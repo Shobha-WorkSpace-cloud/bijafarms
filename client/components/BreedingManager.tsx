@@ -297,7 +297,68 @@ export default function BreedingManager({
     try {
       setSubmitting(true);
 
-      // Create breeding record
+      // Create animal records for all kids first
+      const newAnimalIds: string[] = [];
+      for (let index = 0; index < formData.kids.length; index++) {
+        const kid = formData.kids[index];
+        try {
+          // Generate default name if none provided
+          const kidName =
+            kid.name ||
+            `${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate).getFullYear()}`;
+
+          // Determine status based on kid status
+          let animalStatus: AnimalStatus;
+          switch (kid.status) {
+            case "alive":
+              animalStatus = "active";
+              break;
+            case "stillborn":
+            case "died_after_birth":
+              animalStatus = "dead";
+              break;
+            default:
+              animalStatus = "active";
+          }
+
+          const newAnimal = await animalApi.createAnimal({
+            name: kidName,
+            type: mother.type,
+            breed: mother.breed,
+            gender: kid.gender,
+            dateOfBirth: formData.actualDeliveryDate,
+            photos: [],
+            status: animalStatus,
+            currentWeight: kid.weight ? parseFloat(kid.weight) : undefined,
+            markings: kid.markings || undefined,
+            motherId: mother.id,
+            fatherId:
+              formData.fatherId !== "unknown" ? formData.fatherId : undefined,
+            offspring: [],
+            insured: false,
+            notes: kid.notes || undefined,
+            // Add death details for non-alive kids
+            deathDate: kid.status !== "alive" ? formData.actualDeliveryDate : undefined,
+            deathCause: kid.status === "stillborn" ? "stillborn" :
+                       kid.status === "died_after_birth" ? "died after birth" : undefined,
+          });
+          newAnimalIds.push(newAnimal.id);
+        } catch (error) {
+          console.error(
+            `Error creating animal record for Kid #${index + 1}:`,
+            error,
+          );
+          // Show user-friendly error message
+          toast({
+            title: "Error Creating Animal Record",
+            description: `Failed to create animal record for Kid #${index + 1}. Please try again.`,
+            variant: "destructive",
+          });
+          return; // Stop processing if any kid fails
+        }
+      }
+
+      // Create breeding record with animal IDs
       const breedingRecord = await animalApi.createBreedingRecord({
         motherId: mother.id,
         fatherId:
@@ -313,56 +374,24 @@ export default function BreedingManager({
         veterinarianName: formData.veterinarianName || undefined,
         complications: formData.complications || undefined,
         notes: formData.notes || undefined,
-        kidDetails: formData.kids.map((kid) => ({
-          name: kid.name || undefined,
-          gender: kid.gender,
-          weight: kid.weight ? parseFloat(kid.weight) : undefined,
-          status: kid.status,
-        })),
+        kidDetails: newAnimalIds, // Store only animal IDs
       });
 
-      // Create animal records for living kids if requested
-      const newAnimalIds: string[] = [];
-      for (let index = 0; index < formData.kids.length; index++) {
-        const kid = formData.kids[index];
-        if (kid.createAnimalRecord && kid.status === "alive") {
-          try {
-            // Generate default name if none provided
-            const kidName =
-              kid.name ||
-              `${mother.name}-Kid-${index + 1}-${new Date(formData.actualDeliveryDate).getFullYear()}`;
-
-            const newAnimal = await animalApi.createAnimal({
-              name: kidName,
-              type: mother.type,
-              breed: mother.breed,
-              gender: kid.gender,
-              dateOfBirth: formData.actualDeliveryDate,
-              photos: [],
-              status: "active",
-              currentWeight: kid.weight ? parseFloat(kid.weight) : undefined,
-              markings: kid.markings || undefined,
-              motherId: mother.id,
-              fatherId:
-                formData.fatherId !== "unknown" ? formData.fatherId : undefined,
+      // Update breeding record ID in all created animals
+      for (const animalId of newAnimalIds) {
+        try {
+          const animal = await animalApi.fetchAnimals().then(animals =>
+            animals.find(a => a.id === animalId)
+          );
+          if (animal) {
+            await animalApi.updateAnimal(animalId, {
+              ...animal,
               breedingRecordId: breedingRecord.id,
-              offspring: [],
-              insured: false,
-              notes: kid.notes || undefined,
-            });
-            newAnimalIds.push(newAnimal.id);
-          } catch (error) {
-            console.error(
-              `Error creating animal record for Kid #${index + 1}:`,
-              error,
-            );
-            // Show user-friendly error message
-            toast({
-              title: "Error Creating Animal Record",
-              description: `Failed to create animal record for Kid #${index + 1}. The breeding record was saved, but this kid was not added to the livestock.`,
-              variant: "destructive",
+              updatedAt: new Date().toISOString(),
             });
           }
+        } catch (error) {
+          console.error(`Error updating breeding record ID for animal ${animalId}:`, error);
         }
       }
 
